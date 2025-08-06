@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>一問一答互動範例</title>
+<style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    .question, .answer { margin-bottom: 10px; }
+    .log { background: #f9f9f9; padding: 10px; margin-top: 20px; white-space: pre-wrap; border: 1px solid #ccc; }
+    button { padding: 6px 12px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h2>一問一答互動範例</h2>
+<div id="qa-section">
+    <div class="question">
+        <label>問題：</label>
+        <input type="text" id="question" style="width: 100%;">
+    </div>
+    <div class="answer">
+        <label>回答：</label>
+        <input type="text" id="answer" style="width: 100%;">
+    </div>
+    <button onclick="addQA()">加入問答</button>
+</div>
+
+<h3>問答記錄</h3>
+<div id="qa-log" class="log"></div>
+
+<button onclick="copyToClipboard()">複製到剪貼簿</button>
+
+<script>
+    let qaList = [];
+
+    function addQA() {
+        let q = document.getElementById('question').value.trim();
+        let a = document.getElementById('answer').value.trim();
+        if (q && a) {
+            qaList.push({question: q, answer: a});
+            updateLog();
+            document.getElementById('question').value = '';
+            document.getElementById('answer').value = '';
+        } else {
+            alert("請輸入問題與回答！");
+        }
+    }
+
+    function updateLog() {
+        let log = qaList.map((item, index) => 
+            `Q${index+1}: ${item.question}\nA${index+1}: ${item.answer}`
+        ).join("\n\n");
+        document.getElementById('qa-log').innerText = log;
+    }
+
+    function copyToClipboard() {
+        let logText = document.getElementById('qa-log').innerText;
+        if (!logText) {
+            alert("沒有內容可複製！");
+            return;
+        }
+        navigator.clipboard.writeText(logText).then(() => {
+            alert("已複製到剪貼簿，可以貼到 ChatGPT！");
+        });
+    }
+</script>
+</body>
+</html>
