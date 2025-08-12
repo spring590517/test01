@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI職涯教練｜一問一答收集器</title>
+  <meta name="description" content="將個人職涯資訊用一問一答蒐集，最後自動匯出成可貼到 ChatGPT 的完整文字檔。純前端、可直接部署到 GitHub Pages。" />
+  <style>
+    :root{
+      --bg:#0f172a;        /* slate-900 */
+      --card:#111827;      /* gray-900 */
+      --card-2:#0b1222;    /* dark navy */
+      --text:#e5e7eb;      /* gray-200 */
+      --muted:#9ca3af;     /* gray-400 */
+      --accent:#22d3ee;    /* cyan-400 */
+      --accent-2:#60a5fa;  /* blue-400 */
+      --ok:#34d399;        /* green-400 */
+      --warn:#f59e0b;      /* amber-500 */
+      --err:#f87171;       /* red-400 */
+      --radius:18px;
+    }
+    html,body{height:100%}
+    body{
+      margin:0; background:linear-gradient(120deg,#0b1222,#0f172a 40%,#0b1222);
+      color:var(--text); font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Noto Sans TC, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .wrap{max-width:1000px;margin:0 auto;padding:24px}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:40px;height:40px;border-radius:10px;background:radial-gradient(90% 90% at 20% 20%,var(--accent),transparent),radial-gradient(80% 80% at 80% 40%,var(--accent-2),transparent),#0ea5e9;box-shadow:0 0 0 2px rgba(255,255,255,.06), 0 10px 30px rgba(0,0,0,.35)}
+    h1{font-size:20px;margin:0}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:18px}
+    .row{display:flex;gap:18px;flex-wrap:wrap}
+    .col{flex:1 1 340px}
+    .muted{color:var(--muted)}
+    .btn{appearance:none;border:0;border-radius:14px;padding:10px 14px;color:#0b1222;background:var(--accent);font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(34,211,238,.25);transition:.2s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.18)}
+    .btn.ghost{background:transparent;color:var(--muted)}
+    .btn.bad{background:var(--err);color:#0b1222}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+    .chat{margin-top:18px;display:grid;grid-template-columns: 1fr;gap:12px}
+    .bubble{padding:12px 14px;border-radius:14px;max-width:90%}
+    .ai{background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.25);border-top-left-radius:6px}
+    .me{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-top-right-radius:6px;margin-left:auto}
+    .input{display:flex;gap:10px;margin-top:10px}
+    textarea{flex:1;min-height:120px;background:#0b1020;color:var(--text);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;resize:vertical}
+    .small{font-size:12px}
+    .progress{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+    .bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Liberation Mono","DejaVu Sans Mono","Courier New",monospace;background:#0b1020;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:2px 6px}
+    .hidden{display:none}
+    .check{color:var(--ok);margin-left:6px}
+    .footer{margin-top:24px;color:var(--muted);font-size:12px}
+    pre.preview{white-space:pre-wrap;background:#0b1020;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;max-height:360px;overflow:auto}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>AI職涯教練｜一問一答收集器</h1>
+          <div class="muted small">以對話方式蒐集職涯素材 → 一鍵匯出可貼到 ChatGPT 的完整文字</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn secondary" id="btn-load">載入上次資料</button>
+        <button class="btn ghost" id="btn-reset">清空</button>
+        <a class="btn" id="btn-github" href="https://pages.github.com/" target="_blank" rel="noreferrer">部署到 GitHub Pages</a>
+      </div>
+    </header>
+
+    <div class="card" style="margin-top:16px">
+      <div class="row" style="align-items:flex-start">
+        <div class="col">
+          <div class="pill small" id="status"><span>狀態</span>：<span id="status-text">尚未開始</span></div>
+          <div class="progress" style="margin:8px 0 12px"><div class="bar" id="bar"></div></div>
+          <div class="chat" id="chat"></div>
+          <div class="input" id="input-area">
+            <textarea id="answer" placeholder="在這裡輸入你的回答（可貼上多行文字）。按 Enter+Shift 可換行。"></textarea>
+            <div style="display:flex;flex-direction:column;gap:8px;width:160px">
+              <button class="btn" id="btn-next">送出 / 下一題 →</button>
+              <button class="btn secondary" id="btn-back">← 上一題</button>
+            </div>
+          </div>
+          <div class="footer">
+            資料隱私：所有輸入皆僅儲存在你的瀏覽器 <span class="kbd">localStorage</span>；不會上傳到任何伺服器。
+          </div>
+        </div>
+        <div class="col">
+          <div class="card" style="background:var(--card-2)">
+            <strong>完成後輸出</strong>
+            <p class="muted small">按下「產生文字檔」會整合 <span class="kbd">問題＋你的回答</span>，並附上已寫好的 ChatGPT 指令與 ABCDEF G 架構。</p>
+            <div class="toolbar" style="margin:10px 0">
+              <button class="btn" id="btn-generate">產生文字檔</button>
+              <button class="btn secondary" id="btn-copy">複製到剪貼簿</button>
+              <button class="btn ghost" id="btn-preview">預覽</button>
+            </div>
+            <pre class="preview hidden" id="preview"></pre>
+            <div class="small muted" style="margin-top:8px">
+              小提示：把輸出的文字貼到 <span class="kbd">ChatGPT</span> 對話框，即可請它扮演你的 AI 職涯教練並產出完整分析。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <details>
+        <summary><strong>說明｜題目集</strong></summary>
+        <ol class="small muted">
+          <li>本工具以一問一答蒐集以下十類資訊：簡介、心流時光、就讀科系、擅長科目/作品/論文與競賽、社團/志工、工作經驗、專長技能、專業證照、職業價值觀（擇三）、生涯興趣（擇二）、多元智能（擇三）。</li>
+          <li>完成蒐集後，會自動附上 <span class="kbd">問題 A–G</span> 的標準指令文字，方便直接貼到 ChatGPT。</li>
+          <li>心流時光建議每行一筆，格式：<span class="kbd">Time。Flow。Score。</span>（例如：就讀高三。考上政大心理系。8.5。）</li>
+        </ol>
+      </details>
+    </div>
+
+  </div>
+
+<script>
+// ===== 資料與題庫 =====
+const QUESTIONS = [
+  { id: 'intro', label: '這是我的簡介', prompt: '用 2-4 句話介紹你（年齡、最高學歷/學系、目前職稱與主要職責）。\n例：我目前在○○單位擔任○○，主要負責……', required: true },
+  { id: 'flow', label: '1. 我的心流時光', prompt: '請逐行輸入你的心流事件（每行：Time。Flow。Score。）\n例：就讀高三。考上政大心理系。8.5。', required: true },
+  { id: 'majors', label: '2. 我就讀的科系所', prompt: '請列出大學、碩士、博士（若有），包含主修與輔系／次專長。', required: true },
+  { id: 'strength-subjects', label: '3. 擅長科目／專題／論文／競賽', prompt: '列出你擅長的學科與做過的專題、論文題目或競賽成果。', required: true },
+  { id: 'clubs', label: '4. 社團 / 志工經驗', prompt: '列出你的社團與志工經驗，含擔任角色與影響。', required: true },
+  { id: 'work', label: '5. 工作經驗', prompt: '按時間列出你的工作經驗：職稱、單位、任務、成果或學習。', required: true },
+  { id: 'skills', label: '6. 專長技能', prompt: '列出你可上手的工具、方法、軟硬技能（如：SPSS、統計、心理測驗、專案管理…）。', required: true },
+  { id: 'licenses', label: '7. 專業證照', prompt: '列出你的專業證照或受訓認證（如：TA、教練證、語言檢定…）。', required: false },
+  { id: 'values', label: '8. 我在乎的職業價值觀（擇三，含簡述）', prompt: '請從 16 個職涯價值觀中挑選最在乎的三項，並附一句話說明為何。', required: true },
+  { id: 'interests', label: '9. 我來勁的生涯興趣（擇二）', prompt: '請從 6 類 Holland 生涯興趣中挑選 2 項，並簡述理由。', required: true },
+  { id: 'mi', label: '10. 我擅長的多元智能（擇三）', prompt: '請從 8 項多元智能中挑 3 項並簡述你的強項與證據。', required: true }
+];
+
+const TEMPLATE_HEADER = `請你擔任我的「AI職涯教練」，從以下「1.我的心流時光」、「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、及「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我喜歡的生涯興趣」、「10.我擅長的多元智能」十類資訊，回答我ABCDEFG這七個問題。
+請一次性地回答下面ABCDEFG 七個的問題。
+回答的格式，請用列點配合文字說明的方式呈現。
+每個列表，請加上淺顯易懂的標題，讓我比較容易解讀。
+再回答完最後一個問題G後，請你變成我的「AI職涯教練」，根據我提供的各項資訊與你對我的瞭解，提供我三個最適合的職涯發展建議。`;
+
+const TEMPLATE_A2G = `
+
+問題A.解析我的五個熱情特質。
+每個熱情特質的標題，請用四個字表示。後面加上一句話，讓讀者可以清楚地知悉這個熱情特質。接著列出每個熱情特質的：
+#心流時光佐證資料：針對每個熱情特質從「1.我的心流時光」中舉出相關三個事件。
+#學經歷或心理測驗佐證資料：從「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、及「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我喜歡的生涯興趣」、「10.我擅長的多元智能」的九類資訊中，條列出三項相關內容當做「佐證資料」。
+#摘要說明：針對每個熱情特質提供200個字的「摘要說明」。
+
+問題B.解析我的五個專業才能。
+每個專業才能的標題，請用四個字表示。後面加上一句話，讓讀者可以清楚地知悉這個熱情特質。接著列出每個專業才能的：
+#心流時光佐證資料：針對每個專業才能從「1.我的心流時光」中舉出相關三個事件。
+#學經歷或心理測驗佐證資料：從「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、及「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我喜歡的生涯興趣」、「10.我擅長的多元智能」的九類資訊中，條列出三項相關內容當做「佐證資料」。
+#摘要說明：針對每個專業才能提供200個字的「摘要說明」。
+
+問題C. 推薦我六個適合從事的職業。
+請根據我的學經歷、熱情特質、專業才能，針對每個推薦的職業，條列回答這三個問題。 
+#工作內容：用100個字說明這個職業的工作內容。 
+#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個職業。 
+#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的職業發展，可能會遇到的挑戰問題。
+
+問題D. 推薦我六個適合加入的產業。
+請根據我的學經歷、熱情特質、專業才能，針對每個推薦的產業，條列回答這三個問題。 
+#產業現況與趨勢：用100個字說明這個產業目前發展的現況與未來的趨勢 。
+#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個產業。
+#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的產業發展，可能會遇到的挑戰問題。
+
+問題E. 推薦我二個適合從事的新興職業。
+請根據我的學經歷、熱情特質、專業才能，針對每個推薦的新興職業，條列回答這三個問題。 
+#工作內容：用100個字說明這個新興職業的工作內容。 
+#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個新興職業。 
+#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的新興職業發展，可能會遇到的挑戰問題。
+
+問題F. 推薦我二個適合加入的新興產業。
+請根據我的學經歷、熱情特質、專業才能，針對每個推薦的新興產業，條列回答這三個問題。
+#產業現況與趨勢：用100個字說明這個新興產業目前發展的現況與未來的趨勢 。
+#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個新興產業。
+#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的新興產業發展，可能會遇到的挑戰問題。
+
+問題G. 請用條列的方式，將你對ABCDEF六個問題的回答內容，彙整出直覺易懂的摘要。`;
+
+const STATE_KEY = 'ai-career-chat-state-v1';
+
+let state = {
+  step: 0,
+  answers: {}
+};
+
+// ===== UI Helpers =====
+const el = sel => document.querySelector(sel);
+const chat = el('#chat');
+const answer = el('#answer');
+const bar = el('#bar');
+const statusText = el('#status-text');
+
+function save(){
+  localStorage.setItem(STATE_KEY, JSON.stringify(state));
+}
+function load(){
+  const raw = localStorage.getItem(STATE_KEY);
+  if(!raw) return false;
+  try{ state = JSON.parse(raw); return true; }catch(e){ return false; }
+}
+function reset(){
+  state = { step:0, answers:{} };
+  save();
+  render();
+}
+
+function render(){
+  // progress
+  const pct = Math.round((state.step / QUESTIONS.length) * 100);
+  bar.style.width = Math.min(100, pct) + '%';
+  statusText.textContent = state.step >= QUESTIONS.length ? '已完成問答，準備輸出' : `進度 ${state.step}/${QUESTIONS.length}`;
+
+  // chat bubbles
+  chat.innerHTML = '';
+  for(let i=0;i<=state.step && i<QUESTIONS.length;i++){
+    const q = QUESTIONS[i];
+    if(!q) continue;
+    chat.appendChild(bubbleAI(`${q.label}\n${q.prompt}`));
+    const ans = state.answers[q.id];
+    if(ans){ chat.appendChild(bubbleMe(ans)); }
+  }
+
+  // input
+  if(state.step < QUESTIONS.length){
+    const cur = QUESTIONS[state.step];
+    answer.value = state.answers[cur.id] || '';
+    answer.placeholder = cur.prompt;
+    el('#input-area').classList.remove('hidden');
+  } else {
+    el('#input-area').classList.add('hidden');
+  }
+}
+
+function bubbleAI(text){
+  const d = document.createElement('div');
+  d.className = 'bubble ai';
+  d.textContent = text;
+  return d;
+}
+function bubbleMe(text){
+  const d = document.createElement('div');
+  d.className = 'bubble me';
+  d.textContent = text;
+  return d;
+}
+
+// ===== Export Builder =====
+function buildExport(){
+  // 1) 開場指令
+  let out = TEMPLATE_HEADER + '\n\n';
+
+  // 2) 十類素材（含題目＋回答）
+  out += '——\n這是我的簡介\n' + (state.answers['intro']||'（未填）') + '\n\n';
+  QUESTIONS.forEach(q=>{
+    if(q.id === 'intro') return;
+    out += `${q.label}\n${state.answers[q.id]||'（未填）'}\n\n`;
+  });
+
+  // 3) 問題 A → G 指令
+  out += '——' + TEMPLATE_A2G + '\n\n';
+
+  // 4) 附註：來源與版次
+  out += '（本段文字由 AI職涯教練一問一答收集器自動產生。僅含使用者於瀏覽器端輸入之資料。）\n';
+  return out;
+}
+
+function download(filename, content){
+  const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+// ===== Events =====
+
+el('#btn-next').addEventListener('click', ()=>{
+  const cur = QUESTIONS[state.step];
+  const val = answer.value.trim();
+  if(cur.required && !val){
+    answer.focus();
+    answer.classList.add('shake');
+    return;
+  }
+  state.answers[cur.id] = val;
+  state.step = Math.min(state.step + 1, QUESTIONS.length);
+  save();
+  render();
+});
+
+el('#btn-back').addEventListener('click', ()=>{
+  state.step = Math.max(0, state.step - 1);
+  save();
+  render();
+});
+
+el('#btn-generate').addEventListener('click', ()=>{
+  const txt = buildExport();
+  const dt = new Date();
+  const stamp = dt.toISOString().slice(0,19).replace(/[:T]/g,'-');
+  download(`AI-職涯教練輸入包-${stamp}.txt`, txt);
+});
+
+el('#btn-copy').addEventListener('click', async ()=>{
+  const txt = buildExport();
+  await navigator.clipboard.writeText(txt);
+  el('#status-text').textContent = '已複製到剪貼簿';
+});
+
+el('#btn-preview').addEventListener('click', ()=>{
+  const p = el('#preview');
+  p.textContent = buildExport();
+  p.classList.toggle('hidden');
+});
+
+el('#btn-load').addEventListener('click', ()=>{
+  const ok = load();
+  render();
+  el('#status-text').textContent = ok ? '已載入上次資料' : '沒有可載入的資料';
+});
+
+el('#btn-reset').addEventListener('click', ()=>{
+  if(confirm('確定要清空本機儲存的所有答案嗎？')) reset();
+});
+
+// 允許 Shift+Enter 換行，Enter 送出
+answer.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); el('#btn-next').click(); }
+});
+
+// 初始渲染
+load();
+render();
+</script>
+</body>
+</html>
