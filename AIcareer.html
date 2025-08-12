@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>生涯探索水晶球</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="description" content="手機友善的一問一答蒐集器，完成後一鍵複製為文字檔，直接貼到 ChatGPT。" />
+  <meta name="description" content="萃取生涯發展與探索資訊最棒的工具。完成後一鍵複製為文字檔，直接貼到 ChatGPT，立馬讓ChatGPT變成你的AI職涯經紀人。" />
   <style>
     html,body{background:#0b0f19;color:#e6e8f0}
     .card{background:#11162a}
@@ -46,8 +46,8 @@
       <h2 class="text-xl font-semibold">嗨！先說明一下怎麼用</h2>
       <ol class="list-decimal ml-5 mt-2 space-y-2 text-sm text-white/80">
         <li>這是<strong>一問一答</strong>的生涯資訊蒐集器。</li>
-        <li>完成後按「<span class="font-semibold">5分鐘，即可完成資訊填答。
-        <li>完成後按「<span class="font-semibold">產生給 ChatGPT 的文字</span>」，可一鍵複製或下載 .txt。</li>
+        <li>完成後<span class="font-semibold">5分鐘，即可完成資訊填答。
+        <li>完成後點選「<span class="font-semibold">產生給 ChatGPT 的文字</span>」，即可產生輸入給ChatGPT的Prompt文字。</li>
       </ol>
       <div class="flex gap-2 mt-4">
         <button class="btn-primary glow text-sm px-4 py-2 rounded-xl" onclick="goNext()">開始</button>
@@ -398,7 +398,7 @@
       lines.push('3. 我在大二時，適合修習哪些領域的雙主修、輔系、學程');
       lines.push('4. 適合找哪方面的兼職工作');
       lines.push('5. 提醒剛念大一的我，要注意哪些問題');
-      lines.push('並把以上內容延伸為「四年大學生涯地圖」：每學年建議修的課、參與的活動、累積的學習經驗、工作經歷或作品集，讓我畢業時可直接銜接到理想職業。');
+      lines.push('6. 將以上內容延伸為「四年大學生涯地圖」：內容包含每學年建議要修習哪些課程、要參與哪些活動、要累積哪些學習經驗、要累積哪工作經歷、要累積哪些作品集，讓我畢業時可直接銜接到理想職業。');
 
       const out = lines.join('\n');
       $('finalText').value = out;
