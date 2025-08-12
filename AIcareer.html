@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>生涯發展與探索｜行動版資料蒐集器</title>
+  <title>生涯探索水晶球</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <meta name="description" content="手機友善的一問一答蒐集器，完成後一鍵複製為文字檔，直接貼到 ChatGPT。" />
   <style>
@@ -28,7 +28,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-blue-400"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 14.93V20h-2v-3.07A8.013 8.013 0 0 1 4.07 13H1v-2h3.07A8.013 8.013 0 0 1 11 4.07V1h2v3.07A8.013 8.013 0 0 1 19.93 11H23v2h-3.07A8.013 8.013 0 0 1 13 16.93ZM12 7a5 5 0 1 0 5 5 5.006 5.006 0 0 0-5-5Z"/></svg>
         </div>
         <div>
-          <h1 class="text-lg font-semibold leading-tight">生涯發展與探索｜行動版資料蒐集器</h1>
+          <h1 class="text-lg font-semibold leading-tight">生涯探索水晶球</h1>
           <p class="text-xs text-white/60">完成後一鍵複製，直接貼到 ChatGPT 分析</p>
         </div>
       </div>
@@ -45,9 +45,9 @@
     <section id="step0" class="mt-4 card rounded-2xl p-4">
       <h2 class="text-xl font-semibold">嗨！先說明一下怎麼用</h2>
       <ol class="list-decimal ml-5 mt-2 space-y-2 text-sm text-white/80">
-        <li>這是<strong>一問一答</strong>的蒐集器，手機操作順暢，每題都會自動儲存。</li>
+        <li>這是<strong>一問一答</strong>的生涯資訊蒐集器。</li>
+        <li>完成後按「<span class="font-semibold">5分鐘，即可完成資訊填答。
         <li>完成後按「<span class="font-semibold">產生給 ChatGPT 的文字</span>」，可一鍵複製或下載 .txt。</li>
-        <li>所有選項與格式，都已符合您提供的規格（數字編碼、敘述文字）。</li>
       </ol>
       <div class="flex gap-2 mt-4">
         <button class="btn-primary glow text-sm px-4 py-2 rounded-xl" onclick="goNext()">開始</button>
@@ -100,7 +100,7 @@
     <!-- Q4 價值觀：16 選 3 -->
     <section id="step4" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">4. 我比較在乎的三個職業價值觀？（16 選 3）</h3>
-      <p class="text-sm text-white/70 mt-1">請精確選擇 <strong>三個</strong>。格式會自動輸出為「(編號)名稱：說明」。</p>
+      <p class="text-sm text-white/70 mt-1">請按照你在乎的順序，依序選出 <strong>三個在乎的價值觀</strong>。格式會自動輸出為「(編號)名稱：說明」。</p>
       <div id="values" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       <p id="valuesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 3</p>
       <div class="mt-4 flex justify-between items-center">
@@ -112,7 +112,7 @@
     <!-- Q5 興趣：6 選 2 -->
     <section id="step5" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">5. 我比較來勁的兩個生涯興趣？（6 選 2）</h3>
-      <p class="text-sm text-white/70 mt-1">請精確選擇 <strong>兩個</strong>。將以「(編號)名稱：說明」輸出。</p>
+      <p class="text-sm text-white/70 mt-1">請按照你來勁的程度，依序選出 <strong>二個來勁的生涯興趣</strong>。將以「(編號)名稱：說明」輸出。</p>
       <div id="interests" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       <p id="interestsHint" class="text-xs text-white/60 mt-2">已選擇 0 / 2</p>
       <div class="mt-4 flex justify-between items-center">
@@ -124,7 +124,7 @@
     <!-- Q6 多元智能：8 選 3 -->
     <section id="step6" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">6. 我比較擅長的三個多元智能？（8 選 3）</h3>
-      <p class="text-sm text-white/70 mt-1">請精確選擇 <strong>三個</strong>。將以「(編號)名稱：說明」輸出。</p>
+      <p class="text-sm text-white/70 mt-1">請按照你擅長的程度，依序選出 <strong>三個擅長的多元智能</strong>。將以「(編號)名稱：說明」輸出。</p>
       <div id="intelligences" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       <p id="intelligencesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 3</p>
       <div class="mt-4 flex justify-between items-center">
