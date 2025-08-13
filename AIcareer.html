@@ -133,6 +133,18 @@
       </div>
     </section>
 
+    <!-- Q7 個人風格：4 選 2 -->
+<section id="step7" class="hidden mt-4 card rounded-2xl p-4">
+  <h3 class="text-base font-semibold">7. 我最偏好的二個風格？（4 選 2）</h3>
+  <p class="text-sm text-white/70 mt-1">請按照喜好程度，依序選出 <strong>二個最符合你的風格</strong>。將以「(編號)名稱：說明」輸出。</p>
+  <div id="styles" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+  <p id="stylesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 2</p>
+  <div class="mt-4 flex justify-between items-center">
+    <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+    <button id="stylesNext" class="btn-primary px-4 py-2 rounded-xl" disabled onclick="goNext()">下一步</button>
+  </div>
+</section>
+
     <!-- Review & Generate -->
     <section id="step7" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">最後確認與產出</h3>
@@ -162,6 +174,11 @@
           <p class="text-white/60">多元智能（3）</p>
           <ul id="r_intelligences" class="list-disc ml-5"></ul>
         </div>
+                <div class="border border-white/10 rounded-xl p-3">
+          <p class="text-white/60">個人風格（2）</p>
+          <ul id="r_intelligences" class="list-disc ml-5"></ul>
+        </div>
+
       </div>
 
       <div class="mt-4 grid grid-cols-2 gap-2">
@@ -231,8 +248,15 @@
       [7,'人際互動','擅長觀察人的情緒，喜歡參與團體活動。善於激勵他人，喜歡扮演團體領導者的角色。'],
       [8,'內省同理','擅長探索自己及同理他人，能意識到自己情緒與想法，能安靜獨處，清楚自己的優缺點。'],
     ];
-
-    // ====== 狀態管理 ======
+    
+   const STYLE_OPTIONS = [
+      [1,'理智型','邏輯分析特質強，凡事追根究底，工作非常重視成果、證據與數據。但有時會因為對事不對人，而影響人際相處的氣氛。'],
+      [2,'組織型','事務管理特質強，工作時強調按部就班。任務執行時，謹慎可靠。但有時候可能會太條理組織，而欠缺彈性，不喜歡變動。'],
+      [3,'情感型','人際互動特質強，樂於助人與分享。工作時強調團隊的和諧與合作。但有時可能會因為太過人際考量，而較為優柔寡斷。'],
+      [4,'開創型','想法鮮活多變，勇於嘗試，工作時強調創新與變化。但有時可能過於求新求變，致使在工作執行時會不切實際、虎頭蛇尾。'],
+    ];
+    
+   // ====== 狀態管理 ======
     const state = {
       step: 0,
       uniDept: '',
@@ -241,13 +265,14 @@
       values: [],
       interests: [],
       intelligences: [],
+      styles: [] // 新增
     };
 
     const $ = (id) => document.getElementById(id);
 
     function persist(){ localStorage.setItem('careerFormV1', JSON.stringify(state)); }
     function restore(){ const raw = localStorage.getItem('careerFormV1'); if(raw){ Object.assign(state, JSON.parse(raw)); }}
-
+    
     // ====== 導覽 ======
     const TOTAL_STEPS = 8; // 0~8
 
@@ -326,12 +351,14 @@
       $('valuesHint').textContent = `已選擇 ${state.values.length} / 3`;
       $('interestsHint').textContent = `已選擇 ${state.interests.length} / 2`;
       $('intelligencesHint').textContent = `已選擇 ${state.intelligences.length} / 3`;
+      $('stylesHint').textContent = `已選擇 ${state.styles.length} / 2`;
     }
 
     function validateCounts(){
       $('valuesNext').disabled = state.values.length !== 3;
       $('interestsNext').disabled = state.interests.length !== 2;
       $('intelligencesNext').disabled = state.intelligences.length !== 3;
+      $('stylesNext').disabled = state.styles.length !== 2;
     }
 
     // ====== Review/Output ======
@@ -357,6 +384,16 @@
         .map(n=>INTEL_OPTIONS.find(v=>v[0]===n))
         .filter(Boolean)
         .forEach(([n,t,d])=>{ const li = document.createElement('li'); li.textContent = `(${n})${t}：${d}`; listM.appendChild(li); });
+
+        const listS = $('r_styles'); listS.innerHTML='';
+  state.styles
+    .map(n=>STYLE_OPTIONS.find(v=>v[0]===n))
+    .filter(Boolean)
+    .forEach(([n,t,d])=>{
+      const li = document.createElement('li');
+      li.textContent = `(${n})${t}：${d}`;
+      listS.appendChild(li);
+    });
     }
 
     function generateText(){
@@ -389,6 +426,10 @@
       lines.push('五、我比較擅長的三個多元智能，依序是（8 選 3）');
       lines.push(state.intelligences.length? fmt(state.intelligences, INTEL_OPTIONS) : '（未選）');
       lines.push('');
+
+        lines.push('六、我最偏好的二個風格，依序是（4 選 2）');
+  lines.push(state.styles.length ? fmt(state.styles, STYLE_OPTIONS) : '（未選）');
+  lines.push('');
 
       lines.push('— — — — — — —');
       lines.push('【給 ChatGPT 的指令】');
@@ -445,16 +486,17 @@
 
     // ====== 初始化 ======
     function init(){
-      restore();
-      makeScale('likeScale');
-      makeChips('values', VALUE_OPTIONS, 'values', 3);
-      makeChips('interests', INTEREST_OPTIONS, 'interests', 2);
-      makeChips('intelligences', INTEL_OPTIONS, 'intelligences', 3);
-      updateCounters(); validateCounts();
-      showStep(state.step || 0);
-      $('uniDept').value = state.uniDept || '';
-      $('clubs').value = state.clubs || '';
-    }
+  restore();
+  makeScale('likeScale');
+  makeChips('values', VALUE_OPTIONS, 'values', 3);
+  makeChips('interests', INTEREST_OPTIONS, 'interests', 2);
+  makeChips('intelligences', INTEL_OPTIONS, 'intelligences', 3);
+  makeChips('styles', STYLE_OPTIONS, 'styles', 2); // 新增
+  updateCounters(); validateCounts();
+  showStep(state.step || 0);
+  $('uniDept').value = state.uniDept || '';
+  $('clubs').value = state.clubs || '';
+}
 
     init();
   </script>
