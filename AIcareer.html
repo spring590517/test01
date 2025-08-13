@@ -70,7 +70,7 @@
     <!-- Q2 喜歡程度 1-5 -->
     <section id="step2" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">2. 我對目前就讀科系的喜歡程度？（五點量表）</h3>
-      <p class="text-sm text-white/70 mt-1">請選擇 1～5。分數愈高，表示喜歡程度愈高。：</p>
+      <p class="text-sm text-white/70 mt-1">請選擇 1～5。分數愈高，表示喜歡程度愈高。將以「(編號)名稱」輸出。：</p>
       <div id="likeScale" class="grid grid-cols-5 gap-2 mt-3"></div>
       <ul class="mt-3 text-xs text-white/60 space-y-1">
         <li>(1) 非常不喜歡</li>
@@ -378,15 +378,15 @@
         .map(([n,t,d])=>`(${n})${t}：${d}`)
         .join('\n');
 
-      lines.push('三、我比較在乎的三個職業價值觀（16 選 3）');
+      lines.push('三、我比較在乎的三個職業價值觀，依序是（16 選 3）');
       lines.push(state.values.length? fmt(state.values, VALUE_OPTIONS) : '（未選）');
       lines.push('');
 
-      lines.push('四、我比較來勁的兩個生涯興趣（6 選 2）');
+      lines.push('四、我比較來勁的兩個生涯興趣，依序是（6 選 2）');
       lines.push(state.interests.length? fmt(state.interests, INTEREST_OPTIONS) : '（未選）');
       lines.push('');
 
-      lines.push('五、我比較擅長的三個多元智能（8 選 3）');
+      lines.push('五、我比較擅長的三個多元智能，依序是（8 選 3）');
       lines.push(state.intelligences.length? fmt(state.intelligences, INTEL_OPTIONS) : '（未選）');
       lines.push('');
 
