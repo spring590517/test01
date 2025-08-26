@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>生涯探索水晶球</title>
+  <title>大一生涯發展與探索資料蒐集器</title>
+  <meta name="description" content="引導大一新生輸入生涯發展與探索資訊，完成後一鍵複製為文字檔，直接貼到 ChatGPT，讓 ChatGPT 成為你的 AI 生涯教練。" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="description" content="萃取生涯發展與探索資訊的好工具。完成後一鍵複製為文字檔，直接貼到 ChatGPT，立馬讓ChatGPT變成你的AI職涯經紀人。" />
   <style>
-    html,body{background:#0b0f19;color:#e6e8f0}
+    html,body{background:#0b0f19;color:#e6e8f0;font-family:"Microsoft JhengHei","Noto Sans CJK TC","Noto Sans CJK","Noto Sans TC",ui-sans-serif,system-ui}
     .card{background:#11162a}
     .chip{border:1px solid rgba(255,255,255,.15)}
     .chip.active{background:#334155}
@@ -28,8 +28,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-blue-400"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 14.93V20h-2v-3.07A8.013 8.013 0 0 1 4.07 13H1v-2h3.07A8.013 8.013 0 0 1 11 4.07V1h2v3.07A8.013 8.013 0 0 1 19.93 11H23v2h-3.07A8.013 8.013 0 0 1 13 16.93ZM12 7a5 5 0 1 0 5 5 5.006 5.006 0 0 0-5-5Z"/></svg>
         </div>
         <div>
-          <h1 class="text-lg font-semibold leading-tight">生涯探索水晶球</h1>
-          <p class="text-xs text-white/60">完成後一鍵複製，直接將萃取到的生涯發展與探索資訊貼到 ChatGPT 分析</p>
+          <h1 class="text-lg font-semibold leading-tight">大一生涯發展與探索資料蒐集器</h1>
+          <p class="text-xs text-white/60">完成後按「產生給 ChatGPT 的文字」，即可一鍵複製貼上</p>
         </div>
       </div>
       <!-- Progress -->
@@ -37,7 +37,7 @@
         <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden">
           <div id="progressBar" class="h-2 rounded-full bg-blue-500 transition-all" style="width:0%"></div>
         </div>
-        <p id="progressText" class="mt-1 text-[11px] text-white/60">步驟 1 / 9</p>
+        <p id="progressText" class="mt-1 text-[11px] text-white/60">步驟 1 / 8</p>
       </div>
     </header>
 
@@ -46,8 +46,8 @@
       <h2 class="text-xl font-semibold">嗨！先說明一下怎麼用</h2>
       <ol class="list-decimal ml-5 mt-2 space-y-2 text-sm text-white/80">
         <li>這是<strong>一問一答</strong>的生涯資訊蒐集器。</li>
-        <li>只要<span class="font-semibold">5分鐘，即可完成生涯發展與探索資訊的萃取。</span></li>
-        <li>完成後點選「<span class="font-semibold">產生給ChatGPT的文字</span>」，即可產生輸入給ChatGPT的Prompt文字。</li>
+        <li><span class="font-semibold">約 5 分鐘</span>完成，結束後可下載 .txt 或直接複製。</li>
+        <li>本頁為<strong>單一檔案</strong>（index.html），適合 GitHub Pages 部署。</li>
       </ol>
       <div class="flex gap-2 mt-4">
         <button class="btn-primary glow text-sm px-4 py-2 rounded-xl" onclick="goNext()">開始</button>
@@ -70,7 +70,7 @@
     <!-- Q2 喜歡程度 1-5 -->
     <section id="step2" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">2. 我對目前就讀科系的喜歡程度？（五點量表）</h3>
-      <p class="text-sm text-white/70 mt-1">請選擇 1～5。分數愈高，表示喜歡程度愈高。將以「(編號)名稱」輸出：</p>
+      <p class="text-sm text-white/70 mt-1">請選擇 1～5。會以「(編號)名稱」輸出。</p>
       <div id="likeScale" class="grid grid-cols-5 gap-2 mt-3"></div>
       <ul class="mt-3 text-xs text-white/60 space-y-1">
         <li>(1) 非常不喜歡</li>
@@ -88,8 +88,8 @@
     <!-- Q3 社團與職務 -->
     <section id="step3" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">3. 我以前（高中職、國中…）參加過哪些社團，擔任什麼職務？</h3>
-      <p class="text-sm text-white/70 mt-1">請用文字輸入，例如：<span class="kbd">吉他社 教學組組長</span></p>
-      <textarea id="clubs" rows="4" placeholder="可輸入多筆，換行分隔。例：&#10;吉他社 教學組組長&#10;童軍社 社長"
+      <p class="text-sm text-white/70 mt-1">請用文字輸入，例如：<span class="kbd">吉他社 教學組組長</span>；多筆請分行。</p>
+      <textarea id="clubs" rows="4" placeholder="可輸入多筆，換行分隔。例：&#10;吉他社 教學組組長&#10;偏鄉服務隊 活動部部長"
                 class="mt-3 w-full rounded-xl px-4 py-3 bg-black/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       <div class="mt-4 flex justify-between items-center">
         <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
@@ -100,7 +100,7 @@
     <!-- Q4 價值觀：16 選 3 -->
     <section id="step4" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">4. 我比較在乎的三個職業價值觀？（16 選 3）</h3>
-      <p class="text-sm text-white/70 mt-1">請按照你在乎的順序，依序選出 <strong>三個在乎的價值觀</strong>。格式會自動輸出為「(編號)名稱：說明」。</p>
+      <p class="text-sm text-white/70 mt-1">請依照你在乎的<strong>先後順序</strong>，依序選出三個。會以「(編號)名稱：說明」輸出。</p>
       <div id="values" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       <p id="valuesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 3</p>
       <div class="mt-4 flex justify-between items-center">
@@ -112,7 +112,7 @@
     <!-- Q5 興趣：6 選 2 -->
     <section id="step5" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">5. 我比較來勁的兩個生涯興趣？（6 選 2）</h3>
-      <p class="text-sm text-white/70 mt-1">請按照你來勁的程度，依序選出 <strong>二個來勁的生涯興趣</strong>。將以「(編號)名稱：說明」輸出。</p>
+      <p class="text-sm text-white/70 mt-1">請依<strong>來勁程度</strong>選出兩個。會以「(編號)名稱：說明」輸出。</p>
       <div id="interests" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       <p id="interestsHint" class="text-xs text-white/60 mt-2">已選擇 0 / 2</p>
       <div class="mt-4 flex justify-between items-center">
@@ -124,7 +124,7 @@
     <!-- Q6 多元智能：8 選 3 -->
     <section id="step6" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">6. 我比較擅長的三個多元智能？（8 選 3）</h3>
-      <p class="text-sm text-white/70 mt-1">請按照你擅長的程度，依序選出 <strong>三個擅長的多元智能</strong>。將以「(編號)名稱：說明」輸出。</p>
+      <p class="text-sm text-white/70 mt-1">請依<strong>擅長程度</strong>選出三個。會以「(編號)名稱：說明」輸出。</p>
       <div id="intelligences" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       <p id="intelligencesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 3</p>
       <div class="mt-4 flex justify-between items-center">
@@ -133,20 +133,8 @@
       </div>
     </section>
 
-    <!-- Q7 個人風格：4 選 2 -->
-    <section id="step7" class="hidden mt-4 card rounded-2xl p-4">
-      <h3 class="text-base font-semibold">7. 我最偏好的二個風格？（4 選 2）</h3>
-      <p class="text-sm text-white/70 mt-1">請按照喜好程度，依序選出 <strong>二個最符合你的風格</strong>。將以「(編號)名稱：說明」輸出。</p>
-      <div id="styles" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      <p id="stylesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 2</p>
-      <div class="mt-4 flex justify-between items-center">
-        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
-        <button id="stylesNext" class="btn-primary px-4 py-2 rounded-xl" disabled onclick="goNext()">下一步</button>
-      </div>
-    </section>
-
     <!-- Review & Generate -->
-    <section id="step8" class="hidden mt-4 card rounded-2xl p-4">
+    <section id="step7" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">最後確認與產出</h3>
       <p class="text-sm text-white/70 mt-1">請檢查內容，按下按鈕會產生<strong>完整文字</strong>（含給 ChatGPT 的指令）。</p>
       <div class="mt-3 space-y-2 text-sm">
@@ -174,10 +162,6 @@
           <p class="text-white/60">多元智能（3）</p>
           <ul id="r_intelligences" class="list-disc ml-5"></ul>
         </div>
-        <div class="border border-white/10 rounded-xl p-3">
-          <p class="text-white/60">個人風格（2）</p>
-          <ul id="r_styles" class="list-disc ml-5"></ul>
-        </div>
       </div>
 
       <div class="mt-4 grid grid-cols-2 gap-2">
@@ -187,45 +171,47 @@
     </section>
 
     <!-- Output -->
-    <section id="step9" class="hidden mt-4 card rounded-2xl p-4">
+    <section id="step8" class="hidden mt-4 card rounded-2xl p-4">
       <h3 class="text-base font-semibold">已產生完成 ✅</h3>
       <p class="text-sm text-white/70 mt-1">點一下即可全選，然後複製到 ChatGPT；或直接下載為 .txt。</p>
-      <textarea id="finalText" class="mt-3 w-full h-72 rounded-xl px-4 py-3 bg-black/30 border border-white/10 font-mono text-sm"></textarea>
+      <textarea id="finalText" class="mt-3 w-full h-80 rounded-xl px-4 py-3 bg-black/30 border border-white/10 font-mono text-sm"></textarea>
       <div class="mt-3 grid grid-cols-2 gap-2">
         <button class="btn-primary px-4 py-2 rounded-xl" onclick="copyOutput()">一鍵複製</button>
         <button class="btn-ghost px-4 py-2 rounded-xl" onclick="downloadTxt()">下載 .txt</button>
       </div>
       <div class="mt-3 flex items-center justify-between text-xs text-white/60">
         <button class="underline" onclick="restartAll()">重新開始</button>
-        <span>資料會暫存於本機（localStorage）</span>
+        <span>資料僅暫存於本機（localStorage）</span>
       </div>
     </section>
 
     <!-- Footer -->
     <footer class="mt-8 text-center text-xs text-white/40">
-      <p>© 2025 生涯發展與探索資料蒐集器｜適合 GitHub Pages 部署</p>
+      <p>© 2025 大一生涯發展與探索資料蒐集器｜GitHub Pages Ready</p>
     </footer>
   </main>
 
   <script>
-    // ====== 問題資料 ======
+    // ====== 選項資料 ======
+    const LIKE_LABELS = {1:'非常不喜歡',2:'不喜歡',3:'普普通通',4:'喜歡',5:'非常喜歡'};
+
     const VALUE_OPTIONS = [
-      [1,  '具有影響力', '工作能讓我獲得影響力，取得良好的社會地位與聲望。'],
-      [2,  '理念要有共鳴', '工作或公司文化能符合我的核心價值。'],
-      [3,  '樂於接受挑戰', '工作有挑戰性，使我能從工作中持續獲得成就感。'],
-      [4,  '終身學習最幸福', '工作能提供學習成長機會，有利未來的專業發展或升遷。'],
-      [5,  '公平最重要', '工作的分派、管理、賞罰、薪酬分配都公平合理。'],
-      [6,  '穩定生產力', '工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。'],
-      [7,  '重視薪水福利', '工作提供的薪資福利，可讓我維持良好生活品質。'],
-      [8,  '目標流程清楚', '工作有清楚的流程及規範可依循，可以具體地評估工作成果。'],
-      [9,  '工作符合興趣', '工作內容符合我的興趣，讓我能樂在工作。'],
-      [10, '熱愛多樣化任務', '工作內容豐富多元，不會一成不變。'],
-      [11, '自由不受限', '工作時我能自行規劃工作方式，不受別人的阻礙或控制。'],
-      [12, '創意獨特', '工作能發揮自己的長才與優勢，創造獨特的價值。'],
-      [13, '工作生活平衡', '工作能讓我兼顧家庭和休閒生活。'],
-      [14, '服務他人', '工作讓我能幫助他人，為社會大眾服務。'],
-      [15, '鼓勵起手式', '主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。'],
-      [16, '歡樂工作氣氛', '同事間能互助合作，有良好工作氛圍，讓人有歸屬感。'],
+      [1,'具有影響力','工作能讓我獲得影響力，取得良好的社會地位與聲望。'],
+      [2,'理念要有共鳴','工作或公司文化能符合我的核心價值。'],
+      [3,'樂於接受挑戰','工作有挑戰性，使我能從工作中持續獲得成就感。'],
+      [4,'終身學習最幸福','工作能提供學習成長機會，有利未來的專業發展或升遷。'],
+      [5,'公平最重要','工作的分派、管理、賞罰、薪酬分配都公平合理。'],
+      [6,'穩定生產力','工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。'],
+      [7,'重視薪水福利','工作提供的薪資福利，可讓我維持良好生活品質。'],
+      [8,'目標流程清楚','工作有清楚的流程及規範可依循，可以具體地評估工作成果。'],
+      [9,'工作符合興趣','工作內容符合我的興趣，讓我能樂在工作。'],
+      [10,'熱愛多樣化任務','工作內容豐富多元，不會一成不變。'],
+      [11,'自由不受限','工作時我能自行規劃工作方式，不受別人的阻礙或控制。'],
+      [12,'創意獨特','工作能發揮自己的長才與優勢，創造獨特的價值。'],
+      [13,'工作生活平衡','工作能讓我兼顧家庭和休閒生活。'],
+      [14,'服務他人','工作讓我能幫助他人，為社會大眾服務。'],
+      [15,'鼓勵起手式','主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。'],
+      [16,'歡樂工作氣氛','同事間能互助合作，有良好工作氛圍，讓人有歸屬感。'],
     ];
 
     const INTEREST_OPTIONS = [
@@ -248,240 +234,172 @@
       [8,'內省同理','擅長探索自己及同理他人，能意識到自己情緒與想法，能安靜獨處，清楚自己的優缺點。'],
     ];
 
-    // 新增：個人風格（4 選 2）
-    const STYLE_OPTIONS = [
-      [1,'理智型','邏輯分析特質強，凡事追根究底，工作非常重視成果、證據與數據。但有時會因為對事不對人，而影響人際相處的氣氛。'],
-      [2,'組織型','事務管理特質強，工作時強調按部就班。任務執行時，謹慎可靠。但有時候可能會太條理組織，而欠缺彈性，不喜歡變動。'],
-      [3,'情感型','人際互動特質強，樂於助人與分享。工作時強調團隊的和諧與合作。但有時可能會因為太過人際考量，而較為優柔寡斷。'],
-      [4,'開創型','想法鮮活多變，勇於嘗試，工作時強調創新與變化。但有時可能過於求新求變，致使在工作執行時會不切實際、虎頭蛇尾。'],
-    ];
-
     // ====== 狀態管理 ======
-    const state = {
-      step: 0,
-      uniDept: '',
-      likeLevel: '',
-      clubs: '',
-      values: [],
-      interests: [],
-      intelligences: [],
-      styles: [], // 新增
-    };
-
-    const $ = (id) => document.getElementById(id);
-
-    function persist(){ localStorage.setItem('careerFormV2', JSON.stringify(state)); } // 版本鍵更新
-    function restore(){ const raw = localStorage.getItem('careerFormV2'); if(raw){ Object.assign(state, JSON.parse(raw)); }}
+    const state = { step:0, uniDept:'', likeLevel:'', clubs:'', values:[], interests:[], intelligences:[] };
+    const $ = (id)=>document.getElementById(id);
+    function persist(){ localStorage.setItem('freshmanCareerV1', JSON.stringify(state)); }
+    function restore(){ const raw = localStorage.getItem('freshmanCareerV1'); if(raw){ Object.assign(state, JSON.parse(raw)); }}
 
     // ====== 導覽 ======
-    const TOTAL_STEPS = 9; // 0~9
-
+    const TOTAL_STEPS = 8; // 0~8
     function showStep(n){
-      for(let i=0;i<=9;i++){ const el = $('step'+i); if(el) el && el.classList.add('hidden'); }
+      for(let i=0;i<=8;i++){ const el = $('step'+i); if(el) el.classList.add('hidden'); }
       $('step'+n).classList.remove('hidden');
       state.step = n; persist();
-      const visual = Math.min(n,8); // 0~8 顯示進度（輸出頁固定滿）
-      const pct = Math.round( (visual) / 8 * 100 );
+      const visual = Math.min(n,7); // 0~7 顯示進度（輸出頁固定滿）
+      const pct = Math.round( (visual) / 7 * 100 );
       $('progressBar').style.width = pct + '%';
-      $('progressText').textContent = `步驟 ${Math.min(visual+1,9)} / 9`;
-      if(n===8) fillReview();
-      if(n===9) fillOutput();
+      $('progressText').textContent = `步驟 ${Math.min(visual+1,8)} / 8`;
+      if(n===7) fillReview();
+      if(n===8) fillOutput();
     }
-
-    function goNext(){ showStep(state.step + 1); }
-    function goPrev(){ showStep(Math.max(0, state.step - 1)); }
-
-    function goNextIf(key){ if(state[key]) goNext(); }
-
+    function goNext(){ showStep(state.step+1); }
+    function goPrev(){ showStep(Math.max(0, state.step-1)); }
+    function goNextIf(key){ if(state[key]) goNext(); else toast('請先完成本題'); }
     function saveAndNext(key){ const val = $(key).value.trim(); state[key] = val; persist(); goNext(); }
-
-    function restartAll(){ localStorage.removeItem('careerFormV2'); location.reload(); }
+    function restartAll(){ localStorage.removeItem('freshmanCareerV1'); location.reload(); }
 
     // ====== UI 建立 ======
     function makeChips(containerId, options, key, maxSelect){
-      const box = $(containerId); if(!box) return; box.innerHTML = '';
-      const chosen = new Set(state[key]);
-      options.forEach(([num, title, desc])=>{
-        const btn = document.createElement('button');
-        btn.className = 'chip rounded-xl px-3 py-2 text-left hover:bg-white/10 transition text-sm';
-        btn.innerHTML = `<span class="font-semibold">(${num}) ${title}</span><br><span class="text-white/60">${desc}</span>`;
-        btn.onclick = ()=>{
-          if(chosen.has(num)){
-            chosen.delete(num);
-          }else{
-            if(chosen.size >= maxSelect){
-              toast(`最多只能選擇 ${maxSelect} 個`);
-              return;
-            }
-            chosen.add(num);
-          }
-          state[key] = Array.from(chosen);
-          persist();
-          btn.classList.toggle('active');
-          updateCounters();
-          validateCounts();
-        };
-        if(chosen.has(num)) btn.classList.add('active');
-        box.appendChild(btn);
-      });
+      const box = $(containerId); if(!box) return; box.innerHTML='';
+      const chosen = state[key].slice(); // 保持選取順序
+      const has = (n)=> chosen.includes(n);
+      const toggle = (n)=>{ const i = chosen.indexOf(n); if(i>-1) chosen.splice(i,1); else { if(chosen.length>=maxSelect) { toast(`最多只能選擇 ${maxSelect} 個`); return; } chosen.push(n);} state[key]=chosen; persist(); render(); updateCounters(); validateCounts(); };
+      function render(){
+        box.innerHTML='';
+        options.forEach(([num,title,desc])=>{
+          const b=document.createElement('button');
+          b.className='chip rounded-xl px-3 py-2 text-left hover:bg-white/10 transition text-sm w-full';
+          b.innerHTML=`<span class=\"font-semibold\">(${num}) ${title}</span><br><span class=\"text-white/60\">${desc}</span>`;
+          if(has(num)) b.classList.add('active');
+          b.onclick=()=>toggle(num);
+          box.appendChild(b);
+        });
+      }
+      render();
     }
 
     function makeScale(containerId){
-      const box = $(containerId); box.innerHTML='';
+      const box=$(containerId); box.innerHTML='';
       for(let i=1;i<=5;i++){
-        const b = document.createElement('button');
-        b.className = 'rounded-xl px-3 py-3 bg-black/30 border border-white/10 hover:bg-white/10 text-sm';
-        b.textContent = i;
-        b.onclick = ()=>{ state.likeLevel = String(i); persist(); highlightScale(); };
+        const b=document.createElement('button');
+        b.className='rounded-xl px-3 py-3 bg-black/30 border border-white/10 hover:bg-white/10 text-sm';
+        b.textContent=i;
+        b.onclick=()=>{ state.likeLevel=String(i); persist(); highlightScale(); };
         box.appendChild(b);
       }
       highlightScale();
     }
-
     function highlightScale(){
-      const children = $('likeScale').children;
-      for(const c of children){
-        if(c.textContent === state.likeLevel){ c.classList.add('chip','active'); }
-        else { c.classList.remove('chip','active'); }
-      }
+      const children=$('likeScale').children; for(const c of children){ if(c.textContent===state.likeLevel){ c.classList.add('chip','active'); } else { c.classList.remove('chip','active'); } }
     }
-
     function updateCounters(){
       $('valuesHint').textContent = `已選擇 ${state.values.length} / 3`;
       $('interestsHint').textContent = `已選擇 ${state.interests.length} / 2`;
       $('intelligencesHint').textContent = `已選擇 ${state.intelligences.length} / 3`;
-      $('stylesHint').textContent = `已選擇 ${state.styles.length} / 2`;
     }
-
     function validateCounts(){
-      $('valuesNext').disabled = state.values.length !== 3;
-      $('interestsNext').disabled = state.interests.length !== 2;
-      $('intelligencesNext').disabled = state.intelligences.length !== 3;
-      $('stylesNext').disabled = state.styles.length !== 2;
+      $('valuesNext').disabled = state.values.length!==3;
+      $('interestsNext').disabled = state.interests.length!==2;
+      $('intelligencesNext').disabled = state.intelligences.length!==3;
     }
 
     // ====== Review/Output ======
     function fillReview(){
       $('r_uniDept').textContent = state.uniDept || '（尚未填寫）';
-      $('r_likeLevel').textContent = state.likeLevel || '（尚未選擇）';
+      $('r_likeLevel').textContent = state.likeLevel ? `(${state.likeLevel})${LIKE_LABELS[state.likeLevel]}` : '（尚未選擇）';
       $('r_clubs').textContent = state.clubs || '（尚未填寫）';
 
-      const listV = $('r_values'); listV.innerHTML='';
-      state.values
-        .map(n=>VALUE_OPTIONS.find(v=>v[0]===n))
-        .filter(Boolean)
-        .forEach(([n,t,d])=>{ const li = document.createElement('li'); li.textContent = `(${n})${t}：${d}`; listV.appendChild(li); });
+      const listV=$('r_values'); listV.innerHTML='';
+      state.values.map(n=>VALUE_OPTIONS.find(v=>v[0]===n)).filter(Boolean).forEach(([n,t,d])=>{ const li=document.createElement('li'); li.textContent=`(${n})${t}：${d}`; listV.appendChild(li); });
 
-      const listI = $('r_interests'); listI.innerHTML='';
-      state.interests
-        .map(n=>INTEREST_OPTIONS.find(v=>v[0]===n))
-        .filter(Boolean)
-        .forEach(([n,t,d])=>{ const li = document.createElement('li'); li.textContent = `(${n})${t}：${d}`; listI.appendChild(li); });
+      const listI=$('r_interests'); listI.innerHTML='';
+      state.interests.map(n=>INTEREST_OPTIONS.find(v=>v[0]===n)).filter(Boolean).forEach(([n,t,d])=>{ const li=document.createElement('li'); li.textContent=`(${n})${t}：${d}`; listI.appendChild(li); });
 
-      const listM = $('r_intelligences'); listM.innerHTML='';
-      state.intelligences
-        .map(n=>INTEL_OPTIONS.find(v=>v[0]===n))
-        .filter(Boolean)
-        .forEach(([n,t,d])=>{ const li = document.createElement('li'); li.textContent = `(${n})${t}：${d}`; listM.appendChild(li); });
+      const listM=$('r_intelligences'); listM.innerHTML='';
+      state.intelligences.map(n=>INTEL_OPTIONS.find(v=>v[0]===n)).filter(Boolean).forEach(([n,t,d])=>{ const li=document.createElement('li'); li.textContent=`(${n})${t}：${d}`; listM.appendChild(li); });
+    }
 
-      const listS = $('r_styles'); listS.innerHTML='';
-      state.styles
-        .map(n=>STYLE_OPTIONS.find(v=>v[0]===n))
-        .filter(Boolean)
-        .forEach(([n,t,d])=>{ const li = document.createElement('li'); li.textContent = `(${n})${t}：${d}`; listS.appendChild(li); });
+    function normalizeClubs(raw){
+      if(!raw) return '';
+      const parts = raw.split(/\n|,|，|；|;|、/).map(s=>s.trim()).filter(Boolean);
+      return parts.join('、');
     }
 
     function generateText(){
-      const lines = [];
-      const fmt = (arr, dict)=> arr
-        .map(n=> dict.find(v=>v[0]===n))
-        .filter(Boolean)
-        .map(([n,t,d])=>`(${n})${t}：${d}`)
-        .join('\n');
+      const lines=[];
+      const fmt=(arr,dict)=>arr.map(n=>dict.find(v=>v[0]===n)).filter(Boolean).map(([n,t,d])=>`(${n})${t}：${d}`).join('\n');
 
-      lines.push('【生涯發展與探索資訊（可直接貼到 ChatGPT）】');
-      lines.push('');
-      lines.push('一、我就讀的大學科系');
-      lines.push(`1) 目前就讀：${state.uniDept || '（未填）'}`);
-      lines.push(`2) 對科系的喜歡程度（1～5）：${state.likeLevel || '（未選）'}`);
-      lines.push('');
+      // ===== 彙整後的文字內容（完全依需求格式） =====
+      const likeStr = state.likeLevel ? `(${state.likeLevel})${LIKE_LABELS[state.likeLevel]}` : '（未選）';
+      const clubsStr = state.clubs ? normalizeClubs(state.clubs) : '（未填）';
 
-      lines.push('二、我參與過的社團與職務');
-      lines.push(state.clubs ? state.clubs.trim() : '（未填）');
-      lines.push('');
+      lines.push('1.我目前就讀的大學科系是：' + (state.uniDept || '（未填）') + '。');
+      lines.push('2.我對目前就讀大學科系的喜歡程度是：' + likeStr + '。');
+      lines.push('3.我曾經參加過的社團及擔任的職務：' + clubsStr + '。');
 
-      lines.push('三、我比較在乎的三個職業價值觀，依序是（16 選 3）');
-      lines.push(state.values.length? fmt(state.values, VALUE_OPTIONS) : '（未選）');
-      lines.push('');
+      const valuesBlock = state.values.length ? fmt(state.values, VALUE_OPTIONS) : '（未選）';
+      lines.push('4.我比較在乎的職業價值觀是：');
+      lines.push(valuesBlock);
 
-      lines.push('四、我比較來勁的兩個生涯興趣，依序是（6 選 2）');
-      lines.push(state.interests.length? fmt(state.interests, INTEREST_OPTIONS) : '（未選）');
-      lines.push('');
+      const interestsBlock = state.interests.length ? fmt(state.interests, INTEREST_OPTIONS) : '（未選）';
+      lines.push('5.我比較來勁的生涯興趣是：');
+      lines.push(interestsBlock);
 
-      lines.push('五、我比較擅長的三個多元智能，依序是（8 選 3）');
-      lines.push(state.intelligences.length? fmt(state.intelligences, INTEL_OPTIONS) : '（未選）');
-      lines.push('');
+      const intelBlock = state.intelligences.length ? fmt(state.intelligences, INTEL_OPTIONS) : '（未選）';
+      lines.push('6.我比較擅長的多元智能是：');
+      lines.push(intelBlock);
 
-      lines.push('六、我最偏好的二個風格，依序是（4 選 2）');
-      lines.push(state.styles.length? fmt(state.styles, STYLE_OPTIONS) : '（未選）');
+      // ===== 指令區（依需求原文寫入） =====
       lines.push('');
-
-      lines.push('— — — — — — —');
-      lines.push('【給 ChatGPT 的指令】');
-      lines.push('請根據上述使用者提供的各項生涯發展與探索資訊，依序回答以下任務：');
-      lines.push('1. 解析我的優勢天賦');
-      lines.push('2. 推薦未來適合從事的職業');
-      lines.push('3. 我在大二時，適合修習哪些領域的雙主修、輔系、學程');
-      lines.push('4. 適合找哪方面的兼職工作');
-      lines.push('5. 提醒剛念大一的我，要注意哪些問題');
-      lines.push('6. 將以上內容延伸為「四年大學生涯地圖」：內容包含每學年建議要修習哪些課程、要參與哪些活動、要累積哪些學習經驗、要累積哪工作經歷、要累積哪些作品集，讓我畢業時可直接銜接到理想職業。');
+      lines.push('請根據上述彙整的各項生涯發展與探索資訊，回答我以下的問題。');
+      lines.push('1.我的天賦優勢有哪些？');
+      lines.push('2.推薦我未來適合從事的職業');
+      lines.push('3.推薦未來比較適合修習哪些領域的雙主修、輔系、學程');
+      lines.push('4.推薦我適合參加哪些類型的社團');
+      lines.push('5.推薦我適合找哪方面的兼職工作');
+      lines.push('6.提醒剛念大一的我，要注意哪些問題？');
+      lines.push('');
+      lines.push('最後請把這些內容寫成讓我參考的 「四年大學生涯地圖」，詳細列出我在每個學年~');
+      lines.push('1.要修的課');
+      lines.push('2.要參與的活動');
+      lines.push('3.要累積的學習經驗');
+      lines.push('4.要累積的工作經歷');
+      lines.push('5.要建立的作品集');
+      lines.push('讓我畢業時直接銜接到理想職業。');
 
       const out = lines.join('\n');
       $('finalText').value = out;
-      showStep(9);
+      showStep(8);
       setTimeout(()=> $('finalText').select(), 50);
     }
 
-    function fillOutput(){ /* 已於 generateText 設定 */ }
+    function fillOutput(){ /* 內容已由 generateText 填入 */ }
 
-    function copyOutput(){
-      $('finalText').select();
-      document.execCommand('copy');
-      toast('已複製到剪貼簿');
-    }
+    function copyOutput(){ $('finalText').select(); document.execCommand('copy'); toast('已複製到剪貼簿'); }
 
     function downloadTxt(){
-      const blob = new Blob([$('finalText').value], {type: 'text/plain;charset=utf-8'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = '生涯發展與探索_給ChatGPT.txt';
-      a.click();
+      const blob = new Blob([$('finalText').value], {type:'text/plain;charset=utf-8'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='生涯發展與探索_給ChatGPT.txt'; a.click();
     }
 
     // ====== Helpers ======
-    function toast(msg){
-      const t = document.createElement('div');
-      t.textContent = msg; t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 border border-white/20 backdrop-blur px-3 py-2 rounded-xl text-sm';
-      document.body.appendChild(t);
-      setTimeout(()=>{ t.remove(); }, 1600);
-    }
+    function toast(msg){ const t=document.createElement('div'); t.textContent=msg; t.className='fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 border border-white/20 backdrop-blur px-3 py-2 rounded-xl text-sm'; document.body.appendChild(t); setTimeout(()=>t.remove(),1600); }
 
     function loadSample(){
       state.uniDept = '政治大學中文系';
       state.likeLevel = '4';
-      state.clubs = '吉他社 教學組組長\n返鄉服務隊 活動組';
+      state.clubs = '吉他社 教學組組長\n偏鄉服務隊 活動部部長';
       state.values = [14,1,2];
       state.interests = [4,5];
       state.intelligences = [8,7,2];
-      state.styles = [1,2]; // 範例：理智型＋組織型
       persist();
       if(state.step===0) showStep(1); else showStep(state.step);
       updateCounters(); validateCounts(); highlightScale(); fillReview();
-      // 重繪已載入的 chips 外觀
+      // 重新繪製 chips 外觀
       makeChips('values', VALUE_OPTIONS, 'values', 3);
       makeChips('interests', INTEREST_OPTIONS, 'interests', 2);
       makeChips('intelligences', INTEL_OPTIONS, 'intelligences', 3);
-      makeChips('styles', STYLE_OPTIONS, 'styles', 2);
     }
 
     // ====== 初始化 ======
@@ -491,7 +409,6 @@
       makeChips('values', VALUE_OPTIONS, 'values', 3);
       makeChips('interests', INTEREST_OPTIONS, 'interests', 2);
       makeChips('intelligences', INTEL_OPTIONS, 'intelligences', 3);
-      makeChips('styles', STYLE_OPTIONS, 'styles', 2); // 新增
       updateCounters(); validateCounts();
       showStep(state.step || 0);
       $('uniDept').value = state.uniDept || '';
