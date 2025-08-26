@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>生涯發展與探索資料蒐集器</title>
+  <meta name="description" content="引導使用者輸入生涯發展與探索資訊，完成後一鍵複製為文字檔，直接貼到 ChatGPT，讓 ChatGPT 成為你的 AI 生涯教練。" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html,body{background:#0b0f19;color:#e6e8f0;font-family:"Microsoft JhengHei","Noto Sans CJK TC","Noto Sans CJK","Noto Sans TC",ui-sans-serif,system-ui}
+    .card{background:#11162a}
+    .chip{border:1px solid rgba(255,255,255,.15)}
+    .chip.active{background:#334155}
+    .btn-primary{background:#3b82f6}
+    .btn-primary:disabled{background:#1f2a44;opacity:.5}
+    .btn-secondary{background:#0ea5e9}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.12)}
+    .glow{box-shadow:0 8px 30px rgba(59,130,246,.18)}
+    .kbd{border:1px solid rgba(255,255,255,.2);padding:2px 6px;border-radius:.375rem;font-size:.75rem}
+    .subtle{color:rgba(230,232,240,.7)}
+  </style>
+</head>
+<body class="min-h-screen">
+  <main class="max-w-xl mx-auto px-4 pb-40">
+    <!-- Header -->
+    <header class="sticky top-0 z-10 backdrop-blur bg-black/30 -mx-4 px-4 pt-4 pb-3 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-blue-500/20 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-blue-400"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 14.93V20h-2v-3.07A8.013 8.013 0 0 1 4.07 13H1v-2h3.07A8.013 8.013 0 0 1 11 4.07V1h2v3.07A8.013 8.013 0 0 1 19.93 11H23v2h-3.07A8.013 8.013 0 0 1 13 16.93ZM12 7a5 5 0 1 0 5 5 5.006 5.006 0 0 0-5-5Z"/></svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-semibold leading-tight">生涯發展與探索資料蒐集器</h1>
+          <p class="text-xs text-white/60">完成後按「產生給 ChatGPT 的文字」，即可一鍵複製貼上</p>
+        </div>
+      </div>
+      <!-- Progress -->
+      <div class="mt-3">
+        <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+          <div id="progressBar" class="h-2 rounded-full bg-blue-500 transition-all" style="width:0%"></div>
+        </div>
+        <p id="progressText" class="mt-1 text-[11px] text-white/60">步驟 1 / 15</p>
+      </div>
+    </header>
+
+    <!-- Welcome Card -->
+    <section id="step0" class="mt-4 card rounded-2xl p-4">
+      <h2 class="text-xl font-semibold">嗨！先說明一下怎麼用</h2>
+      <ol class="list-decimal ml-5 mt-2 space-y-2 text-sm text-white/80">
+        <li>這是<strong>一問一答</strong>的生涯資訊蒐集器。</li>
+        <li><span class="font-semibold">約 5–8 分鐘</span>完成，結束後可下載 .txt 或直接複製。</li>
+      </ol>
+      <div class="flex gap-2 mt-4">
+        <button class="btn-primary glow text-sm px-4 py-2 rounded-xl" onclick="goNext()">開始</button>
+        <button class="btn-ghost text-sm px-4 py-2 rounded-xl" onclick="loadSample()">一鍵載入示例</button>
+      </div>
+    </section>
+
+    <!-- 1 年資 -->
+    <section id="step1" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">1. 我目前累積的工作年資有幾年？</h3>
+      <p class="text-sm text-white/70 mt-1">請直接輸入數字，例如：<span class="kbd">20</span></p>
+      <input id="workYears" type="number" min="0" inputmode="numeric" placeholder="請輸入：例如 20" class="mt-3 w-full rounded-xl px-4 py-3 bg-black/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveAndNext('workYears')">下一步</button>
+      </div>
+    </section>
+
+    <!-- 2 工作狀態 -->
+    <section id="step2" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">2. 我目前的工作狀態是？（5 選 1）</h3>
+      <p class="text-sm text-white/70 mt-1">請依現況選一個。</p>
+      <div id="workStatusBox" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="goNextIf('workStatus')">下一步</button>
+      </div>
+    </section>
+
+    <!-- 3 生涯發展現況（退休時程） -->
+    <section id="step3" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">3. 我目前的生涯發展現況是？（5 選 1）</h3>
+      <p class="text-sm text-white/70 mt-1">請依退休時程選一個。</p>
+      <div id="retireStageBox" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="goNextIf('retireStage')">下一步</button>
+      </div>
+    </section>
+
+    <!-- 4 現職 -->
+    <section id="step4" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">4. 我最近或目前從事的工作是？</h3>
+      <p class="text-sm text-white/70 mt-1">請輸入「產業/職務/年資」，例如：<span class="kbd">零售業/總務/5年</span>；若無請寫「無」</p>
+      <input id="jobNow" type="text" placeholder="例如 零售業/總務/5年 或 無" class="mt-3 w-full rounded-xl px-4 py-3 bg-black/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveAndNext('jobNow')">下一步</button>
+      </div>
+    </section>
+
+    <!-- 5 更早之前工作 -->
+    <section id="step5" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">5. 我更早之前從事的工作是？</h3>
+      <p class="text-sm text-white/70 mt-1">請輸入「產業/職務/年資」，例如：<span class="kbd">物流業/採購/3年</span>；若無請寫「無」</p>
+      <input id="jobPrev" type="text" placeholder="例如 物流業/採購/3年 或 無" class="mt-3 w-full rounded-xl px-4 py-3 bg-black/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveAndNext('jobPrev')">下一步</button>
+      </div>
+    </section>
+
+    <!-- 6 另一份成就感工作 -->
+    <section id="step6" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">6. 我曾經較有成就感的工作是？</h3>
+      <p class="text-sm text-white/70 mt-1">請輸入「產業/職務/年資」，例如：<span class="kbd">慈善教育基金會/社工/5年</span>；若無請寫「無」</p>
+      <input id="jobProud" type="text" placeholder="例如 慈善教育基金會/社工/5年 或 無" class="mt-3 w-full rounded-xl px-4 py-3 bg-black/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveAndNext('jobProud')">下一步</button>
+      </div>
+    </section>
+
+    <!-- 7 管理經驗年數 -->
+    <section id="step7" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">7. 我的管理經驗？</h3>
+      <p class="text-sm text-white/70 mt-1">請輸入管理年資數字，或勾選「無」。</p>
+      <div class="mt-3 flex items-center gap-3">
+        <input id="mgrYears" type="number" min="0" inputmode="numeric" placeholder="例如 5" class="flex-1 rounded-xl px-4 py-3 bg-black/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="inline-flex items-center gap-2 text-sm">
+          <input id="noMgmt" type="checkbox" class="accent-blue-500" onclick="toggleNoMgmt()"> 無
+        </label>
+      </div>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveMgrAndNext()">下一步</button>
+      </div>
+    </section>
+
+    <!-- 8 證照 -->
+    <section id="step8" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">8. 我擁有的證照？</h3>
+      <p class="text-sm text-white/70 mt-1">多張以逗號（,）分隔，例如：<span class="kbd">乙級就業服務士,PMP證照</span>；若無請寫「無」</p>
+      <input id="licenses" type="text" placeholder="例如 乙級就業服務士,PMP證照 或 無" class="mt-3 w-full rounded-xl px-4 py-3 bg-black/30 border border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveAndNext('licenses')">下一步</button>
+      </div>
+    </section>
+
+    <!-- 9~11 心流事件 x3 -->
+    <section id="step9" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">9. 我最有心流時光的一次生命經歷是？</h3>
+      <p class="text-sm text-white/70 mt-1">每個事件請填 <span class="font-semibold">Time / Flow / Score(0~10)</span>。例如：<span class="kbd">大學期間</span>、<span class="kbd">參加返鄉服務隊陪伴偏鄉國小兒童</span>、<span class="kbd">8</span></p>
+      <div class="mt-3 grid gap-2">
+        <input id="f1_time" type="text" placeholder="Time 例如：大學期間" class="rounded-xl px-4 py-3 bg-black/30 border border-white/10">
+        <textarea id="f1_flow" rows="3" placeholder="Flow 例如：參加返鄉服務隊陪伴偏鄉國小兒童" class="rounded-xl px-4 py-3 bg-black/30 border border-white/10"></textarea>
+        <div class="flex items-center gap-3">
+          <input id="f1_score" type="range" min="0" max="10" step="1" value="8" class="w-full"> <span id="f1_score_val" class="text-sm">8</span>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveFlowAndNext(1)">下一步</button>
+      </div>
+    </section>
+
+    <section id="step10" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">10. 我另一個有心流感覺的生命經歷是？</h3>
+      <p class="text-sm subtle mt-1">例如：在 104 人力銀行服務期間，負責培訓職涯引導師；分數 9 分</p>
+      <div class="mt-3 grid gap-2">
+        <input id="f2_time" type="text" placeholder="Time 例如：在 104 人力銀行服務期間" class="rounded-xl px-4 py-3 bg-black/30 border border-white/10">
+        <textarea id="f2_flow" rows="3" placeholder="Flow 例如：負責培訓職涯引導師" class="rounded-xl px-4 py-3 bg-black/30 border border-white/10"></textarea>
+        <div class="flex items-center gap-3">
+          <input id="f2_score" type="range" min="0" max="10" step="1" value="9" class="w-full"> <span id="f2_score_val" class="text-sm">9</span>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveFlowAndNext(2)">下一步</button>
+      </div>
+    </section>
+
+    <section id="step11" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">11. 我另一個有心流感覺的生命經歷是？</h3>
+      <p class="text-sm subtle mt-1">例如：服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育；分數 8 分</p>
+      <div class="mt-3 grid gap-2">
+        <input id="f3_time" type="text" placeholder="Time 例如：服役期間" class="rounded-xl px-4 py-3 bg-black/30 border border-white/10">
+        <textarea id="f3_flow" rows="3" placeholder="Flow 例如：擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育" class="rounded-xl px-4 py-3 bg-black/30 border border-white/10"></textarea>
+        <div class="flex items-center gap-3">
+          <input id="f3_score" type="range" min="0" max="10" step="1" value="8" class="w-full"> <span id="f3_score_val" class="text-sm">8</span>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="saveFlowAndNext(3)">下一步</button>
+      </div>
+    </section>
+
+    <!-- 12 價值觀：16 選 3 -->
+    <section id="step12" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">12. 我比較在乎的三個職業價值觀？（16 選 3）</h3>
+      <p class="text-sm text-white/70 mt-1">請依照你在乎的<strong>先後順序</strong>，依序選出三個。會以「(編號)名稱：說明」輸出。</p>
+      <div id="values" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      <p id="valuesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 3</p>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button id="valuesNext" class="btn-primary px-4 py-2 rounded-xl" disabled onclick="goNext()">下一步</button>
+      </div>
+    </section>
+
+    <!-- 13 興趣：6 選 2 -->
+    <section id="step13" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">13. 我比較來勁的兩個生涯興趣？（6 選 2）</h3>
+      <p class="text-sm text-white/70 mt-1">請依<strong>來勁程度</strong>選出兩個。會以「(編號)名稱：說明」輸出。</p>
+      <div id="interests" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      <p id="interestsHint" class="text-xs text-white/60 mt-2">已選擇 0 / 2</p>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button id="interestsNext" class="btn-primary px-4 py-2 rounded-xl" disabled onclick="goNext()">下一步</button>
+      </div>
+    </section>
+
+    <!-- 14 多元智能：8 選 3 -->
+    <section id="step14" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">14. 我比較擅長的三個多元智能？（8 選 3）</h3>
+      <p class="text-sm text-white/70 mt-1">請依<strong>擅長程度</strong>選出三個。會以「(編號)名稱：說明」輸出。</p>
+      <div id="intelligences" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      <p id="intelligencesHint" class="text-xs text-white/60 mt-2">已選擇 0 / 3</p>
+      <div class="mt-4 flex justify-between items-center">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button id="intelligencesNext" class="btn-primary px-4 py-2 rounded-xl" disabled onclick="goNext()">下一步</button>
+      </div>
+    </section>
+
+    <!-- Review & Generate -->
+    <section id="step15" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">最後確認與產出</h3>
+      <p class="text-sm text-white/70 mt-1">請檢查內容，選擇要附加的「指令模板」，按下按鈕會產生<strong>完整文字</strong>（含給 ChatGPT 的指令）。</p>  
+      <!-- Review Cards -->
+      <div class="mt-3 space-y-2 text-sm">
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">工作年資</p><p id="r_workYears" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">工作狀態</p><p id="r_workStatus" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">生涯發展現況</p><p id="r_retireStage" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">最近/目前工作</p><p id="r_jobNow" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">更早之前工作</p><p id="r_jobPrev" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">成就感工作</p><p id="r_jobProud" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">管理經驗</p><p id="r_mgrYears" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3"><p class="text-white/60">證照</p><p id="r_licenses" class="font-medium"></p></div>
+        <div class="border border-white/10 rounded-xl p-3">
+          <p class="text-white/60">心流時光事件</p>
+          <ul id="r_flows" class="list-disc ml-5"></ul>
+        </div>
+        <div class="border border-white/10 rounded-xl p-3">
+          <p class="text-white/60">職業價值觀（3）</p>
+          <ul id="r_values" class="list-disc ml-5"></ul>
+        </div>
+        <div class="border border-white/10 rounded-xl p-3">
+          <p class="text-white/60">生涯興趣（2）</p>
+          <ul id="r_interests" class="list-disc ml-5"></ul>
+        </div>
+        <div class="border border-white/10 rounded-xl p-3">
+          <p class="text-white/60">多元智能（3）</p>
+          <ul id="r_intelligences" class="list-disc ml-5"></ul>
+        </div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="goPrev()">上一步</button>
+        <button class="btn-secondary px-4 py-2 rounded-xl" onclick="generateText()">產生給 ChatGPT 的文字</button>
+      </div>
+    </section>
+
+    <!-- Output -->
+    <section id="step16" class="hidden mt-4 card rounded-2xl p-4">
+      <h3 class="text-base font-semibold">已產生完成 ✅</h3>
+      <p class="text-sm text-white/70 mt-1">點一下即可全選，然後複製到 ChatGPT；或直接下載為 .txt。</p>
+      <textarea id="finalText" class="mt-3 w-full h-96 rounded-xl px-4 py-3 bg-black/30 border border-white/10 font-mono text-sm"></textarea>
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <button class="btn-primary px-4 py-2 rounded-xl" onclick="copyOutput()">一鍵複製</button>
+        <button class="btn-ghost px-4 py-2 rounded-xl" onclick="downloadTxt()">下載 .txt</button>
+      </div>
+      <div class="mt-3 flex items-center justify-between text-xs text-white/60">
+        <button class="underline" onclick="restartAll()">重新開始</button>
+        <span>資料僅暫存於本機（localStorage）</span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-xs text-white/40">
+      <p>© 2025 中高齡生涯發展與探索資料蒐集器｜GitHub Pages Ready</p>
+    </footer>
+  </main>
+
+  <script>
+    // ====== 選項資料 ======
+    const WORK_STATUS = [
+      [1,'目前有正職的工作。'],
+      [2,'目前有兼職的工作。'],
+      [3,'目前有志工的工作。'],
+      [4,'目前沒有工作。'],
+      [5,'其他'],
+    ];
+    const RETIRE_STAGE = [
+      [1,'離退休還有二年以上。'],
+      [2,'二年內會退休。'],
+      [3,'一年內會退休。'],
+      [4,'剛退休（一年內）。'],
+      [5,'已經退休一年以上。'],
+    ];
+    const VALUE_OPTIONS = [
+      [1,'具有影響力','工作能讓我獲得影響力，取得良好的社會地位與聲望。'],
+      [2,'理念要有共鳴','工作或公司文化能符合我的核心價值。'],
+      [3,'樂於接受挑戰','工作有挑戰性，使我能從工作中持續獲得成就感。'],
+      [4,'終身學習最幸福','工作能提供學習成長機會，有利未來的專業發展或升遷。'],
+      [5,'公平最重要','工作的分派、管理、賞罰、薪酬分配都公平合理。'],
+      [6,'穩定生產力','工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。'],
+      [7,'重視薪水福利','工作提供的薪資福利，可讓我維持良好生活品質。'],
+      [8,'目標流程清楚','工作有清楚的流程及規範可依循，可以具體地評估工作成果。'],
+      [9,'工作符合興趣','工作內容符合我的興趣，讓我能樂在工作。'],
+      [10,'熱愛多樣化任務','工作內容豐富多元，不會一成不變。'],
+      [11,'自由不受限','工作時我能自行規劃工作方式，不受別人的阻礙或控制。'],
+      [12,'創意獨特','工作能發揮自己的長才與優勢，創造獨特的價值。'],
+      [13,'工作生活平衡','工作能讓我兼顧家庭和休閒生活。'],
+      [14,'服務他人','工作讓我能幫助他人，為社會大眾服務。'],
+      [15,'鼓勵起手式','主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。'],
+      [16,'歡樂工作氣氛','同事間能互助合作，有良好工作氛圍，讓人有歸屬感。'],
+    ];
+    const INTEREST_OPTIONS = [
+      [1,'實作型','喜歡動手解決問題，並按照訂定的規則逐步製造出成品。'],
+      [2,'研究型','個性獨立自主，對事物充滿好奇心喜歡觀察並追根究底。'],
+      [3,'藝術型','追求自由奔放的靈魂，直覺敏銳，充滿創意與想像力。'],
+      [4,'社會型','喜歡與人群互動，重視人的需求感受及人際間的和諧。'],
+      [5,'企業型','樂觀積極，處事果決且充滿信心，有影響與說服他人的能力。'],
+      [6,'事務型','做事精準追求完美，重視細節，有效率且踏實地完成目標。'],
+    ];
+    const INTEL_OPTIONS = [
+      [1,'邏輯數學','擅長推理思考，喜歡提問尋找答案，對益智遊戲、推理解題活動很感興趣。'],
+      [2,'語言文字','口齒伶俐，善於表達。用詞豐富，具說服力。能言善道，喜歡發問、閱讀、撰寫創作。'],
+      [3,'自然觀察','喜歡觀察大自然生態，對飼養動物、栽種植物有濃厚興趣，對周圍環境充滿好奇心。'],
+      [4,'肢體動覺','擅長運用身體表達想法和感受，喜歡動手操作，偏好以活動為主的工作與學習型態。'],
+      [5,'空間藝術','習慣用意象及圖像來思考，喜歡拼圖、迷宮、愛繪畫、設計及空間規劃。'],
+      [6,'音樂旋律','能輕易記住歌曲、旋律及辨別音調，可以輕鬆學會樂器，工作學習偏好搭配音樂旋律。'],
+      [7,'人際互動','擅長觀察人的情緒，喜歡參與團體活動。善於激勵他人，喜歡扮演團體領導者的角色。'],
+      [8,'內省同理','擅長探索自己及同理他人，能意識到自己情緒與想法，能安靜獨處，清楚自己的優缺點。'],
+    ];
+
+    // ====== 狀態管理 ======
+    const state = {
+      step:0,
+      workYears:'', workStatus:'', retireStage:'',
+      jobNow:'', jobPrev:'', jobProud:'',
+      mgrYears:'', licenses:'',
+      flows:[{time:'',flow:'',score:''},{time:'',flow:'',score:''},{time:'',flow:'',score:''}],
+      values:[], interests:[], intelligences:[]
+    };
+    const $ = (id)=>document.getElementById(id);
+    function persist(){ localStorage.setItem('midlifeCareerV1', JSON.stringify(state)); }
+    function restore(){ const raw = localStorage.getItem('midlifeCareerV1'); if(raw){ Object.assign(state, JSON.parse(raw)); }}
+
+    // ====== 導覽 ======
+    const TOTAL_STEPS = 16; // 0~16
+    function showStep(n){
+      for(let i=0;i<=16;i++){ const el = $('step'+i); if(el) el.classList.add('hidden'); }
+      $('step'+n).classList.remove('hidden');
+      state.step = n; persist();
+      const visual = Math.min(n,15); // 0~15 顯示進度（輸出頁固定滿）
+      const pct = Math.round( (visual) / 15 * 100 );
+      $('progressBar').style.width = pct + '%';
+      $('progressText').textContent = `步驟 ${Math.min(visual+1,16)} / 16`;
+      if(n===15) fillReview();
+      if(n===16) fillOutput();
+    }
+    function goNext(){ showStep(state.step+1); }
+    function goPrev(){ showStep(Math.max(0, state.step-1)); }
+    function goNextIf(key){ if(state[key]) goNext(); else toast('請先完成本題'); }
+    function saveAndNext(key){ const val = $(key).value.trim(); state[key] = val; persist(); goNext(); }
+    function restartAll(){ localStorage.removeItem('midlifeCareerV1'); location.reload(); }
+
+    function buildChips(containerId, options, key, maxSelect){
+      const box = $(containerId); if(!box) return; box.innerHTML='';
+      const chosen = Array.isArray(state[key]) ? state[key].slice() : [];
+      const has = (n)=> chosen.includes(n);
+      const toggle = (n)=>{ const i = chosen.indexOf(n); if(i>-1) chosen.splice(i,1); else { if(chosen.length>=maxSelect) { toast(`最多只能選擇 ${maxSelect} 個`); return; } chosen.push(n);} state[key]=chosen; persist(); render(); updateCounters(); validateCounts(); };
+      function render(){
+        box.innerHTML='';
+        options.forEach(([num,title,desc])=>{
+          const b=document.createElement('button');
+          b.className='chip rounded-xl px-3 py-2 text-left hover:bg-white/10 transition text-sm w-full';
+          b.innerHTML = desc ? `<span class=\"font-semibold\">(${num}) ${title}</span><br><span class=\"text-white/60\">${desc}</span>` : `<span class=\"font-semibold\">(${num}) ${title}</span>`;
+          if(has(num)) b.classList.add('active');
+          b.onclick=()=>toggle(num);
+          box.appendChild(b);
+        });
+      }
+      render();
+    }
+
+    function buildRadios(containerId, options, key){
+      const box=$(containerId); box.innerHTML='';
+      options.forEach(([num,label])=>{
+        const wrap=document.createElement('label');
+        wrap.className='chip rounded-xl px-3 py-2 hover:bg-white/10 transition text-sm w-full flex items-start gap-2';
+        wrap.innerHTML = `<input type=\"radio\" name=\"${key}\" class=\"accent-blue-500 mt-1\" ${String(state[key])===String(num)?'checked':''} /> <div><span class=\"font-semibold\">(${num})</span> ${label}</div>`;
+        wrap.onclick=()=>{ state[key]=String(num); persist(); };
+        box.appendChild(wrap);
+      });
+    }
+
+    function updateCounters(){
+      $('valuesHint').textContent = `已選擇 ${state.values.length} / 3`;
+      $('interestsHint').textContent = `已選擇 ${state.interests.length} / 2`;
+      $('intelligencesHint').textContent = `已選擇 ${state.intelligences.length} / 3`;
+    }
+    function validateCounts(){
+      $('valuesNext').disabled = state.values.length!==3;
+      $('interestsNext').disabled = state.interests.length!==2;
+      $('intelligencesNext').disabled = state.intelligences.length!==3;
+    }
+
+    // 管理經驗：無/數字
+    function toggleNoMgmt(){
+      if($('noMgmt').checked){ $('mgrYears').value=''; $('mgrYears').disabled=true; state.mgrYears='無'; }
+      else { $('mgrYears').disabled=false; if(state.mgrYears==='無') state.mgrYears=''; }
+      persist();
+    }
+    function saveMgrAndNext(){
+      if($('noMgmt').checked){ state.mgrYears='無'; }
+      else { state.mgrYears = $('mgrYears').value.trim(); }
+      persist(); goNext();
+    }
+
+    // 心流輸入顯示數值
+    ['f1','f2','f3'].forEach(id=>{
+      document.addEventListener('input', (e)=>{
+        if(e.target && e.target.id===id+'_score'){
+          $(id+'_score_val').textContent = e.target.value;
+        }
+      });
+    });
+    function saveFlowAndNext(idx){
+      const t=$('f'+idx+'_time').value.trim();
+      const f=$('f'+idx+'_flow').value.trim();
+      const s=$('f'+idx+'_score').value;
+      state.flows[idx-1]={time:t,flow:f,score:s};
+      persist(); goNext();
+    }
+
+    // ====== Review/Output ======
+    function fillReview(){
+      $('r_workYears').textContent = state.workYears? state.workYears+' 年' : '（尚未填寫）';
+      const ws = WORK_STATUS.find(v=>String(v[0])===String(state.workStatus));
+      $('r_workStatus').textContent = ws? `(${ws[0]})${ws[1]}` : '（尚未選擇）';
+      const rt = RETIRE_STAGE.find(v=>String(v[0])===String(state.retireStage));
+      $('r_retireStage').textContent = rt? `(${rt[0]})${rt[1]}` : '（尚未選擇）';
+      $('r_jobNow').textContent = state.jobNow || '（尚未填寫）';
+      $('r_jobPrev').textContent = state.jobPrev || '（尚未填寫）';
+      $('r_jobProud').textContent = state.jobProud || '（尚未填寫）';
+      $('r_mgrYears').textContent = state.mgrYears? state.mgrYears : '（尚未填寫）';
+      $('r_licenses').textContent = state.licenses || '（尚未填寫）';
+      const ul=$('r_flows'); ul.innerHTML='';
+      state.flows.forEach((o,i)=>{
+        if(o.time||o.flow){
+          const li=document.createElement('li');
+          const scoreText = o.score!==''? `${o.score}分` : '';
+          li.textContent = `${o.time}，${o.flow}${scoreText? '。'+scoreText:''}`;
+          ul.appendChild(li);
+        }
+      });
+      const listV=$('r_values'); listV.innerHTML='';
+      state.values.map(n=>VALUE_OPTIONS.find(v=>v[0]===n)).filter(Boolean).forEach(([n,t,d])=>{ const li=document.createElement('li'); li.textContent=`(${n})${t}：${d}`; listV.appendChild(li); });
+      const listI=$('r_interests'); listI.innerHTML='';
+      state.interests.map(n=>INTEREST_OPTIONS.find(v=>v[0]===n)).filter(Boolean).forEach(([n,t,d])=>{ const li=document.createElement('li'); li.textContent=`(${n})${t}：${d}`; listI.appendChild(li); });
+      const listM=$('r_intelligences'); listM.innerHTML='';
+      state.intelligences.map(n=>INTEL_OPTIONS.find(v=>v[0]===n)).filter(Boolean).forEach(([n,t,d])=>{ const li=document.createElement('li'); li.textContent=`(${n})${t}：${d}`; listM.appendChild(li); });
+    }
+
+    function fmtList(arr,dict){ return arr.map(n=>dict.find(v=>v[0]===n)).filter(Boolean).map(([n,t,d])=>`(${n})${t}：${d}`).join('\n'); }
+
+    function generateText(){
+      const lines=[];
+      // ===== 彙整後的文字內容（完全依需求格式） =====
+      lines.push(`1.我目前累積的工作年資有：${state.workYears||'（未填）'}年。`);
+      const ws = WORK_STATUS.find(v=>String(v[0])===String(state.workStatus));
+      lines.push(`2.我目前的工作狀態是： ${ws? `(${ws[0]})${ws[1]}`:'（未選）'}`);
+      const rt = RETIRE_STAGE.find(v=>String(v[0])===String(state.retireStage));
+      lines.push(`3.我目前的生涯發展現況是：${rt? `(${rt[0]})${rt[1]}`:'（未選）'}`);
+      lines.push(`4.最近或目前從事的工作是：${state.jobNow||'（未填）'}。`);
+      lines.push(`5.更早之前從事的工作是：${state.jobPrev||'（未填）'}。`);
+      lines.push(`6.除了上述二個工作，我還從事過那個比較有成就感的工作是：${state.jobProud||'（未填）'}。`);
+      lines.push(`7.我的管理經驗：${state.mgrYears||'（未填）'}。`);
+      lines.push(`8.我擁有的證照：${state.licenses||'（未填）'}。`);
+      // 心流 3 則
+      const fStr = (o)=> (o.time||o.flow)? `${o.time||''}，${o.flow||''}${o.score!==''? `。${o.score}分。`:''}` : '無';
+      lines.push(`9.我最有心流時光的一次生命經歷是：${fStr(state.flows[0])}`);
+      lines.push(`10.我另一個比較有心流時光感覺的生命經歷是：${fStr(state.flows[1])}`);
+      lines.push(`11.我另一個比較有心流時光感覺的生命經歷是：${fStr(state.flows[2])}`);
+      // 價值觀
+      lines.push('12.我比較在乎的職業價值觀是：');
+      lines.push(state.values.length? fmtList(state.values, VALUE_OPTIONS) : '（未選）');
+      // 興趣
+      lines.push('13.我比較來勁的生涯興趣是：');
+      lines.push(state.interests.length? fmtList(state.interests, INTEREST_OPTIONS) : '（未選）');
+      // 多元智能
+      lines.push('14.我比較擅長的多元智能是：');
+      lines.push(state.intelligences.length? fmtList(state.intelligences, INTEL_OPTIONS) : '（未選）');
+
+      // ===== 指令模板 =====
+      const tpl = document.querySelector('input[name=tpl]:checked')?.value || 'midlife';
+      lines.push('');
+      if(tpl==='midlife'){
+        lines.push('請根據上述彙整的各項生涯發展與探索資訊，協助我回答以下七個問題：');
+        lines.push('1. 解析我的天賦優勢與可轉移能力（舉例對應到實際情境與證據）。');
+        lines.push('2. 推薦我的「第二曲線」職涯方向（兼職 / 斜槓 / 顧問 / 創業 / 志工），並說明切入門檻與第一步。');
+        lines.push('3. 建議未來半年內應補強的技能與證照（包含課程主題、練習任務與評量方式）。');
+        lines.push('4. 建議我可參與的社群 / 協會 / 志工或專案，以擴大人脈與影響力（列出 3–5 種路徑與加入方式）。');
+        lines.push('5. 推薦我可嘗試的兼職 / 接案 / 短期任務類型（含接單平台、作品集切題與報價建議）。');
+        lines.push('6. 提醒中高齡轉職 / 再就業需注意的風險與避雷點（法律、財務、職場年齡歧視、自我照顧）。');
+        lines.push('7. 以「未來 3 年生涯行動地圖」收斂：按「季」列出：學習主題、專案與里程碑、作品集輸出、人脈經營與健康管理。');
+      }
+
+      const out = lines.join('\n');
+      $('finalText').value = out;
+      showStep(16);
+      setTimeout(()=> $('finalText').select(), 50);
+    }
+
+    function fillOutput(){ /* 內容已由 generateText 填入 */ }
+
+    function copyOutput(){ $('finalText').select(); document.execCommand('copy'); toast('已複製到剪貼簿'); }
+
+    function downloadTxt(){
+      const blob = new Blob([$('finalText').value], {type:'text/plain;charset=utf-8'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='中高齡_生涯發展與探索_給ChatGPT.txt'; a.click();
+    }
+
+    // ====== Helpers ======
+    function toast(msg){ const t=document.createElement('div'); t.textContent=msg; t.className='fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 border border-white/20 backdrop-blur px-3 py-2 rounded-xl text-sm'; document.body.appendChild(t); setTimeout(()=>t.remove(),1600); }
+
+    function loadSample(){
+      state.workYears = '20';
+      state.workStatus = '1';
+      state.retireStage = '2';
+      state.jobNow = '零售業/總務/5年';
+      state.jobPrev = '物流業/採購/3年';
+      state.jobProud = '慈善教育基金會/社工/5年';
+      state.mgrYears = '5'; $('noMgmt').checked=false; $('mgrYears').disabled=false;
+      state.licenses = '乙級就業服務士,PMP證照';
+      state.flows = [
+        {time:'大學期間', flow:'參加返鄉服務隊陪伴偏鄉國小兒童', score:'8'},
+        {time:'在104人力銀行服務期間', flow:'負責培訓職涯引導師', score:'9'},
+        {time:'服役期間', flow:'擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育', score:'8'}
+      ];
+      state.values = [14,1,2];
+      state.interests = [4,5];
+      state.intelligences = [8,7,2];
+      persist();
+      if(state.step===0) showStep(1); else showStep(state.step);
+      // 重繪 UI
+      buildRadios('workStatusBox', WORK_STATUS, 'workStatus');
+      buildRadios('retireStageBox', RETIRE_STAGE, 'retireStage');
+      buildChips('values', VALUE_OPTIONS, 'values', 3);
+      buildChips('interests', INTEREST_OPTIONS, 'interests', 2);
+      buildChips('intelligences', INTEL_OPTIONS, 'intelligences', 3);
+      updateCounters(); validateCounts();
+      // 填入心流預設值
+      ['1','2','3'].forEach(i=>{
+        $('f'+i+'_time').value = state.flows[i-1].time;
+        $('f'+i+'_flow').value = state.flows[i-1].flow;
+        $('f'+i+'_score').value = state.flows[i-1].score;
+        $('f'+i+'_score_val').textContent = state.flows[i-1].score;
+      });
+    }
+
+    // ====== 初始化 ======
+    function init(){
+      restore();
+      buildRadios('workStatusBox', WORK_STATUS, 'workStatus');
+      buildRadios('retireStageBox', RETIRE_STAGE, 'retireStage');
+      buildChips('values', VALUE_OPTIONS, 'values', 3);
+      buildChips('interests', INTEREST_OPTIONS, 'interests', 2);
+      buildChips('intelligences', INTEL_OPTIONS, 'intelligences', 3);
+      updateCounters(); validateCounts();
+      showStep(state.step || 0);
+      // 回填輸入框
+      $('workYears').value = state.workYears || '';
+      $('jobNow').value = state.jobNow || '';
+      $('jobPrev').value = state.jobPrev || '';
+      $('jobProud').value = state.jobProud || '';
+      $('mgrYears').value = (state.mgrYears && state.mgrYears!=='無')? state.mgrYears : '';
+      if(state.mgrYears==='無'){ $('noMgmt').checked=true; $('mgrYears').disabled=true; }
+      $('licenses').value = state.licenses || '';
+      // 心流
+      ['1','2','3'].forEach(i=>{
+        const o = state.flows[i-1]||{};
+        $('f'+i+'_time').value = o.time||'';
+        $('f'+i+'_flow').value = o.flow||'';
+        $('f'+i+'_score').value = o.score||'0';
+        $('f'+i+'_score_val').textContent = o.score||'0';
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
