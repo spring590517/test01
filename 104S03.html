@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>10分鐘打造你的AI生涯教練 · RWD 版</title>
+<style>
+  /* ---------- CSS Reset (lightweight) ---------- */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC",sans-serif;line-height:1.5;background:#f6f7fb;color:#1f2328;-webkit-font-smoothing:antialiased}
+  img,svg{display:block;max-width:100%}
+  button,input,textarea{font:inherit}
+  :root{
+    --brand:#ff6600;--brand-600:#e65a00;--ink:#1f2328;--muted:#5b616e;--ring:#e6e8ef;--card:#fff;--bg:#f6f7fb;
+    --radius:14px;--shadow:0 6px 18px rgba(23,26,31,.06);
+    /* Responsive type scale */
+    --fs-12:clamp(12px, 0.75rem, 0.75rem);
+    --fs-14:clamp(13px, 0.9vw + 10px, 14px);
+    --fs-16:clamp(15px, 1.2vw + 10px, 16px);
+    --fs-18:clamp(16px, 1.4vw + 10px, 18px);
+    --fs-22:clamp(18px, 1.2rem + 0.8vw, 22px);
+    --fs-28:clamp(22px, 1.2rem + 1.6vw, 28px);
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root{--ink:#e7e9ee;--muted:#aeb4c0;--ring:#2c3340;--card:#0e1116;--bg:#0a0d12}
+    body{background:var(--bg);color:var(--ink)}
+  }
+
+  header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(160%) blur(8px);
+    background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+    border-bottom:1px solid var(--ring);}
+  @media (prefers-color-scheme: dark){
+    header{background:linear-gradient(180deg, rgba(14,17,22,.85), rgba(14,17,22,.55));}
+  }
+  .header-inner{max-width:min(1000px, 92vw);margin:0 auto;padding:18px 8px 10px;}
+  .title{font-weight:800;font-size:var(--fs-28);letter-spacing:.01em}
+  .sub{color:var(--muted);font-size:var(--fs-14);margin-top:2px}
+
+  .wrap{max-width:min(1000px, 92vw);margin:16px auto 40px;padding:0 4px}
+
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);}
+  .landing{padding:16px;display:grid;gap:12px}
+
+  .muted{color:var(--muted);font-size:var(--fs-14)}
+  .hint{color:var(--muted);font-size:var(--fs-12)}
+  .qtitle{font-size:var(--fs-22);font-weight:800;margin:4px 0}
+
+  .btn{appearance:none;border:1px solid transparent;background:var(--brand);color:#fff;border-radius:10px;padding:.8em 1.1em;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.5em;box-shadow:0 1px 0 rgba(0,0,0,.05);transition:transform .06s ease, background .2s ease, box-shadow .2s ease}
+  .btn:hover{background:var(--brand-600)}
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:#444e60}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--ring)}
+  .btn.block{width:100%;justify-content:center}
+
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
+
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .field{width:100%;padding:.8em .9em;border:1px solid var(--ring);border-radius:10px;font-size:var(--fs-16);background:var(--card);color:inherit}
+  .field:focus{outline:2px solid transparent;box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+
+  .grid{display:grid;gap:10px}
+  .cols-2{grid-template-columns:1fr}
+  @media(min-width:640px){.cols-2{grid-template-columns:1fr 1fr}}
+  @media(min-width:900px){.cols-3{grid-template-columns:repeat(3,1fr)}}
+
+  .chip{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--ring);border-radius:999px;background:#fafbff;color:inherit;cursor:pointer;user-select:none;outline:none}
+  .chip b{font-variant-numeric:tabular-nums}
+  .chip.sel{background:#ffe9da;border-color:#ffd0ae}
+  .chip:focus-visible{box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+
+  .progress{position:sticky;top:58px;height:10px;background:#e9ebf3;border-radius:999px;overflow:hidden;margin:0 0 14px}
+  .bar{height:100%;background:var(--brand);width:0;transition:width .25s ease}
+
+  textarea{width:100%;min-height:50vh;resize:vertical}
+
+  /* Mobile-safe spacing for bottom actions */
+  .safe-bottom{padding-bottom:calc(env(safe-area-inset-bottom, 0) + 6px)}
+
+  /* Compact layout on very small screens */
+  @media (max-width:360px){
+    .btn{padding:.7em .9em}
+    .chip{padding:10px 12px}
+  }
+
+  .btn.ghost.inline-link{padding:2px 6px;font-size:var(--fs-12);line-height:1.4;
+    display:inline-flex;align-items:center;margin-left:4px;text-decoration:none}
+  .btn.ghost.inline-link:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+
+  .sel-strip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .sel-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px dashed var(--brand);
+    background:#fff7f0;border-radius:999px;font-size:var(--fs-12)}
+  .sel-pill b{font-variant-numeric:tabular-nums}
+  .sel-pill button{all:unset;cursor:pointer;padding:2px 4px;border-radius:6px}
+  .sel-pill button:focus-visible{outline:2px solid var(--brand)}
+  .sel-pill button:hover{background:rgba(0,0,0,.06)}
+
+
+  .chip.sel{position:relative;border-color:#ffd0ae;background:#fff}
+  .chip.sel::before{content:'';position:absolute;inset:0;border-radius:999px;background:rgba(255,102,0,.12);pointer-events:none}
+  .chip.sel::after{content:attr(data-order);position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    color:#a04300;font-weight:800;font-size:20px;line-height:1;pointer-events:none;
+    width:32px;height:32px;margin:auto;border-radius:50%;background:#fff}
+
+
+  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes popIn { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.05); opacity: 1 } 100% { transform: scale(1) } }
+  .chip.sel::before{animation: fadeIn .18s ease-out}
+  .chip.sel::after{animation: popIn .22s ease-out}
+
+</style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="title">10分鐘打造你的AI生涯教練</div>
+      <div class="sub">盤點你的生涯經歷，打造你專屬的AI職涯教練</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card landing" id="landing" aria-label="起始畫面">
+      <p class="muted">逐題填寫或直接載入範例，最後自動產生完整文字，一鍵複製到 ChatGPT。</p>
+      <div class="grid">
+        <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 啟動我的AI職涯教練</button>
+        <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例快速體驗</button>
+      </div>
+      <p class="hint">提示：沒有相關資訊可以直接勾選「無」選項。</p>
+    </section>
+
+    <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
+  </main>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const landing = document.getElementById('landing');
+
+  const S = { step:0, total:14,
+    years:'', yearsNone:false,
+    workStatus:null,
+    careerStage:null,
+    jobNow:'', jobNowNone:false,
+    jobPrev:'', jobPrevNone:false,
+    jobOther:'', jobOtherNone:false,
+    manageYears:'', manageNone:false,
+    licenses:'', licensesNone:false,
+    flow1:'', flow1None:false,
+    flow2:'', flow2None:false,
+    flow3:'', flow3None:false,
+    valuesSel:[], interestsSel:[], miSel:[]
+  };
+
+  const sample = {
+    years:20, workStatus:1, careerStage:2,
+    jobNow:'人力銀行/職涯教育長/15年。',
+    jobPrev:'資訊科技製造公司/員工發展室專案顧問/3年。',
+    jobOther:'國立大學/心理系助理教授/5年。',
+    manageYears:5,
+    licenses:'乙級就業服務士,PMP證照。',
+    flow1:'大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
+    flow2:'在104人力銀行服務期間，負責培訓150位職涯引導師。',
+    flow3:'在服役期間擔任巡迴教官，負責官兵情緒管理及職涯規劃的教育訓練。',
+    values:[14,1,2], interests:[4,5], mi:[8,7,2]
+  };
+
+  const workStatusOpts=[[1,'目前有正職的工作。'],[2,'目前有兼職的工作。'],[3,'目前有志工的工作。'],[4,'目前沒有任何工作。'],[5,'其他']];
+  const careerStageOpts=[[1,'離退休還有二年以上。'],[2,'二年內會退休。'],[3,'一年內會退休。'],[4,'目前剛退休（一年內）。'],[5,'已經退休一年以上。']];
+  const valuesOpts=[[1,'具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。'],[2,'理念要有共鳴：工作或公司文化能符合我的核心價值。'],[3,'樂於接受挑戰：工作有挑戰性，使我能從工作中持續獲得成就感。'],[4,'終身學習最幸福：工作能提供學習成長機會，有利未來的專業發展或升遷。'],[5,'公平最重要：工作的分派、管理、賞罰、薪酬分配都公平合理。'],[6,'穩定生產力：工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。'],[7,'重視薪水福利：工作提供的薪資福利，可讓我維持良好生活品質。'],[8,'目標流程清楚：工作有清楚的流程及規範可依循，可以具體地評估工作成果。'],[9,'工作符合興趣：工作內容符合我的興趣，讓我能樂在工作。'],[10,'熱愛多樣化任務：工作內容豐富多元，不會一成不變。'],[11,'自由不受限：工作時我能自行規劃工作方式，不受別人的阻礙或控制。'],[12,'創意獨特：工作能發揮自己的長才與優勢，創造獨特的價值。'],[13,'工作生活平衡：工作能讓我兼顧家庭和休閒生活。'],[14,'服務他人：工作讓我能幫助他人，為社會大眾服務。'],[15,'鼓勵起手式：主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。'],[16,'歡樂工作氣氛：同事間能互助合作，有良好工作氛圍，讓人有歸屬感。']];
+  const interestOpts=[[1,'R.實作型：喜歡動手解決問題，並按照訂定的規則逐步製造出成品。'],[2,'I.研究型：個性獨立自主，對事物充滿好奇心喜歡觀察並追根究底。'],[3,'A.藝術型：追求自由奔放的靈魂，直覺敏銳，充滿創意與想像力。'],[4,'S.社會型：喜歡與人群互動，重視人的需求感受及人際間的和諧。'],[5,'E.企業型：樂觀積極，處事果決且充滿信心，有影響與說服他人的能力。'],[6,'C.事務型：做事精準追求完美，重視細節，有效率且踏實地完成目標。']];
+  const miOpts=[[1,'邏輯數學：擅長推理思考，喜歡提問尋找答案，對益智遊戲、推理解題活動很感興趣。'],[2,'語言文字：口齒伶俐，善於表達。用詞豐富，具說服力。能言善道，喜歡發問、閱讀、撰寫創作。'],[3,'自然觀察：喜歡觀察大自然生態，對飼養動物、栽種植物有濃厚興趣，對周圍環境充滿好奇心。'],[4,'肢體動覺：擅長運用身體表達想法和感受，喜歡動手操作，偏好以活動為主的工作與學習型態。'],[5,'空間藝術：習慣用意象及圖像來思考，喜歡拼圖、迷宮、愛繪畫、設計及空間規劃。'],[6,'音樂旋律：能輕易記住歌曲、旋律及辨別音調，可以輕鬆學會樂器，工作學習偏好搭配音樂旋律。'],[7,'人際互動：擅長觀察人的情緒，喜歡參與團體活動。善於激勵他人，喜歡扮演團體領導者的角色。'],[8,'內省同理：擅長探索自己及同理他人，能意識到自己情緒與想法，能安靜獨處，清楚自己的優缺點。']];
+
+  function start(){ S.step=1; landing.hidden = true; render(); }
+  function loadSample(){ Object.assign(S, {
+    step:1,
+    years:sample.years, workStatus:sample.workStatus, careerStage:sample.careerStage,
+    jobNow:sample.jobNow, jobPrev:sample.jobPrev, jobOther:sample.jobOther,
+    manageYears:sample.manageYears, licenses:sample.licenses,
+    flow1:sample.flow1, flow2:sample.flow2, flow3:sample.flow3,
+    valuesSel:sample.values.slice(), interestsSel:sample.interests.slice(), miSel:sample.mi.slice()
+  }); landing.hidden = true; render(); }
+
+  document.getElementById('startBtn').addEventListener('click', start);
+  document.getElementById('sampleBtn').addEventListener('click', loadSample);
+
+  function progress(){
+    const pct=Math.round(Math.min(S.step,S.total)/S.total*100);
+    return '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><div class="bar" style="width:'+pct+'%"></div></div>';
+  }
+  function nav(){
+    return '<div class="toolbar" role="toolbar" aria-label="導覽按鈕">'
+      +(S.step>1&&S.step<=S.total?'<button class="btn ghost" id="prev" aria-label="上一題">← 上一題</button>':'')
+      +(S.step<S.total?'<button class="btn" id="next" aria-label="下一題">下一題 →</button>':'<button class="btn" id="gen" aria-label="產生咒語">生成召喚ChatGPT成為我AI生涯教練的咒語 →</button>')
+      +'</div>';
+  }
+  function chips(opts, selected, multi){
+    let html='<div class="grid cols-2">';
+    for(const [id, text] of opts){
+      const isSel = multi ? selected.includes(id) : selected===id;
+      const order = multi && isSel ? (selected.indexOf(id)+1) : '';
+      const state = isSel? ' sel' : '';
+      html += '<button type="button" class="chip'+state+'" data-id="'+id+'" '+(order?('data-order="'+order+'"'):'')+' aria-pressed="'+isSel+'" aria-label="'+(isSel?('已選第'+order+'個：'):'')+text.replace(/<[^>]+>/g,'')+'"><b>(' + id + ')</b><span>'+text+'</span></button>';
+    }
+    html+='</div>'; return html;
+  }
+  function bindChips(set){
+    stage.querySelectorAll('.chip').forEach(el=>{
+      el.addEventListener('click',()=>{ const id=+el.getAttribute('data-id'); set(id); render(); });
+      el.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }});
+    });
+  }
+  function toggleMulti(arr,id,cap){ const i=arr.indexOf(id); if(i>=0){arr.splice(i,1);return;} if(arr.length<cap){arr.push(id);} }
+
+function selView(opts, selected){
+  if(!selected || !selected.length) return '<div class="hint">尚未選擇。</div>';
+  let html='<div class="sel-strip" id="selStrip">';
+  for(const id of selected){
+    const o = opts.find(o=>o[0]===id);
+    if(!o) continue;
+    html += '<span class="sel-pill"><b>(' + id + ')</b><span>'+o[1].replace(/<[^>]+>/g,'')+'</span><button class="sel-remove" aria-label="移除" data-id="'+id+'">×</button></span>';
+  }
+  html+='</div>'; return html;
+}
+function bindSelRemove(arr, cap){
+  (stage.querySelectorAll('.sel-remove')||[]).forEach(btn=>{
+    btn.addEventListener('click',()=>{ const id=+btn.getAttribute('data-id'); const i=arr.indexOf(id); if(i>=0){arr.splice(i,1);} render(); });
+  });
+}
+
+  function qWrap(title, hint, inner){
+    stage.innerHTML = progress()+`<section class="card" style="padding:16px" aria-live="polite"><div class="qtitle">${title}</div>${hint?`<div class="hint">${hint}</div>`:''}<div class="grid" style="margin-top:10px">${inner}</div>${nav()}</section>`;
+    const p=stage.querySelector('#prev'); if(p) p.onclick=()=>{S.step--; render();};
+    const n=stage.querySelector('#next'); if(n) n.onclick=()=>{S.step++; render();};
+    const g=stage.querySelector('#gen'); if(g) g.onclick=()=>{S.step=15; render();};
+    // Move focus to first focusable element for better a11y
+    const firstFocusable = stage.querySelector('input, textarea, .chip, .btn');
+    if(firstFocusable) firstFocusable.focus({preventScroll:true});
+  }
+
+  function render(){
+    switch(S.step){
+      case 1:
+        qWrap('1. 我目前累積的工作年資有幾年？','例如：20年。請直接輸入幾年數字；若不適用可勾選「無」。',`
+          <div class="row">
+            <input class="field" id="years" inputmode="numeric" placeholder="例如：20" ${S.yearsNone?'disabled':''} value="${escape(S.years)}" aria-label="工作年資（年）">
+            <label class="hint"><input type="checkbox" id="yearsNone" ${S.yearsNone?'checked':''}> 無</label>
+          </div>`);
+        stage.querySelector('#years').oninput=e=>S.years=e.target.value;
+        stage.querySelector('#yearsNone').onchange=e=>{S.yearsNone=e.target.checked; render();};
+        break;
+      case 2:
+        qWrap('2. 我目前的工作狀態是？','請從以下五個選項中選一個。', chips(workStatusOpts,S.workStatus,false));
+        bindChips(id=>S.workStatus=id);
+        break;
+      case 3:
+        qWrap('3. 我目前的生涯發展現況是？','請從以下五個選項中選一個。', chips(careerStageOpts,S.careerStage,false));
+        bindChips(id=>S.careerStage=id);
+        break;
+      case 4:
+        qWrap('4. 我最近或目前從事的工作是？','例如：人力銀行/職涯教育長/15年。',`
+          <div class="row">
+            <input class="field" id="jobNow" placeholder="請輸入：產業/職務/累積年資。例：人力銀行/職涯教育長/15年。" ${S.jobNowNone?'disabled':''} value="${escape(S.jobNow)}" aria-label="目前工作">
+            <label class="hint"><input type="checkbox" id="jobNowNone" ${S.jobNowNone?'checked':''}> 無</label>
+          </div>`);
+        stage.querySelector('#jobNow').oninput=e=>S.jobNow=e.target.value;
+        stage.querySelector('#jobNowNone').onchange=e=>{S.jobNowNone=e.target.checked; render();};
+        break;
+      case 5:
+        qWrap('5. 我更早之前從事的工作是？','例如：資訊科技製造公司/員工發展室專案顧問/3年。',`
+          <div class="row">
+            <input class="field" id="jobPrev" placeholder="請輸入：產業/職務/累積年資。例：資訊科技製造公司/員工發展室專案顧問/3年。" ${S.jobPrevNone?'disabled':''} value="${escape(S.jobPrev)}" aria-label="過去工作">
+            <label class="hint"><input type="checkbox" id="jobPrevNone" ${S.jobPrevNone?'checked':''}> 無</label>
+          </div>`);
+        stage.querySelector('#jobPrev').oninput=e=>S.jobPrev=e.target.value;
+        stage.querySelector('#jobPrevNone').onchange=e=>{S.jobPrevNone=e.target.checked; render();};
+        break;
+      case 6:
+        qWrap('6. 另一個比較有成就感的工作是？','例如：國立大學/心理系助理教授/5年。',`
+          <div class="row">
+            <input class="field" id="jobOther" placeholder="請輸入：產業/職務/累積年資。例：國立大學/心理系助理教授/5年。" ${S.jobOtherNone?'disabled':''} value="${escape(S.jobOther)}" aria-label="其他成就工作">
+            <label class="hint"><input type="checkbox" id="jobOtherNone" ${S.jobOtherNone?'checked':''}> 無</label>
+          </div>`);
+        stage.querySelector('#jobOther').oninput=e=>S.jobOther=e.target.value;
+        stage.querySelector('#jobOtherNone').onchange=e=>{S.jobOtherNone=e.target.checked; render();};
+        break;
+      case 7:
+        qWrap('7. 我的管理經驗？','例如：5年。請直接輸入幾年；若不適用可勾選「無」。',`
+          <div class="row">
+            <input class="field" id="manageYears" inputmode="numeric" placeholder="例如：5" ${S.manageNone?'disabled':''} value="${escape(S.manageYears)}" aria-label="管理年資（年）">
+            <label class="hint"><input type="checkbox" id="manageNone" ${S.manageNone?'checked':''}> 無</label>
+          </div>`);
+        stage.querySelector('#manageYears').oninput=e=>S.manageYears=e.target.value;
+        stage.querySelector('#manageNone').onchange=e=>{S.manageNone=e.target.checked; render();};
+        break;
+      case 8:
+        qWrap('8. 我擁有的證照？','例如：乙級就業服務士,PMP證照。多張證照請用逗號（,）分開。',`
+          <div class="row">
+            <input class="field" id="licenses" placeholder="例：乙級就業服務士,PMP證照。" ${S.licensesNone?'disabled':''} value="${escape(S.licenses)}" aria-label="證照清單">
+            <label class="hint"><input type="checkbox" id="licensesNone" ${S.licensesNone?'checked':''}> 無</label>
+          </div>`);
+        stage.querySelector('#licenses').oninput=e=>S.licenses=e.target.value;
+        stage.querySelector('#licensesNone').onchange=e=>{S.licensesNone=e.target.checked; render();};
+        break;
+      case 9:
+        qWrap('9. 我最有心流時光的一次生命事件是？','所謂「心流時光」，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',`
+          <textarea class="field" id="flow1" placeholder="請用 1~2 句寫下 Time 與 Flow 的重點。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1)}</textarea>
+          <label class="hint"><input type="checkbox" id="flow1None" ${S.flow1None?'checked':''}> 無</label>`);
+        stage.querySelector('#flow1').oninput=e=>S.flow1=e.target.value;
+        stage.querySelector('#flow1None').onchange=e=>{S.flow1None=e.target.checked; render();};
+        break;
+      case 10:
+        qWrap('10. 另一個比較有心流時光感覺的生命經歷是？','例如：在人力銀行服務期間，負責培訓150位職涯引導師。',`
+          <textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二">${escape(S.flow2)}</textarea>
+          <label class="hint"><input type="checkbox" id="flow2None" ${S.flow2None?'checked':''}> 無</label>`);
+        stage.querySelector('#flow2').oninput=e=>S.flow2=e.target.value;
+        stage.querySelector('#flow2None').onchange=e=>{S.flow2None=e.target.checked; render();};
+        break;
+      case 11:
+        qWrap('11. 另一個比較有心流時光感覺的生命經歷是？','例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',`
+          <textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三">${escape(S.flow3)}</textarea>
+          <label class="hint"><input type="checkbox" id="flow3None" ${S.flow3None?'checked':''}> 無</label>`);
+        stage.querySelector('#flow3').oninput=e=>S.flow3=e.target.value;
+        stage.querySelector('#flow3None').onchange=e=>{S.flow3None=e.target.checked; render();};
+        break;
+      case 12:
+        qWrap('12. 我比較在乎的三個職業價值觀是？',
+             '請點選三個在乎的職業價值觀。<a href="https://guide.104.com.tw/value/" target="_blank" rel="noopener">（若想更了解，可先做：職業價值觀測驗）</a>',
+             chips(valuesOpts,S.valuesSel,true)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
+        bindChips(id=>{toggleMulti(S.valuesSel,id,3)});
+        break;
+      case 13:
+        qWrap('13. 我比較來勁的二個生涯興趣？',
+             '請點選二個來勁的生涯興趣。<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">（若想更了解，可先做：生涯興趣測驗）</a>',
+             chips(interestOpts,S.interestsSel,true)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
+        bindChips(id=>{toggleMulti(S.interestsSel,id,2)});
+        break;
+      case 14:
+        qWrap('14. 我比較擅長的三個多元智能？','請直接點選三個比較擅長的多元智能。',
+          chips(miOpts,S.miSel,true)+`<div class="hint">已選 ${S.miSel.length} / 3</div>`);
+        bindChips(id=>{toggleMulti(S.miSel,id,3)});
+        break;
+      case 15:
+        const text = compiledText();
+        stage.innerHTML = progress()+`<section class="card" style="padding:16px">
+          <div class="qtitle">彙整完成</div>
+          <div class="hint">下方文字已包含 14 項彙整與後續 7 題請求。點「一鍵複製」即可貼上使用。</div>
+          <textarea id="out" aria-label="彙整文字">${escape(text)}</textarea>
+          <div class="toolbar">
+            <button class="btn" id="copy">Step 1：一鍵複製咒語到 ChatGPT</button>
+            <a class="btn secondary" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Step 2：開啟 ChatGPT 並貼上</a>
+            <button class="btn ghost" id="restart">我要重新再試一次</button>
+          </div>
+        </section>`;
+        document.getElementById('copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(text); toast('已複製到剪貼簿！'); }catch(e){ alert('複製失敗，請手動選取文字。'); } };
+        document.getElementById('restart').onclick=()=>{ Object.assign(S,{step:0,years:'',yearsNone:false,workStatus:null,careerStage:null,jobNow:'',jobNowNone:false,jobPrev:'',jobPrevNone:false,jobOther:'',jobOtherNone:false,manageYears:'',manageNone:false,licenses:'',licensesNone:false,flow1:'',flow1None:false,flow2:'',flow2None:false,flow3:'',flow3None:false,valuesSel:[],interestsSel:[],miSel:[]}); landing.hidden=false; stage.innerHTML=''; };
+        break;
+    }
+  }
+
+  function toast(msg){
+    const n=document.createElement('div');
+    n.textContent=msg;
+    Object.assign(n.style,{position:'fixed',left:'50%',bottom:'calc(env(safe-area-inset-bottom,0) + 24px)',transform:'translateX(-50%)',background:'var(--ink)',color:'#fff',padding:'10px 14px',borderRadius:'999px',boxShadow:'var(--shadow)',zIndex:1000});
+    document.body.appendChild(n);
+    setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity .3s';},1200);
+    setTimeout(()=>n.remove(),1550);
+  }
+
+  function escape(s){ return String(s??'').replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch])); }
+  function findById(arr,id){ const f=arr.find(a=>a[0]===id); return f?f[1]:''; }
+  function withYear(v){ if(v==null||v==='') return ''; const s=String(v).trim(); return s.endsWith('年')?s:s+'年'; }
+  function compiledText(){
+    const L1 = `1.我目前累積的工作年資有：${S.yearsNone?'無。':(withYear(S.years)||'。')}`;
+    const L2 = `2.我目前的工作狀態是： ${(S.workStatus?`(${S.workStatus})`:'')}${findById(workStatusOpts,S.workStatus)}`;
+    const L3 = `3.我目前的生涯發展現況是：${(S.careerStage?`(${S.careerStage})`:'')}${findById(careerStageOpts,S.careerStage)}`;
+    const L4 = `4.最近或目前從事的工作是：${S.jobNowNone?'無。':(S.jobNow||'')}`;
+    const L5 = `5.更早之前從事的工作是：${S.jobPrevNone?'無。':(S.jobPrev||'')}`;
+    const L6 = `6.除了上述二個工作，我還從事過那個比較有成就感的工作是：${S.jobOtherNone?'無。':(S.jobOther||'')}`;
+    const L7 = `7.我的管理經驗：${S.manageNone?'無。':(withYear(S.manageYears)||'。')}`;
+    const L8 = `8.我擁有的證照：${S.licensesNone?'無。':(S.licenses||'')}`;
+    const L9 = `9.我最有心流時光的一次生命經歷是：${S.flow1None?'無。':(S.flow1||'')}`;
+    const L10= `10.我另一個比較有心流時光感覺的生命經歷是：${S.flow2None?'無。':(S.flow2||'')}`;
+    const L11= `11.我另一個比較有心流時光感覺的生命經歷是：${S.flow3None?'無。':(S.flow3||'')}`;
+    const V12 = '12.我比較在乎的三個職業價值觀是：\n' + S.valuesSel.map(id=>`(${id})${findById(valuesOpts,id)}`).join('\n');
+    const V13 = '13.我比較來勁的二個生涯興趣是：\n' + S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n');
+    const V14 = '14.我比較擅長的多元智能是：\n' + S.miSel.map(id=>`(${id})${findById(miOpts,id)}`).join('\n');
+
+    const ask = [
+      '請根據上述彙整的各項生涯發展與探索資訊，運用你的AI智慧，回答我以下八個問題。回答的內容，請直接用文字加上標題出現在對話框，方便我直接閱讀。','',
+      '1. 解析我累積的專業才能及未來開展第二人生可以運用的專業才能。請從我上述提供的各項生涯發展與探索資訊加以佐證。',
+      '2. 解析我累積的熱情特質及未來開展第二人生可以運用的熱情特質。請從我上述提供的各項生涯發展與探索資訊加以佐證。',
+      '3. 解析我未來開展第二人生時，有哪些之前累積的人脈資產可以運用。請從我上述提供的各項生涯發展與探索資訊加以佐證。',
+      '4. 從我的專業才能、熱情特質、人脈資產，解析我第二人生的使命。請詳細說明原因為何？',
+      '5. 根據上述四個分析結果，請推薦我「第二人生」可能發展的五個職涯領域。請詳細說明每個職涯領域推薦的原因，並且說明進入每個職涯領域的挑戰與切入的第一步。',
+      '6. 請說明上述推薦的五個職涯領域，我在半年內可以培養的技術/能力或取得的證照。請說明原因，也說明這些技術/能力/證照取得的管道或方法。',
+      '7. 建議我在上述各個職涯領域，可以參與哪些 社群/協會/志工團體或政府專案，並請提供這些社群/協會/志工或政府專案的正確網址….，方便我可以點閱查詢。',
+      '8. 請推薦我馬上可以嘗試的 兼職、接案或任務類型，以及如何相關的接案管道與報價建議。',
+      '9. 請提醒我開啟第二人生之前，在金錢財務、身心健康、家庭關係、人際關係....要事先做好的準備。',
+      '10. 以「未來 3 年生涯行動地圖」收斂，列出每年的「關鍵任務」、「學習主題」、「人脈經營重點」與「身心健康計畫」。'
+    ].join('\n');
+
+    return '「\n'+[L1,'',L2,'',L3,'',L4,'',L5,'',L6,'',L7,'',L8,'',L9,'',L10,'',L11,'',V12,'',V13,'',V14].join('\n')+'\n」\n\n「\n'+ask+'\n」';
+  }
+})();
+</script>
+</body>
+</html>
