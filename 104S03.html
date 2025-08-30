@@ -327,13 +327,13 @@ function bindSelRemove(arr, cap){
         break;
       case 12:
         qWrap('12. 我比較在乎的三個職業價值觀是？',
-             '請依序選出三個比較在乎的職業價值觀。<a href="https://guide.104.com.tw/value/" target="_blank" rel="noopener">（若想了解瞭解您的職業價值觀，可以試試104職業價值觀測驗）</a>',
+             '請依序選出三個比較在乎的職業價值觀。探索職業價值觀，可以試試→ <a href="https://guide.104.com.tw/value/" target="_blank" rel="noopener">【104職業價值觀測驗】</a>',
              chips(valuesOpts,S.valuesSel,true)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
         bindChips(id=>{toggleMulti(S.valuesSel,id,3)});
         break;
       case 13:
         qWrap('13. 我比較來勁的二個生涯興趣？',
-             '請依序選出二個比較來勁的生涯興趣。<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">（若想了解瞭解您的生涯興趣，可以試試104生涯興趣測驗）</a>',
+             '請依序選出二個比較來勁的生涯興趣。探索職業價值觀，可以試試→ <a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">【104生涯興趣測驗】</a>',
              chips(interestOpts,S.interestsSel,true)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
         bindChips(id=>{toggleMulti(S.interestsSel,id,2)});
         break;
