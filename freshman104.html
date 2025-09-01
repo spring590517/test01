@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>AI職涯教練召喚器（大一新生版 / 修正版2）</title>
+<title>AI職涯教練召喚器</title>
 <style>
   *,*::before,*::after{box-sizing:border-box}
   [hidden]{display:none !important}
@@ -53,17 +53,17 @@
 <body>
 <header>
   <div class="header-inner">
-    <div class="title">AI職涯教練召喚器（大一新生版 / 修正版2）</div>
+    <div class="title">AI職涯教練召喚器</div>
     <div class="sub">逐題填寫 → 自動彙整 → 一鍵複製貼到 ChatGPT</div>
   </div>
 </header>
 
 <main class="wrap">
   <section class="card landing" id="landing">
-    <p class="muted">點「啟動」逐題填寫；或先「載入範例」直接測流程。首頁僅出現在此頁，不會出現在後續題目。</p>
+    <p class="muted">點「啟動我的AI職涯教練」逐題填寫；或先「載入範例，體驗看看」直接測流程。首頁僅出現在此頁，不會出現在後續題目。</p>
     <div class="grid">
-      <button class="btn block" id="startBtn">▶︎ 啟動</button>
-      <button class="btn secondary block" id="sampleBtn">✨ 載入範例</button>
+      <button class="btn block" id="startBtn">▶︎ 啟動我的AI職涯教練</button>
+      <button class="btn secondary block" id="sampleBtn">✨ 載入範例，體驗看看</button>
     </div>
   </section>
   <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
@@ -147,7 +147,7 @@
     landing.hidden = (S.step >= 1);
     switch(S.step){
       case 1:
-        qWrap('1. 我目前就讀哪個大學、哪個科系？','請將「例如：政治大學中文系。」當作格式範例填寫。',`<input class="field" id="q1" placeholder="例如：政治大學中文系。" value="${escapeHTML(S.q1_uni)}" aria-label="大學與科系">`);
+        qWrap('1. 我目前就讀哪個大學、哪個科系？','請將「例如：政治大學中文系。」當作格式範例填寫。',`<input class="field" id="q1" placeholder="政治大學中文系。" value="${escapeHTML(S.q1_uni)}" aria-label="大學與科系">`);
         stage.querySelector('#q1').oninput = e=> S.q1_uni = e.target.value;
         break;
       case 2:
