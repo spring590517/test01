@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>10分鐘打造你的AI生涯教練</title>
+<title>10分鐘打造你的AI生涯教練｜SecondLife Plus (Fixed)</title>
 <style>
   /* ---------- Base & Reset ---------- */
   *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important}
   html,body{height:100%}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC",sans-serif;line-height:1.5;background:#f6f7fb;color:#1f2328;-webkit-font-smoothing:antialiased}
   img,svg{display:block;max-width:100%}
@@ -20,6 +21,7 @@
     --fs-18:clamp(16px, 1.4vw + 10px, 18px);
     --fs-22:clamp(18px, 1.2rem + 0.8vw, 22px);
     --fs-28:clamp(22px, 1.2rem + 1.6vw, 28px);
+    --zoom:1;
   }
   @media (prefers-color-scheme: dark){
     :root{--ink:#e7e9ee;--muted:#aeb4c0;--ring:#2c3340;--card:#0e1116;--bg:#0a0d12}
@@ -99,9 +101,36 @@
   @keyframes popIn { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.05); opacity: 1 } 100% { transform: scale(1) } }
   .chip.sel::before{animation: fadeIn .18s ease-out}
   .chip.sel::after{animation: popIn .22s ease-out}
+
+  /* --- Zoom & font scaling (A±) --- */
+  :root{
+    --fs-12: calc(12px * var(--zoom));
+    --fs-14: calc(14px * var(--zoom));
+    --fs-16: calc(16px * var(--zoom));
+    --fs-18: calc(18px * var(--zoom));
+    --fs-22: calc(22px * var(--zoom));
+    --fs-28: calc(28px * var(--zoom));
+  }
+  .toolbar-top{position:fixed;right:10px;top:10px;z-index:50;display:flex;gap:6px}
+  .btn.icon{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+  .btn.icon small{font-weight:700}
+  /* --- Chip order badge --- */
+  .chip{position:relative;overflow:hidden}
+  .chip .ord{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:22px;opacity:.25;pointer-events:none;
+    background:linear-gradient(0deg, rgba(255,153,0,.15), rgba(255,153,0,.15));
+  }
 </style>
 </head>
+
 <body>
+
+  <div class="toolbar-top" aria-label="字級調整">
+    <button class="btn icon" id="zoomOut" title="縮小字級"><small>A−</small></button>
+    <button class="btn icon" id="zoomIn" title="放大字級"><small>A＋</small></button>
+  </div>
+
   <header>
     <div class="header-inner">
       <div class="title">10分鐘打造你的AI生涯教練</div>
@@ -112,12 +141,12 @@
   <main class="wrap">
     <!-- 只在首頁顯示的 Landing 區塊 -->
     <section class="card landing" id="landing" aria-label="起始畫面">
-      <p class="muted">逐題填寫或直接載入範例，最後自動產生完整文字，一鍵複製到 ChatGPT。</p>
+      <p class="muted">逐題填寫或直接載入範例，最後自動產生完整文字，一鍵複製到 ChatGPT。此頁只會出現在首頁，不會出現在後續題目。</p>
       <div class="grid">
         <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 啟動我的AI職涯教練</button>
         <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例，先體驗看看</button>
       </div>
-      <p class="hint">提示：沒有相關資訊可勾選「無」。本頁只會出現在首頁，不會出現在後續題目。</p>
+      <p class="hint">提示：沒有相關資訊可勾選「無」。</p>
     </section>
 
     <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
@@ -154,8 +183,8 @@ try{
     [9,'其他']
   ];
   const valuesOpts=[[1,'具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。'],[2,'理念要有共鳴：工作或公司文化能符合我的核心價值。'],[3,'樂於接受挑戰：工作有挑戰性，使我能從工作中持續獲得成就感。'],[4,'終身學習最幸福：工作能提供學習成長機會，有利未來的專業發展或升遷。'],[5,'公平最重要：工作的分派、管理、賞罰、薪酬分配都公平合理。'],[6,'穩定生產力：工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。'],[7,'重視薪水福利：工作提供的薪資福利，可讓我維持良好生活品質。'],[8,'目標流程清楚：工作有清楚的流程及規範可依循，可以具體地評估工作成果。'],[9,'工作符合興趣：工作內容符合我的興趣，讓我能樂在工作。'],[10,'熱愛多樣化任務：工作內容豐富多元，不會一成不變。'],[11,'自由不受限：工作時我能自行規劃工作方式，不受別人的阻礙或控制。'],[12,'創意獨特：工作能發揮自己的長才與優勢，創造獨特的價值。'],[13,'工作生活平衡：工作能讓我兼顧家庭和休閒生活。'],[14,'服務他人：工作讓我能幫助他人，為社會大眾服務。'],[15,'鼓勵起手式：主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。'],[16,'歡樂工作氣氛：同事間能互助合作，有良好工作氛圍，讓人有歸屬感。']];
-  const interestOpts = [[1,'R.實作型：喜歡具體、動手操作的任務，常展現解決實際問題的行為。偏好戶外、機械、工具或體力活動，較少抽象或人際互動。喜歡明確的工作環境與實際成果。'],[2,'I.研究型：喜歡思考、探究、驗證理論，展現出邏輯推理與獨立解決問題的行為。偏好數理、科學、醫學等需要深入分析的工作，對實驗與知識追求感到興奮。'],[3,'A.藝術型：重視自我表達與創造。常展現創意發想、藝術創作或非傳統思維的行為。偏好音樂、繪畫、設計、表演等自由度高的活動，討厭過度僵化的規範。'],[4,'S.社會型：喜歡助人、協作與引導他人。常展現傾聽、教導、支持他人的行為。偏好溝通、人際互動與服務工作，樂於建立和諧關係。'],[5,'E.企業型：喜歡影響與說服他人，展現領導、組織與決策的行為。偏好充滿挑戰與競爭的環境，樂於承擔風險並追求成就。'],[6,'C.事務型：喜歡有結構與秩序的環境。常展現精準、耐心、追求效率的行為。偏好處理數據、文件、流程，擅長在規範下完成任務。']];
-  const miOpts=[[1,'邏輯數學：擅長推理思考，喜歡提問尋找答案，對益智遊戲、推理解題活動很感興趣。'],[2,'語言文字：口齒伶俐，善於表達。用詞豐富，具說服力。能言善道，喜歡發問、閱讀、撰寫創作。'],[3,'自然觀察：喜歡觀察大自然生態，對飼養動物、栽種植物有濃厚興趣，對周圍環境充滿好奇心。'],[4,'肢體動覺：擅長運用身體表達想法和感受，喜歡動手操作，偏好以活動為主的工作與學習型態。'],[5,'空間藝術：習慣用意象及圖像來思考，喜歡拼圖、迷宮、愛繪畫、設計及空間規劃。'],[6,'音樂旋律：能輕易記住歌曲、旋律及辨別音調，可以輕鬆學會樂器，工作學習偏好搭配音樂旋律。'],[7,'人際互動：擅長觀察人的情緒，喜歡參與團體活動。善於激勵他人，喜歡扮演團體領導者的角色。'],[8,'內省同理：擅長探索自己及同理他人，能意識到自己情緒與想法，能安靜獨處，清楚自己的優缺點。']];
+  const interestOpts = [[1,'R.實作型：喜歡具體、動手操作的任務，常展現解決實際問題的行為。偏好戶外、機械、工具或體力活動。'],[2,'I.研究型：喜歡思考、探究、驗證理論，展現邏輯推理與獨立解決問題。'],[3,'A.藝術型：重視自我表達與創造，偏好音樂、繪畫、設計、表演等高自由度活動。'],[4,'S.社會型：喜歡助人、協作與引導他人，偏好溝通、人際互動與服務工作。'],[5,'E.企業型：喜歡影響與說服他人，展現領導、組織與決策的行為。'],[6,'C.事務型：喜歡有結構與秩序的環境，擅長處理數據、文件、流程。']];
+  const miOpts=[[1,'邏輯數學：擅長推理思考，喜歡提問尋找答案。'],[2,'語言文字：善於表達，喜歡閱讀、撰寫創作。'],[3,'自然觀察：喜歡觀察生態，對飼養動物、栽種植物有興趣。'],[4,'肢體動覺：擅長用身體表達與動手操作。'],[5,'空間藝術：用圖像思考，喜歡繪畫、設計與空間規劃。'],[6,'音樂旋律：易記旋律，能辨別音調，喜歡樂器。'],[7,'人際互動：擅長觀察情緒，喜歡團體活動與帶領。'],[8,'內省同理：擅長探索自己與同理他人，能安靜獨處。']];
 
   // ---------- 範例資料 ----------
   const sample = {
@@ -179,26 +208,67 @@ try{
     values:[14,1,2], interests:[4,5], mi:[8,7,2]
   };
 
-  // ---------- 啟動 / 載入 ----------
-  function start(){ S.step=1; landing.hidden = true; render(); }
-  function loadSample(){ Object.assign(S, {
-    step:1,
-    eduLevel:sample.eduLevel,
-    eduField:sample.eduField, eduNone:false,
-    skillPaper:sample.skillPaper, skillNone:false,
-    jobNow:sample.jobNow, jobNowNone:false,
-    jobPrev:sample.jobPrev, jobPrevNone:false,
-    jobOther:sample.jobOther, jobOtherNone:false,
-    manageYears:sample.manageYears, manageNone:false,
-    licenses:sample.licenses, licensesNone:false,
-    flow1:sample.flow1, flow1None:false,
-    flow2:sample.flow2, flow2None:false,
-    flow3:sample.flow3, flow3None:false,
-    valuesSel:sample.values.slice(), interestsSel:sample.interests.slice(), miSel:sample.mi.slice()
-  }); landing.hidden = true; render(); }
-
+  // ---------- 啟動 / 載入（確保首頁僅出現在首頁） ----------
+  function hideLanding(){ landing.hidden = true; landing.setAttribute('aria-hidden','true'); }
+  function showLanding(){ landing.hidden = false; landing.removeAttribute('aria-hidden'); }
+  function start(){ S.step=1; hideLanding(); render(); }
+  function loadSample(){
+    Object.assign(S, {
+      step:1,
+      eduLevel:sample.eduLevel,
+      eduField:sample.eduField, eduNone:false,
+      skillPaper:sample.skillPaper, skillNone:false,
+      jobNow:sample.jobNow, jobNowNone:false,
+      jobPrev:sample.jobPrev, jobPrevNone:false,
+      jobOther:sample.jobOther, jobOtherNone:false,
+      manageYears:sample.manageYears, manageNone:false,
+      licenses:sample.licenses, licensesNone:false,
+      flow1:sample.flow1, flow1None:false,
+      flow2:sample.flow2, flow2None:false,
+      flow3:sample.flow3, flow3None:false,
+      valuesSel:sample.values.slice(), interestsSel:sample.interests.slice(), miSel:sample.mi.slice()
+    });
+    hideLanding(); render();
+  }
   document.getElementById('startBtn').addEventListener('click', start);
   document.getElementById('sampleBtn').addEventListener('click', loadSample);
+
+  // ---------- Zoom controls (A±) ----------
+  (function(){
+    const root = document.documentElement;
+    const saved = localStorage.getItem('zoom') || '1';
+    root.style.setProperty('--zoom', saved);
+    function setZoom(z){
+      z = Math.max(0.85, Math.min(1.4, Math.round(z*100)/100));
+      root.style.setProperty('--zoom', z);
+      localStorage.setItem('zoom', z);
+    }
+    document.getElementById('zoomIn').addEventListener('click', ()=> setZoom(parseFloat(getComputedStyle(root).getPropertyValue('--zoom')) + 0.1));
+    document.getElementById('zoomOut').addEventListener('click', ()=> setZoom(parseFloat(getComputedStyle(root).getPropertyValue('--zoom')) - 0.1));
+  })();
+
+  // ---------- Open ChatGPT App (prefer app) ----------
+  function openChatGPTApp(){
+    const webUrl='https://chatgpt.com/';
+    const universalUrl='https://chat.openai.com/';
+    const schemeUrl='chatgpt://';
+    const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isAndroid=/android/i.test(navigator.userAgent);
+    let fallbackTimer;
+    const fallback=()=>{ window.open(universalUrl,'_blank','noopener') || window.open(webUrl,'_blank','noopener'); };
+    const onVis=()=>{ if(document.hidden){ clearTimeout(fallbackTimer); document.removeEventListener('visibilitychange', onVis);} };
+    document.addEventListener('visibilitychange', onVis);
+    try{
+      if(isIOS){
+        const iframe=document.createElement('iframe'); iframe.style.display='none'; iframe.src=schemeUrl; document.body.appendChild(iframe);
+        fallbackTimer=setTimeout(fallback,700); setTimeout(()=>iframe.remove(),1500);
+      }else if(isAndroid){
+        location.href=schemeUrl; fallbackTimer=setTimeout(fallback,700);
+      }else{
+        fallback();
+      }
+    }catch(e){ fallback(); }
+  }
 
   // ---------- UI helpers ----------
   function progress(){
@@ -217,7 +287,7 @@ try{
       const isSel = multi ? selected.includes(id) : selected===id;
       const order = multi && isSel ? (selected.indexOf(id)+1) : '';
       const state = isSel? ' sel' : '';
-      html += '<button type="button" class="chip'+state+'" data-id="'+id+'" '+(order?('data-order="'+order+'"'):'')+' aria-pressed="'+isSel+'" aria-label="'+(isSel?('已選第'+order+'個：'):'')+text.replace(/<[^>]+>/g,'')+'"><b>(' + id + ')</b><span>'+text+'</span></button>';
+      html +=  (multi && isSel ? ('<button type="button" class="chip'+state+'" data-id="'+id+'" data-order="'+order+'"><b>(' + id + ')</b><span>'+text+'</span></button>') : ('<button type="button" class="chip'+state+'" data-id="'+id+'"><b>(' + id + ')</b><span>'+text+'</span></button>'));
     }
     html+='</div>'; return html;
   }
@@ -259,7 +329,13 @@ try{
 
   // ---------- 題目呈現 ----------
   function render(){
+    // 確保首頁不會出現在後續題目頁
+    landing.hidden = (S.step >= 1);
+
     switch(S.step){
+      case 0:
+        showLanding();
+        break;
       case 1:
         qWrap('1. 我的最高學歷？','請從以下選項選出一個。例如：選擇(8) 表示博士畢業。',
           chips(eduLevelOpts,S.eduLevel,false));
@@ -267,7 +343,7 @@ try{
         break;
       case 2:
         qWrap('2. 我就讀的專業領域？',
-        '例如：大學是念心理系，主修工商心理學組。輔系是修讀企管系，同時有修AI學程。碩士是念心理研究所，主修工商心理學。博士是念心理研究所，主修工商心理學，輔修心理輔導。請參考下方輸入框中的「範例」，依相同格式填寫；若無可勾選「無」。',
+        '請參考下方輸入框中的「範例」，依相同格式填寫；若無可勾選「無」。',
         `<div class="row">
            <textarea class="field" id="eduField" ${S.eduNone?'disabled':''} aria-label="就讀專業領域" placeholder="
 大學是念心理系，主修工商心理學組。輔系是修讀企管系，同時有修AI學程。
@@ -280,7 +356,7 @@ try{
         break;
       case 3:
         qWrap('3. 我擅長的科目、做過的專題、論文或參與過的競賽：',
-        '例如：擅長科目有：人力資源管理、組織心理學、心理輔導、心理測驗、統計、SPSS。碩士論文：目標設定對工作動機的影響。博士論文：部屬對領導者的知覺與因應行為。請參考下方輸入框中的「範例」，依相同格式填寫；若無可勾選「無」。',
+        '請參考下方輸入框中的「範例」，依相同格式填寫；若無可勾選「無」。',
         `<div class="row">
            <textarea class="field" id="skillPaper" ${S.skillNone?'disabled':''} aria-label="擅長科目/論文/競賽" placeholder="
 擅長科目有：人力資源管理、組織心理學、心理輔導、心理測驗、統計、SPSS。
@@ -343,7 +419,7 @@ try{
         break;
       case 9:
         qWrap('9. 我最有心流時光的一次生命事件是？',
-        '所謂「心流時光」，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
         `<textarea class="field" id="flow1" placeholder="請用 1~2 句寫下 Time 與 Flow 的重點。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1)}</textarea>
          <label class="hint"><input type="checkbox" id="flow1None" ${S.flow1None?'checked':''}> 無</label>`);
         stage.querySelector('#flow1').oninput=e=>S.flow1=e.target.value;
@@ -352,7 +428,7 @@ try{
       case 10:
         qWrap('10. 我另一個比較有心流時光感覺的生命經歷是？',
         '例如：在人力銀行服務期間，負責培訓150位職涯引導師。',
-        `<textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二">${escape(S.flow2)}</textarea>
+        `<textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二" placeholder="請輸入你的第二個心流事件">${escape(S.flow2)}</textarea>
          <label class="hint"><input type="checkbox" id="flow2None" ${S.flow2None?'checked':''}> 無</label>`);
         stage.querySelector('#flow2').oninput=e=>S.flow2=e.target.value;
         stage.querySelector('#flow2None').onchange=e=>{S.flow2None=e.target.checked; render();};
@@ -360,7 +436,7 @@ try{
       case 11:
         qWrap('11. 我另一個比較有心流時光感覺的生命經歷是？',
         '例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
-        `<textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三">${escape(S.flow3)}</textarea>
+        `<textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三" placeholder="請輸入你的第三個心流事件">${escape(S.flow3)}</textarea>
          <label class="hint"><input type="checkbox" id="flow3None" ${S.flow3None?'checked':''}> 無</label>`);
         stage.querySelector('#flow3').oninput=e=>S.flow3=e.target.value;
         stage.querySelector('#flow3None').onchange=e=>{S.flow3None=e.target.checked; render();};
@@ -393,39 +469,26 @@ try{
         stage.innerHTML = progress()+`<section class="card" style="padding:16px">
           <div class="qtitle">彙整完成</div>
           <div class="hint">下方文字已包含 14 項彙整與 ABCDEF 七題請求。點「一鍵複製」即可貼上使用。</div>
-          <textarea id="out" aria-label="彙整文字">${escape(text)}</textarea>
+          <textarea id="out" aria-label="彙整文字" class="field">${escape(text)}</textarea>
           <div class="toolbar">
             <button class="btn" id="copy">Step.1 一鍵複製貼到ChatGPT的 Prompt</button>
-            <a class="btn secondary" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Step.2 開啟ChatGPT 貼上複製的 Prompt</a>
+            <button class="btn secondary" id="openChatGPT">Step.2 開啟 ChatGPT App / 網頁</button>
             <button class="btn ghost" id="restart">重新開始</button>
           </div>
         </section>`;
         document.getElementById('copy').onclick=async()=>{
-          const textArea = document.getElementById('out');
-          async function copyText(txt){
-            try{
-              if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(txt);
-                return true;
-              }
-            }catch(_){}
-            const ta=document.createElement('textarea');
-            ta.value=txt; ta.setAttribute('readonly','');
-            ta.style.position='fixed'; ta.style.top='-9999px'; ta.style.opacity='0';
-            document.body.appendChild(ta);
-            ta.focus(); ta.select(); ta.setSelectionRange(0, ta.value.length);
-            let ok=false; try{ ok=document.execCommand('copy'); }catch(_){ ok=false }
-            ta.remove();
-            return ok;
-          }
-          const ok = await copyText(text);
-          if(ok){ toast('已複製到剪貼簿！'); }
-          else{
-            textArea.focus(); textArea.select(); textArea.setSelectionRange(0, textArea.value.length);
-            alert('複製被瀏覽器阻擋，已幫你全選文字，請按 Ctrl/Cmd + C 複製');
-          }
+          const txt = document.getElementById('out').value;
+          try{
+            if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(txt);
+              toast('已複製到剪貼簿！');
+            }else{
+              fallbackCopy(txt);
+            }
+          }catch(_){ fallbackCopy(txt); }
         };
         document.getElementById('restart').onclick=()=>{ reset(); };
+        document.getElementById('openChatGPT').onclick=openChatGPTApp;
         break;
     }
   }
@@ -437,6 +500,17 @@ try{
     document.body.appendChild(n);
     setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity .3s';},1200);
     setTimeout(()=>n.remove(),1550);
+  }
+
+  function fallbackCopy(txt){
+    const ta=document.createElement('textarea');
+    ta.value=txt; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-9999px'; ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select(); ta.setSelectionRange(0, ta.value.length);
+    let ok=false; try{ ok=document.execCommand('copy'); }catch(_){ ok=false }
+    ta.remove();
+    if(ok){ toast('已複製到剪貼簿！'); } else { alert('複製被瀏覽器阻擋，請按 Ctrl/Cmd + C'); }
   }
 
   function escape(s){ return String(s??'').replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch])); }
@@ -454,7 +528,7 @@ try{
     flow2:'', flow2None:false,
     flow3:'', flow3None:false,
     valuesSel:[], interestsSel:[], miSel:[]
-  }); landing.hidden=false; stage.innerHTML=''; }
+  }); showLanding(); stage.innerHTML=''; }
 
   // ---------- 彙整文字（含 ABCDEF 七題） ----------
   function compiledText(){
@@ -464,65 +538,36 @@ try{
     const L4 = `4.我最近或目前從事的工作是：${S.jobNowNone?'無。':(S.jobNow||'')}`;
     const L5 = `5.我更早之前從事的工作是：${S.jobPrevNone?'無。':(S.jobPrev||'')}`;
     const L6 = `6.除了上述二個工作，我還從事過那個比較有成就感的工作是：${S.jobOtherNone?'無。':(S.jobOther||'')}`;
-    const L7 = `7.我的管理經驗有：${S.manageNone?'無。':(S.manageYears? S.manageYears+'年。':'')}`;
-    const L8 = `8.我擁有的證照：${S.licensesNone?'無。':(S.licenses||'')}`;
-    const L9 = `9.我最有心流時光的一次生命事件是：${S.flow1None?'無。':(S.flow1||'')}`;
-    const L10= `10.我另一個比較有心流時光感覺的生命經歷是：${S.flow2None?'無。':(S.flow2||'')}`;
-    const L11= `11.我另一個比較有心流時光感覺的生命經歷是：${S.flow3None?'無。':(S.flow3||'')}`;
-    const V12 = '12.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id})${findById(valuesOpts,id)}`).join('\n') : '未選擇');
-    const V13 = '13.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
-    const V14 = '14.我比較擅長的多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id})${findById(miOpts,id)}`).join('\n') : '未選擇');
+    const L7 = `7.我的管理經驗：${S.manageNone?'無。':(S.manageYears?S.manageYears+'年。':'（未填）')}`;
+    const L8 = `8.我擁有的證照：${S.licensesNone?'無。':(S.licenses||'（未填）')}`;
+    const L9 = `9.我最有心流時光的一次生命經歷是：${S.flow1None?'無。':(S.flow1||'（未填）')}`;
+    const L10 = `10.我另一個比較有心流時光感覺的生命經歷是：${S.flow2None?'無。':(S.flow2||'（未填）')}`;
+    const L11 = `11.我另一個比較有心流時光感覺的生命經歷是：${S.flow3None?'無。':(S.flow3||'（未填）')}`;
+    const L12 = '12.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id}) ${findById(valuesOpts,id)}`).join('\n') : '未選擇');
+    const L13 = '13.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
+    const L14 = '14.我比較擅長的多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id}) ${findById(miOpts,id)}`).join('\n') : '未選擇');
 
-    const ask = [
-      '請你擔任我的「AI執涯教練」，根據上述彙整的各項生涯發展與探索資訊，運用你的AI智慧，',
-      '回答我ABCDEFG這七個問題。',
-      '請一次性地回答下面ABCDEFG 七個的問題。',
-      '回答的格式，請用列點配合文字說明的方式呈現。',
-      '每個列表，請加上淺顯易懂的標題，讓我比較容易解讀。',
-      '在回答完最後一個問題G後，請你變成我的「AI職涯教練」，根據我提供的各項資訊與你對我的瞭解，提供我三個最適合的職涯發展建議。','',
-      '問題A. 解析我的五個熱情特質。',
-      '每個熱情特質的標題請用四個字，後面加上一句話。',
-      '#佐證資料：從心流時光、學經歷或心理測驗擇三點。',
-      '#摘要說明：每個熱情特質 200 字摘要。','',
-      '問題B. 解析我的五個專業才能。',
-      '每個專業才能的標題請用四個字，後面加上一句話。',
-      '#佐證資料：從心流時光、學經歷或心理測驗擇三點。',
-      '#摘要說明：每個專業才能 200 字摘要。','',
-      '問題C. 推薦我六個適合從事的職業。',
-      '#工作內容：100字。',
-      '#推薦原因：100字。',
-      '#思考問題：列三題。','',
-      '問題D. 推薦我六個適合加入的產業。',
-      '#產業現況與趨勢：100字。',
-      '#推薦原因：100字。',
-      '#思考問題：列三題。','',
-      '問題E. 推薦我二個適合從事的新興職業。',
-      '#工作內容：100字。',
-      '#推薦原因：100字。',
-      '#思考問題：列三題。','',
-      '問題F. 推薦我二個適合加入的新興產業。',
-      '#產業現況與趨勢：100字。',
-      '#推薦原因：100字。',
-      '#思考問題：列三題。','',
-      '問題G. 請以條列方式，彙整 ABCDEF 的直覺易懂摘要。',
-      '最後請直接給出 3 個個人化職涯發展建議。'
+    const tail = [
+'',
+'請根據上述彙整的各項生涯發展與探索資訊，回答我以下的問題（ABCDEF + G）：',
+'A. 我的熱情特質有哪些？請列出 5~8 個，並為每一項提供 1~2 句摘要與我的心流/學經歷對應佐證。',
+'B. 我的專業才能有哪些？請列出 5~8 個，並為每一項提供 1~2 句摘要與我的心流/學經歷對應佐證。',
+'C. 推薦我適合的職業清單（10~15 個），每個職業附上 1~2 句理由。',
+'D. 推薦我適合的產業領域（6~8 個），每個產業附 1~2 句理由。',
+'E. 推薦我 2030 以前的新興職業與產業（6~8 個），每項附 1~2 句理由。',
+'F. 請彙整成「我值得被看見的 1000 字職涯摘要」。',
+'G. 最後請提供 3 個「未來 90 天個人化職涯行動建議」。'
     ].join('\n');
 
-    return '「\n'+[L1,'',L2,'',L3,'',L4,'',L5,'',L6,'',L7,'',L8,'',L9,'',L10,'',L11,'',V12,'',V13,'',V14].join('\n')+'\n」\n\n「\n'+ask+'\n」';
+    return [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,'',tail].join('\n');
   }
 
-  // 初始
+  // 初始渲染
   render();
-} catch(err){
-  const stage = document.getElementById('stage');
-  const card = document.createElement('section');
-  card.className='card';
-  card.style.padding='16px';
-  card.innerHTML = '<div class="qtitle">預覽載入失敗</div><div class="hint">可能是預覽沙盒封鎖了 inline script。請改用 GitHub Pages (HTTPS) 或直接以瀏覽器開啟本檔案測試。錯誤：'
-    +(err && (err.message||String(err)))+'</div>';
-  (stage||document.body).appendChild(card);
-}
-});
+
+}catch(e){
+  console.error(e);
+}});
 </script>
 </body>
 </html>
