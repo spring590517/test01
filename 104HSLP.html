@@ -152,7 +152,7 @@
     club:'吉他社/教學組組長，偏鄉服務隊/活動部部長',
     riasec:[4,5],
     mi:[8,7,2],
-    flow1:'國一的寒假，參加四天三頁的全國大露營擔任小隊長。',
+    flow1:'國一的寒假，參加四天三夜的全國大露營擔任小隊長。',
     flow2:'國三升高一暑假，用二週的時間跟教會弟兄姊妹騎自行車環島。',
     flow3:'高一下學期，擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。',
     flow4:'高二上學期，擔任學校樂隊指揮，並在高二下帶領樂隊獲得全國軍樂競賽亞軍。',
@@ -287,8 +287,8 @@
         qWrap('5. 我比較擅長的三個多元智能？（選 3）','請從八個選項中選擇三個。', selStrip(miOpts, S.mi, S.mi) + chips(miOpts, S.mi, 3) + `<div class="hint">已選 ${S.mi.length} / 3</div>`);
         break;
       case 6:
-        qWrap('6. 我最有心流時光的一次生命事件是？','「所謂的『心流時光』，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流時光事件組合包含：Time。Flow。二個元素。第一句的 Time，表示這個心流時光事件發生的時間或背景。第二句的 Flow，簡述這個心流時光事件的內容重點。 例如：國一的寒假，參加四天三頁的全國大露營擔任小隊長。」', `<div class="row">
-          <textarea class="field" id="flow1" ${S.flow1_none?'disabled':''} placeholder="國一的寒假，參加四天三頁的全國大露營擔任小隊長。">${escapeHTML(S.flow1)}</textarea>
+        qWrap('6. 我最有心流時光的一次生命事件是？','「所謂的『心流時光』，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流時光事件組合包含：Time。Flow。二個元素。第一句的 Time，表示這個心流時光事件發生的時間或背景。第二句的 Flow，簡述這個心流時光事件的內容重點。 例如：國一的寒假，參加四天三夜的全國大露營擔任小隊長。」', `<div class="row">
+          <textarea class="field" id="flow1" ${S.flow1_none?'disabled':''} placeholder="國一的寒假，參加四天三夜的全國大露營擔任小隊長。">${escapeHTML(S.flow1)}</textarea>
           <label class="hint"><input type="checkbox" id="flow1n" ${S.flow1_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow1').oninput = e=> S.flow1 = e.target.value;
