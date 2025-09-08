@@ -327,13 +327,13 @@
         stage.querySelector('#flow5n').onchange = e=>{ S.flow5_none = e.target.checked; render(); };
         break;
       case 11:
-        qWrap('確認頁','請檢查是否需要返回修改，或下一步生成彙整。', `<div class="hint">按「生成召喚ChatGPT的Prompt→」即可生成。</div>`);
+        qWrap('生成召喚ChatGPT的Prompt','如果要返回修改內容，請點選「←上一題」。', `<div class="hint">如果要直接生成生成召喚ChatGPT的Prompt，請點「下一題→」。</div>`);
         break;
       case 12:
         const text = compileText();
         stage.innerHTML = `${progress()}<section class="card" style="padding:16px">
-          <div class="qtitle">生成召喚ChatGPT的Prompt→</div>
-          <div class="hint">點「Step.1 一鍵複製貼到ChatGPT的Prompt」，接著按「Step.2 開啟ChatGPT，貼上複製的Prompt」貼上使用。</div>
+          <div class="qtitle">將生成召喚ChatGPT的Prompt，複製到ChatGPT</div>
+          <div class="hint">點「Step.1 一鍵複製ChatGPT的Prompt」，接著按「Step.2 開啟ChatGPT，貼上複製的Prompt」貼上使用。</div>
           <textarea id="out" class="field" aria-label="生成召喚ChatGPT的Prompt">${escapeHTML(text)}</textarea>
           <div class="toolbar">
             <button class="btn" id="copy">Step.1 一鍵複製貼到ChatGPT的Prompt</button>
