@@ -218,7 +218,7 @@
     landing.hidden = (S.step >= 1);
     switch(S.step){
       case 1:
-        qWrap('1. 我目前就讀哪個大學、哪個科系？','請將「例如：政治大學中文系。」當作格式範例填寫。',`<input class="field" id="q1" placeholder="例如：政治大學中文系。" value="${escapeHTML(S.q1_uni)}" aria-label="大學與科系">`);
+        qWrap('1. 我目前就讀哪個大學、哪個科系？','請按照範例的格式撰寫。例如：「政治大學中文系」。',`<input class="field" id="q1" placeholder="政治大學中文系。" value="${escapeHTML(S.q1_uni)}" aria-label="大學與科系">`);
         stage.querySelector('#q1').oninput = e=> S.q1_uni = e.target.value;
         break;
       case 2:
