@@ -218,23 +218,23 @@
     landing.hidden = (S.step >= 1);
     switch(S.step){
       case 1:
-        qWrap('1. 我目前就讀哪個大學、哪個科系？','請按照範例的格式撰寫。例如：「政治大學中文系」。',`<input class="field" id="q1" placeholder="政治大學中文系。" value="${escapeHTML(S.q1_uni)}" aria-label="大學與科系">`);
+        qWrap('1. 我目前就讀哪個大學、哪個科系？','請按照範例的格式撰寫。例如：「政治大學中文系」。',`<input class="field" id="q1" placeholder="政治大學中文系" value="${escapeHTML(S.q1_uni)}" aria-label="大學與科系">`);
         stage.querySelector('#q1').oninput = e=> S.q1_uni = e.target.value;
         break;
       case 2:
-        qWrap('2. 我對目前就讀科系的喜歡程度？（五點量表）','例如：選擇(5)，非常喜歡目前就讀的科系。請從下列五個選項選擇其一。', chips(likeOpts, S.q2_like, (id)=>S.q2_like=id));
+        qWrap('2. 我對目前就讀科系的喜歡程度？（五點量表）','請從下列五個選項選擇其一。例如：選擇(5)，表示「非常喜歡」目前就讀的科系。', chips(likeOpts, S.q2_like, (id)=>S.q2_like=id));
         break;
       case 3:
-        qWrap('3. 我以前（高中職、國中…）參加過哪些社團，擔任什麼職務？','可多行輸入；若無可勾選「無」。', `<div class="row">
-          <textarea class="field" id="q3" ${S.q3_none?'disabled':''} placeholder="例如：\n吉他社教學組組長\n模擬聯合國社公關部部長">${escapeHTML(S.q3_club)}</textarea>
+        qWrap('3. 我以前（高中職、國中…）參加過哪些社團，擔任什麼職務？','請按照範例的格式撰寫。可輸入多個社團/職務，不同社團/職務間，請用「，」區隔。例如：吉他社/教學組組長，模擬聯合國社/公關部部長。若沒有參加社團，請勾選文字框下方的「無」。', `<div class="row">
+          <textarea class="field" id="q3" ${S.q3_none?'disabled':''} placeholder="吉他社/教學組組長，模擬聯合國社/公關部部長">${escapeHTML(S.q3_club)}</textarea>
           <label class="hint"><input type="checkbox" id="q3n" ${S.q3_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#q3').oninput = e=> S.q3_club = e.target.value;
         stage.querySelector('#q3n').onchange = e=>{ S.q3_none = e.target.checked; render(); };
         break;
       case 4:
-        qWrap('4. 我個人有什麼興趣或喜好？','可多行輸入；若無可勾選「無」。', `<div class="row">
-          <textarea class="field" id="q4" ${S.q4_none?'disabled':''} placeholder="例如：\n閱讀科幻小說\n打排球\n玩策略類線上遊戲">${escapeHTML(S.q4_hobby)}</textarea>
+        qWrap('4. 我個人有什麼興趣或喜好？','請按照範例的格式撰寫。可輸入多個興趣或喜好，不同興趣或喜好間，請用「，」區隔。例如：閱讀科幻小說，打排球，玩策略類線上遊戲。若沒有興趣或愛好，請勾選文字框下方的「無」。', `<div class="row">
+          <textarea class="field" id="q4" ${S.q4_none?'disabled':''} placeholder="閱讀科幻小說，打排球，玩策略類線上遊戲">${escapeHTML(S.q4_hobby)}</textarea>
           <label class="hint"><input type="checkbox" id="q4n" ${S.q4_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#q4').oninput = e=> S.q4_hobby = e.target.value;
