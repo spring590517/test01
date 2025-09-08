@@ -252,9 +252,9 @@
       case 8:
         const text = compileText();
         stage.innerHTML = `${progress()}<section class="card" style="padding:16px">
-          <div class="qtitle">彙整完成</div>
+          <div class="qtitle">生成召喚ChatGPT的Prompt→</div>
           <div class="hint">點「Step.1 一鍵複製貼到ChatGPT的 Prompt」，接著按「Step.2 開啟ChatGPT 貼上複製的 Prompt」貼上使用。</div>
-          <textarea id="out" class="field" aria-label="彙整文字">${escapeHTML(text)}</textarea>
+          <textarea id="out" class="field" aria-label="生成召喚ChatGPT的Prompt">${escapeHTML(text)}</textarea>
           <div class="toolbar">
             <button class="btn" id="copy">Step.1 一鍵複製貼到ChatGPT的 Prompt</button>
             <button class="btn secondary" id="openApp">Step.2 開啟ChatGPT 貼上複製的 Prompt</button>
