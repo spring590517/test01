@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+生成召喚 ChatGPT 的完整文字 →<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
@@ -158,7 +158,7 @@
     const pct = Math.round(Math.min(S.step,S.total)/S.total*100);
     return `<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div class="bar" style="width:${pct}%"></div></div>`;
   };
-  const nav = () => `<div class="toolbar">${S.step>1?'<button class="btn ghost" id="prev">← 上一題</button>':''}${S.step<S.total?'<button class="btn" id="next">下一題 →</button>':'<button class="btn" id="gen">生成召喚ChatGPT的完整文字→</button>'}</div>`;
+  const nav = () => `<div class="toolbar">${S.step>1?'<button class="btn ghost" id="prev">← 上一題</button>':''}${S.step<S.total?'<button class="btn" id="next">下一題 →</button>':'<button class="btn" id="gen">生成召喚ChatGPT的Prompt→</button>'}</div>`;
   const chips = (opts, selected, capOrSingle) => {
     const multi = Array.isArray(selected);
     let html = '<div class="grid cols-2">';
