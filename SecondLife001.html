@@ -278,7 +278,7 @@ try{
   function nav(){
     return '<div class="toolbar" role="toolbar" aria-label="導覽按鈕">'
       +(S.step>1&&S.step<=S.total?'<button class="btn ghost" id="prev" aria-label="上一題">← 上一題</button>':'')
-      +(S.step<S.total?'<button class="btn" id="next" aria-label="下一題">下一題 →</button>':'<button class="btn" id="gen" aria-label="產生彙整">生成召喚 ChatGPT 的完整文字 →</button>')
+      +(S.step<S.total?'<button class="btn" id="next" aria-label="下一題">下一題 →</button>':'<button class="btn" id="gen" aria-label="產生彙整">生成召喚ChatGPT的Prompt →</button>')
       +'</div>';
   }
   function chips(opts, selected, multi){
