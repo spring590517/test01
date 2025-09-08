@@ -149,14 +149,14 @@
     g1:2,
     g2_dept:'我是普通高中學生',
     g2_isHS:true,
-    club:'吉他社教學組組長；偏鄉服務隊活動部部長',
+    club:'吉他社/教學組組長，偏鄉服務隊/活動部部長',
     riasec:[4,5],
     mi:[8,7,2],
-    flow1:'大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
-    flow2:'人力銀行服務期間，負責培訓150位職涯引導師。',
-    flow3:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
-    flow4:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
-    flow5:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。'
+    flow1:'國一的寒假，參加四天三頁的全國大露營擔任小隊長。',
+    flow2:'國三升高一暑假，用二週的時間跟教會弟兄姊妹騎自行車環島。',
+    flow3:'高一下學期，擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。',
+    flow4:'高二上學期，擔任學校樂隊指揮，並在高二下帶領樂隊獲得全國軍樂競賽亞軍。',
+    flow5:'高二升高三暑假，擔任原鄉音樂夏令營副總召，陪伴原住民孩童進行音樂成果發表。'
   };
 
   /* --------- UI Helpers --------- */
@@ -264,17 +264,17 @@
         qWrap('1. 我目前就讀？','請從下列選項中，選出一個符合自己現況。', chips(gradeOpts, S.g1, (id)=>S.g1=id));
         break;
       case 2:
-        qWrap('2. 我目前是就讀哪一科？','技職高中請輸入科別；普通高中請勾選「我是普通高中學生」。', `
+        qWrap('2. 我目前是就讀哪一科？','技職高中請輸入科別，例如：資訊處理科。如果你是普通高中學生，請勾選文字框下方的「我是普通高中學生」選項。', `
           <div class="row">
-            <input class="field" id="dept" placeholder="例如：資訊處理科；若為普通高中請勾下方選項" value="${escapeHTML(S.g2_dept)}" ${S.g2_isHS?'disabled':''} aria-label="就讀科別">
+            <input class="field" id="dept" placeholder="資訊處理科" value="${escapeHTML(S.g2_dept)}" ${S.g2_isHS?'disabled':''} aria-label="就讀科別">
             <label class="hint"><input type="checkbox" id="hs" ${S.g2_isHS?'checked':''}> 我是普通高中學生</label>
           </div>`);
         stage.querySelector('#dept').oninput = e=> S.g2_dept = e.target.value;
         stage.querySelector('#hs').onchange = e=>{ S.g2_isHS = e.target.checked; if(S.g2_isHS){ S.g2_dept='我是普通高中學生'; } else { S.g2_dept=''; } render(); };
         break;
       case 3:
-        qWrap('3. 我在以前（高中職、國中...）參加過哪些社團，擔任什麼職務？','請輸入社團名稱與職務，可多行；若無請勾選「無」。', `<div class="row">
-          <textarea class="field" id="club" ${S.club_none?'disabled':''} placeholder="例如：\n吉他社教學組組長\n偏鄉服務隊活動部部長">${escapeHTML(S.club)}</textarea>
+        qWrap('3. 我在以前（高中職、國中...）參加過哪些社團，擔任什麼職務？','請按照範例的格式撰寫。可輸入多個社團/職務，不同社團/職務間，請用「，」區隔。例如：吉他社/教學組組長，偏鄉服務隊/活動部部長。', `<div class="row">
+          <textarea class="field" id="club" ${S.club_none?'disabled':''} placeholder="吉他社教學組組長，偏鄉服務隊活動部部長">${escapeHTML(S.club)}</textarea>
           <label class="hint"><input type="checkbox" id="clubn" ${S.club_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#club').oninput = e=> S.club = e.target.value;
@@ -287,40 +287,40 @@
         qWrap('5. 我比較擅長的三個多元智能？（選 3）','請從八個選項中選擇三個。', selStrip(miOpts, S.mi, S.mi) + chips(miOpts, S.mi, 3) + `<div class="hint">已選 ${S.mi.length} / 3</div>`);
         break;
       case 6:
-        qWrap('6. 我最有心流時光的一次生命事件是？','「所謂的『心流時光』，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流時光事件組合包含：Time。Flow。二個元素。第一句的 Time，表示這個心流時光事件發生的時間或背景。第二句的 Flow，簡述這個心流時光事件的內容重點。 例如：大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。」', `<div class="row">
-          <textarea class="field" id="flow1" ${S.flow1_none?'disabled':''} placeholder="例如：大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。">${escapeHTML(S.flow1)}</textarea>
+        qWrap('6. 我最有心流時光的一次生命事件是？','「所謂的『心流時光』，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流時光事件組合包含：Time。Flow。二個元素。第一句的 Time，表示這個心流時光事件發生的時間或背景。第二句的 Flow，簡述這個心流時光事件的內容重點。 例如：國一的寒假，參加四天三頁的全國大露營擔任小隊長。」', `<div class="row">
+          <textarea class="field" id="flow1" ${S.flow1_none?'disabled':''} placeholder="國一的寒假，參加四天三頁的全國大露營擔任小隊長。">${escapeHTML(S.flow1)}</textarea>
           <label class="hint"><input type="checkbox" id="flow1n" ${S.flow1_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow1').oninput = e=> S.flow1 = e.target.value;
         stage.querySelector('#flow1n').onchange = e=>{ S.flow1_none = e.target.checked; render(); };
         break;
       case 7:
-        qWrap('7. 我另一個比較有心流時光感覺的生命經歷是？','例如：在104人力銀行服務期間，負責培訓150位職涯引導師。', `<div class="row">
-          <textarea class="field" id="flow2" ${S.flow2_none?'disabled':''} placeholder="例如：在104人力銀行服務期間，負責培訓150位職涯引導師。">${escapeHTML(S.flow2)}</textarea>
+        qWrap('7. 我另一個比較有心流時光感覺的生命經歷是？','例如：國三升高一暑假，用二週的時間跟教會弟兄姊妹騎自行車環島。', `<div class="row">
+          <textarea class="field" id="flow2" ${S.flow2_none?'disabled':''} placeholder="國三升高一暑假，用二週的時間跟教會弟兄姊妹騎自行車環島。">${escapeHTML(S.flow2)}</textarea>
           <label class="hint"><input type="checkbox" id="flow2n" ${S.flow2_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow2').oninput = e=> S.flow2 = e.target.value;
         stage.querySelector('#flow2n').onchange = e=>{ S.flow2_none = e.target.checked; render(); };
         break;
       case 8:
-        qWrap('8. 我另一個比較有心流時光感覺的生命經歷是？','例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。', `<div class="row">
-          <textarea class="field" id="flow3" ${S.flow3_none?'disabled':''} placeholder="例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。">${escapeHTML(S.flow3)}</textarea>
+        qWrap('8. 我另一個比較有心流時光感覺的生命經歷是？','例如：高一下學期，擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。', `<div class="row">
+          <textarea class="field" id="flow3" ${S.flow3_none?'disabled':''} placeholder="高一下學期，擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。">${escapeHTML(S.flow3)}</textarea>
           <label class="hint"><input type="checkbox" id="flow3n" ${S.flow3_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow3').oninput = e=> S.flow3 = e.target.value;
         stage.querySelector('#flow3n').onchange = e=>{ S.flow3_none = e.target.checked; render(); };
         break;
       case 9:
-        qWrap('9. 我另一個比較有心流時光感覺的生命經歷是？','例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。', `<div class="row">
-          <textarea class="field" id="flow4" ${S.flow4_none?'disabled':''} placeholder="例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。">${escapeHTML(S.flow4)}</textarea>
+        qWrap('9. 我另一個比較有心流時光感覺的生命經歷是？','例如：高二上學期，擔任學校樂隊指揮，並在高二下帶領樂隊獲得全國軍樂競賽亞軍。', `<div class="row">
+          <textarea class="field" id="flow4" ${S.flow4_none?'disabled':''} placeholder="高二上學期，擔任學校樂隊指揮，並在高二下帶領樂隊獲得全國軍樂競賽亞軍。">${escapeHTML(S.flow4)}</textarea>
           <label class="hint"><input type="checkbox" id="flow4n" ${S.flow4_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow4').oninput = e=> S.flow4 = e.target.value;
         stage.querySelector('#flow4n').onchange = e=>{ S.flow4_none = e.target.checked; render(); };
         break;
       case 10:
-        qWrap('10. 我另一個比較有心流時光感覺的生命經歷是？','例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。', `<div class="row">
-          <textarea class="field" id="flow5" ${S.flow5_none?'disabled':''} placeholder="例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。">${escapeHTML(S.flow5)}</textarea>
+        qWrap('10. 我另一個比較有心流時光感覺的生命經歷是？','例如：高二升高三暑假，擔任原鄉音樂夏令營副總召，陪伴原住民孩童進行音樂成果發表。', `<div class="row">
+          <textarea class="field" id="flow5" ${S.flow5_none?'disabled':''} placeholder="高二升高三暑假，擔任原鄉音樂夏令營副總召，陪伴原住民孩童進行音樂成果發表。">${escapeHTML(S.flow5)}</textarea>
           <label class="hint"><input type="checkbox" id="flow5n" ${S.flow5_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow5').oninput = e=> S.flow5 = e.target.value;
