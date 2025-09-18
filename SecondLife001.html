@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>10分鐘打造你的AI生涯教練｜SecondLife Plus (Fixed)</title>
+<meta name="theme-color" content="#ff6600" />
+<title>10分鐘打造你的AI生涯教練｜SecondLife Plus (Scheme B)</title>
 <style>
   /* ---------- Base & Reset ---------- */
   *,*::before,*::after{box-sizing:border-box}
@@ -65,10 +66,25 @@
   @media(min-width:640px){.cols-2{grid-template-columns:1fr 1fr}}
   @media(min-width:900px){.cols-3{grid-template-columns:repeat(3,1fr)}}
 
-  .chip{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--ring);border-radius:999px;background:#fafbff;color:inherit;cursor:pointer;user-select:none;outline:none}
+  /* ----- SCHEME B: higher-contrast chips for mobile ----- */
+  .chip{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--ring);border-radius:999px;background:#f2f3f5;color:#1f2328;cursor:pointer;user-select:none;outline:none;font-weight:500}
   .chip b{font-variant-numeric:tabular-nums}
-  .chip.sel{background:#ffe9da;border-color:#ffd0ae}
+  .chip:hover{background:#e9eaee}
+  .chip:active{background:#ffd6bf}
   .chip:focus-visible{box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+
+  .chip.sel{background:#ffe0cc;border-color:#ff6600;color:#1f2328;position:relative;overflow:hidden}
+  .chip.sel::before{content:'';position:absolute;inset:0;border-radius:999px;background:rgba(255,102,0,.08);pointer-events:none}
+  .chip.sel[data-order]::after{content:attr(data-order);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a04300;font-weight:800;font-size:20px;line-height:1;pointer-events:none;width:32px;height:32px;margin:auto;border-radius:50%;background:#fff}
+
+  @media (prefers-color-scheme: dark){
+    .chip{background:#1c2430;color:#e7e9ee;border-color:#2c3340}
+    .chip:hover{background:#212b39}
+    .chip:active{background:#40332a}
+    .chip.sel{background:#3a2a22;border-color:#ff8a4a;color:#fff}
+    .chip.sel::before{background:rgba(255,138,74,.12)}
+    .chip.sel[data-order]::after{background:#2b211b;color:#ffd6bf}
+  }
 
   .progress{position:sticky;top:58px;height:10px;background:#e9ebf3;border-radius:999px;overflow:hidden;margin:0 0 14px}
   .bar{height:100%;background:var(--brand);width:0;transition:width .25s ease}
@@ -92,11 +108,6 @@
   .sel-pill button:focus-visible{outline:2px solid var(--brand)}
   .sel-pill button:hover{background:rgba(0,0,0,.06)}
 
-  /* Order-number overlay & soft orange film */
-  .chip.sel{position:relative;border-color:#ffd0ae;background:#fff}
-  .chip.sel::before{content:'';position:absolute;inset:0;border-radius:999px;background:rgba(255,102,0,.12);pointer-events:none}
-  .chip.sel::after{content:attr(data-order);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a04300;font-weight:800;font-size:20px;line-height:1;pointer-events:none;width:32px;height:32px;margin:auto;border-radius:50%;background:#fff}
-
   @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
   @keyframes popIn { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.05); opacity: 1 } 100% { transform: scale(1) } }
   .chip.sel::before{animation: fadeIn .18s ease-out}
@@ -114,13 +125,6 @@
   .toolbar-top{position:fixed;right:10px;top:10px;z-index:50;display:flex;gap:6px}
   .btn.icon{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center}
   .btn.icon small{font-weight:700}
-  /* --- Chip order badge --- */
-  .chip{position:relative;overflow:hidden}
-  .chip .ord{
-    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:22px;opacity:.25;pointer-events:none;
-    background:linear-gradient(0deg, rgba(255,153,0,.15), rgba(255,153,0,.15));
-  }
 </style>
 </head>
 
@@ -208,7 +212,7 @@ try{
     values:[14,1,2], interests:[4,5], mi:[8,7,2]
   };
 
-  // ---------- 啟動 / 載入（確保首頁僅出現在首頁） ----------
+  // ---------- 啟動 / 載入 ----------
   function hideLanding(){ landing.hidden = true; landing.setAttribute('aria-hidden','true'); }
   function showLanding(){ landing.hidden = false; landing.removeAttribute('aria-hidden'); }
   function start(){ S.step=1; hideLanding(); render(); }
