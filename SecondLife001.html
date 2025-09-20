@@ -172,7 +172,7 @@ try{
   const landing = document.getElementById('landing');
 
   // ---------- 狀態 ----------
-  const S = { step:0, total:14,
+  const S = { step:0, total:17,
     eduLevel:null,
     eduField:'', eduNone:false,
     skillPaper:'', skillNone:false,
@@ -184,6 +184,8 @@ try{
     flow1:'', flow1None:false,
     flow2:'', flow2None:false,
     flow3:'', flow3None:false,
+    flow4:'', flow4None:false,
+    flow5:'', flow5None:false,
     valuesSel:[], interestsSel:[], miSel:[]
   };
 
@@ -218,6 +220,8 @@ try{
     flow1:'大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
     flow2:'在人力銀行服務期間，負責培訓150位職涯引導師。',
     flow3:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+    flow4:'在人力銀行服務期間，負責培訓150位職涯引導師。',
+    flow5:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
     values:[14,1,2], interests:[4,5], mi:[8,7,2]
   };
 
@@ -239,6 +243,8 @@ try{
       flow1:sample.flow1, flow1None:false,
       flow2:sample.flow2, flow2None:false,
       flow3:sample.flow3, flow3None:false,
+      flow4:sample.flow4, flow4None:false,
+      flow5:sample.flow5, flow5None:false,
       valuesSel:sample.values.slice(), interestsSel:sample.interests.slice(), miSel:sample.mi.slice()
     });
     hideLanding(); render();
@@ -291,7 +297,12 @@ try{
   function nav(){
     return '<div class="toolbar" role="toolbar" aria-label="導覽按鈕">'
       +(S.step>1&&S.step<=S.total?'<button class="btn ghost" id="prev" aria-label="上一題">← 上一題</button>':'')
-      +(S.step<S.total?'<button class="btn" id="next" aria-label="下一題">下一題 →</button>':'<button class="btn" id="gen" aria-label="產生彙整">生成召喚ChatGPT的Prompt →</button>')
+      +((S.step===16)
+  ? '<button class="btn" id="gen" aria-label="產生彙整">生成召喚ChatGPT的Prompt →</button>'
+  : (S.step<S.total
+      ? '<button class="btn" id="next" aria-label="下一題">下一題 →</button>'
+      : '<button class="btn" id="gen" aria-label="產生彙整">生成召喚ChatGPT的Prompt →</button>')
+)
       +'</div>';
   }
   function chips(opts, selected, multi){
@@ -330,7 +341,7 @@ try{
     stage.innerHTML = progress()+`<section class="card" style="padding:16px" aria-live="polite"><div class="qtitle">${title}</div>${hint?`<div class="hint">${hint}</div>`:''}<div class="grid" style="margin-top:10px">${inner}</div>${nav()}</section>`;
     const p=stage.querySelector('#prev'); if(p) p.onclick=()=>{S.step--; render();};
     const n=stage.querySelector('#next'); if(n) n.onclick=()=>{S.step++; render();};
-    const g=stage.querySelector('#gen'); if(g) g.onclick=()=>{S.step=15; render();};
+    const g=stage.querySelector('#gen'); if(g) g.onclick=()=>{S.step=17; render();};
     const firstFocusable = stage.querySelector('input, textarea, .chip, .btn');
     if(firstFocusable) firstFocusable.focus({preventScroll:true});
   }
@@ -450,30 +461,46 @@ try{
         stage.querySelector('#flow3None').onchange=e=>{S.flow3None=e.target.checked; render();};
         break;
       case 12:
-        qWrap('12. 我比較在乎的三個職業價值觀是？',
+        qWrap('12. 我另一個比較有心流時光感覺的生命經歷是？',
+        '例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+        `<textarea class="field" id="flow4" ${S.flow4None?'disabled':''} aria-label="心流事件四" placeholder="請輸入你的第四個心流事件">${escape(S.flow4)}</textarea>
+         <label class="hint"><input type="checkbox" id="flow4None" ${S.flow4None?'checked':''}> 無</label>`);
+        stage.querySelector('#flow4').oninput=e=>S.flow4=e.target.value;
+        stage.querySelector('#flow4None').onchange=e=>{S.flow4None=e.target.checked; render();};
+        break;
+      case 13:
+        qWrap('13. 我另一個比較有心流時光感覺的生命經歷是？',
+        '例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+        `<textarea class="field" id="flow5" ${S.flow4None?'disabled':''} aria-label="心流事件五" placeholder="請輸入你的第五個心流事件">${escape(S.flow5)}</textarea>
+         <label class="hint"><input type="checkbox" id="flow5None" ${S.flow5None?'checked':''}> 無</label>`);
+        stage.querySelector('#flow5').oninput=e=>S.flow5=e.target.value;
+        stage.querySelector('#flow5None').onchange=e=>{S.flow5None=e.target.checked; render();};
+        break;
+      case 14:
+        qWrap('14. 我比較在乎的三個職業價值觀是？',
         '請點選三個在乎的職業價值觀。<a href="https://guide.104.com.tw/value/" target="_blank" rel="noopener">（若不清楚，可先做「職業價值觀測驗」）</a>',
         selView(valuesOpts,S.valuesSel)+
         chips(valuesOpts,S.valuesSel,true)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
         bindChips(id=>{toggleMulti(S.valuesSel,id,3)});
         break;
-      case 13:
-        qWrap('13. 我比較來勁的二個生涯興趣？',
+      case 15:
+        qWrap('15. 我比較來勁的二個生涯興趣？',
         '請點選二個來勁的生涯興趣。<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">（若不清楚，可先做「生涯興趣測驗」）</a>',
         selView(interestOpts,S.interestsSel)+
         chips(interestOpts,S.interestsSel,true)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
         bindChips(id=>{toggleMulti(S.interestsSel,id,2)});
         break;
-      case 14:
-        qWrap('14. 我比較擅長的三個多元智能？','請點選三個比較擅長的多元智能。',
+      case 16:
+        qWrap('16. 我比較擅長的三個多元智能？','請點選三個比較擅長的多元智能。',
           selView(miOpts,S.miSel)+
           chips(miOpts,S.miSel,true)+`<div class="hint">已選 ${S.miSel.length} / 3</div>`);
         bindChips(id=>{toggleMulti(S.miSel,id,3)});
         break;
-      case 15:
+      case 17:
         const text = compiledText();
         stage.innerHTML = progress()+`<section class="card" style="padding:16px">
           <div class="qtitle">彙整完成</div>
-          <div class="hint">下方文字已包含 14 項彙整與 ABCDEF 七題請求。點「一鍵複製」即可貼上使用。</div>
+          <div class="hint">下方文字已包含 16 項彙整與 ABCDEFG 七題請求。點「一鍵複製」即可貼上使用。</div>
           <textarea id="out" aria-label="彙整文字" class="field">${escape(text)}</textarea>
           <div class="toolbar">
             <button class="btn" id="copy">Step.1 一鍵複製貼到ChatGPT的 Prompt</button>
@@ -532,6 +559,8 @@ try{
     flow1:'', flow1None:false,
     flow2:'', flow2None:false,
     flow3:'', flow3None:false,
+    flow4:'', flow4None:false,
+    flow5:'', flow5None:false,
     valuesSel:[], interestsSel:[], miSel:[]
   }); showLanding(); stage.innerHTML=''; }
 
@@ -548,15 +577,17 @@ try{
     const L9 = `9.我最有心流時光的一次生命經歷是：${S.flow1None?'無。':(S.flow1||'（未填）')}`;
     const L10 = `10.我另一個比較有心流時光感覺的生命經歷是：${S.flow2None?'無。':(S.flow2||'（未填）')}`;
     const L11 = `11.我另一個比較有心流時光感覺的生命經歷是：${S.flow3None?'無。':(S.flow3||'（未填）')}`;
-    const L12 = '12.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id}) ${findById(valuesOpts,id)}`).join('\n') : '未選擇');
-    const L13 = '13.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
-    const L14 = '14.我比較擅長的多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id}) ${findById(miOpts,id)}`).join('\n') : '未選擇');
+    const L12 = `12.我另一個比較有心流時光感覺的生命經歷是：${S.flow4None?'無。':(S.flow4||'（未填）')}`;
+    const L13 = `13.我另一個比較有心流時光感覺的生命經歷是：${S.flow5None?'無。':(S.flow5||'（未填）')}`;
+    const L14 = '14.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id}) ${findById(valuesOpts,id)}`).join('\n') : '未選擇');
+    const L15 = '15.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
+    const L16 = '16.我比較擅長的多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id}) ${findById(miOpts,id)}`).join('\n') : '未選擇');
 
     const tail = [
 '',
 '請根據上述彙整的各項生涯發展與探索資訊，回答我以下的問題。回答的內容，請用條列方式呈現，方便我的閱讀。',
-'A. 我有哪五個比較明確的熱情特質？每個熱情特質的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個熱情特質。接著列出每個熱情特質，與我提供那些資料有關。請詳細列舉出資料中的具體內容加以說明。並針對每個熱情特質提供200個字的「摘要說明」。',
-'B. 我有哪五個比較明確的專業才能？每個專業才能的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個專業才能。接著列出每個專業才能，與我提供那些資料有關。請詳細列舉出資料中的具體內容加以說明。並針對每個專業才能提供200個字的「摘要說明」。',
+'A. 我有哪六個比較明確的熱情特質？每個熱情特質的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個熱情特質。接著列出每個熱情特質，與我提供的五項心流時光（第9至13題）及各項資料（第1至8題，及第14至16題）中的哪些資料有關。請詳細列舉出資料中的具體內容加以說明。並針對每個熱情特質提供200個字的「摘要說明」。',
+'B. 我有哪六個比較明確的專業才能？每個專業才能的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個專業才能。接著列出每個專業才能，與我提供的五項心流時光（第9至13題）及各項資料（第1至8題，及第14至16題）中的哪些資料有關。請詳細列舉出資料中的具體內容加以說明。並針對每個專業才能提供200個字的「摘要說明」。',
 'C. 推薦我適合從事的六個職業。每個推薦的職業，請用100個字介紹這個職業。並請說明這個職業目前發展的現況及未來發展的趨勢。最後請提供150個字說明為何推薦我從事這個職業。',
 'D. 推薦我適合加入的六個產業，每個推薦的產業，請用100個字介紹這個產業。並請說明這個產業目前發展的現況及未來發展的趨勢。最後請提供150個字說明為何推薦我加入這個產業。',
 'E. 推薦我適合從事的二個新興職業。每個推薦的新興職業，請用100個字介紹這個新興職業。並請說明這個新興職業目前發展的現況及未來發展的趨勢。最後請提供150個字說明為何推薦我從事這個新興職業。',
@@ -564,7 +595,7 @@ try{
 'G. 根據你對問題ABCDEF的解析，推薦我最適合發展的三個職涯領域。每個推薦的職涯領域，請問200個字具體說明推薦的原因。並且說明這個職涯領域的發展現況與未來趨勢。',
     ].join('\n');
 
-    return [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,'',tail].join('\n');
+    return [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15,L16,'',tail].join('\n');
   }
 
   // 初始渲染
