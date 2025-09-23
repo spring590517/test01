@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PAC 五種自我狀態測驗（單題式）</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --deep-green:#0f5132; --mid-green:#198754; }
+    html { font-size: 100%; }
+    body { color: var(--deep-green); }
+    .btn-lg { width:100%; padding:.9rem 1rem; border-radius:1rem; border:1px solid #d1fae5; text-align:center; font-weight:600; }
+    .opt { width:100%; padding:1.2rem 1rem; border-radius:1rem; border:1px solid #d1fae5; text-align:center; font-weight:700; font-size:1.125rem; }
+    .opt:focus-visible { outline: 2px solid var(--mid-green); outline-offset: 3px; }
+    .shadow-soft { box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+    .bar { background: linear-gradient(90deg, #19875433, #19875488); }
+    .btn-ghost { padding:.25rem .5rem; border:1px solid #d1fae5; border-radius:.5rem; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+  </style>
+</head>
+<body class="bg-white min-h-screen">
+  <!-- 頂端：上一題 / 進度 / 字級 -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b">
+    <div class="max-w-md mx-auto px-4 py-3">
+      <div class="flex items-center justify-between text-sm mb-2">
+        <button id="btnBack" class="btn-ghost hover:bg-emerald-50">上一題</button>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span id="progressText" class="font-medium">0 / 50</span>
+            <span id="progressPercent" class="text-emerald-700">0%</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button id="btnFontSmall" class="btn-ghost hover:bg-emerald-50" aria-label="字體變小">A-</button>
+            <button id="btnFontLarge" class="btn-ghost hover:bg-emerald-50" aria-label="字體變大">A+</button>
+          </div>
+        </div>
+      </div>
+      <div class="w-full h-3 bg-emerald-50 rounded-full overflow-hidden">
+        <div id="progressBar" class="h-3 bar rounded-full" style="width:0%"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto px-4 py-6">
+    <!-- 指導語 -->
+    <section id="intro" class="p-5 border rounded-2xl shadow-soft bg-white">
+      <h1 class="text-xl font-bold mb-3">指導語</h1>
+      <p class="leading-relaxed">
+        請根據您對自己在日常工作、生活、學習...與人的互動、溝通，回答以下的問題。<br/>
+        如果您的狀況符合問題描述的內容，請點選「符合」。<br/>
+        如果您的狀況不符合問題描述的內容，請點選「不符合」。<br/>
+        如果您不確定個人的狀況是否符合問題描述的內容，請點選「不確定」。
+      </p>
+      <button id="btnStart" class="btn-lg mt-4 hover:bg-emerald-50">開始作答</button>
+    </section>
+
+    <!-- 題目區（單題顯示） -->
+    <section id="quiz" class="hidden">
+      <div id="qCard" class="p-5 border rounded-2xl shadow-soft bg-white">
+        <div class="text-sm text-emerald-900/70 mb-2">第 <span id="qNum">01</span> 題</div>
+        <div id="qText" class="text-lg font-medium leading-relaxed mb-5">題目文字</div>
+        <div class="space-y-3">
+          <button class="opt hover:bg-emerald-50" data-val="yes">符合</button>
+          <button class="opt hover:bg-emerald-50" data-val="maybe">不確定</button>
+          <button class="opt hover:bg-emerald-50" data-val="no">不符合</button>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center justify-between text-sm">
+        <button id="btnPrev" class="btn-ghost hover:bg-emerald-50">上一題</button>
+        <button id="btnNext" class="btn-ghost hover:bg-emerald-50">下一題</button>
+      </div>
+    </section>
+
+    <!-- 結果區 -->
+    <section id="resultWrap" class="hidden">
+      <div class="p-5 border rounded-2xl shadow-soft bg-white">
+        <h2 class="text-lg font-semibold mb-4">測驗結果</h2>
+        <div id="resultList" class="space-y-3"></div>
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <button id="btnGoFirst" class="btn-lg hover:bg-emerald-50">回到第1題</button>
+          <button id="btnRestart" class="btn-lg hover:bg-emerald-50">重新作答</button>
+          <button id="btnExport" class="btn-lg hover:bg-emerald-50">下載結果（CSV）</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 測試輸出（隱藏） -->
+    <div id="__test_status" class="sr-only"></div>
+  </main>
+
+  <script>
+    'use strict';
+    // 題目
+    const QUESTIONS = [
+      "我經常用『你應該…』『你最好…』的語氣說話。",
+      "我經常說：『我可以幫你…』『你需不需要我的協助…』。",
+      "我經常說：『根據我的分析…』『根據資料顯示…』。",
+      "我經常用：『哇！喔！耶！太棒了！…』的語句說話。",
+      "我經常說：『不好意思、抱歉』『好，我會再試試看！…』。",
+      "與人談話時，我會想迫不及待地抒發己見。",
+      "我很能體貼與關心朋友。",
+      "行動前，我會先衡量利弊得失。",
+      "行事時，我要比別人來得隨心所欲。",
+      "我不太習慣主動將心中想的事情告訴別人。",
+      "我對人就事論事，會主動點出對方的缺失，讓對方有所成長。",
+      "與人相處時，我會重視對方的感覺。",
+      "與人對談時，我比較少訴諸情感。",
+      "我對任何事情常常抱有好奇心。",
+      "我希望自己讓別人喜歡。",
+      "我會嚴守約會時間，很有時間觀念。",
+      "發現對方的優點時，我會主動找機會稱讚他。",
+      "下決定前，我會仔細分析、慎重考慮。",
+      "我喜歡冒險，嘗試做一些自己沒做過的事。",
+      "我不能接受有人討厭或不喜歡我。",
+      "我懷抱理想，而且會努力地想實現理想。",
+      "受他人之託，我不會覺得厭煩。",
+      "我能很快地做出決斷，不會有任何人情包袱的壓力。",
+      "我是有話直說，做事毫不猶豫的人。",
+      "通常是我自己先與別人妥協，而不是對方讓步。",
+      "我重視社會的規範、倫理與道德。",
+      "當別人請我幫忙時，我不太會拒絕。",
+      "我喜歡事實、證據或數據，做為判斷的主要參考依據。",
+      "我會執著於自己想要的東西或要做的事。",
+      "我會在乎別人的臉色、眼光或評價。",
+      "我會要求別人要有責任感，而且不喜歡做事散漫的人。",
+      "當他人難過時，我會主動關心他的狀況。",
+      "我凡事講求理性，較少情緒化。",
+      "我覺得自己的想法比別人來得有創意。",
+      "我會覺得自己在很多地方都比不過別人。",
+      "我做事不打馬虎眼，不放過小瑕疵。",
+      "我願意原諒別人對我的錯誤或傷害。",
+      "我行事按步就班，絕不拖延時間。",
+      "興緻一來時，我常常埋頭苦幹，廢寢忘食。",
+      "我會努力達成別人對自己的期望。",
+      "我會熱心指導弟妹或同事（學），但我也會嚴格要求他們。",
+      "我能夠平靜地傾聽完別人的談話。",
+      "行事前，我會訂定詳細的計畫。",
+      "我敢於與眾不同，敢實現夢想。",
+      "我常覺得自己過於壓抑自己的夢想與情緒。",
+      "在要求自己的權利之前，我必先盡自己的義務。",
+      "我會因為『人』的考量而優柔寡斷。",
+      "我不喜歡執行模糊、不明確，無法證明自己成就或績效的任務。",
+      "當我喜歡的東西無法到手時，我會覺得很難過。",
+      "我覺得現在的我，不像真正的自己，或應該有的自己。",
+    ];
+
+    // 向度對應題號
+    const DIM_MAP = {
+      CP: [1,6,11,16,21,26,31,36,41,46],
+      NP: [2,7,12,17,22,27,32,37,42,47],
+      A:  [3,8,13,18,23,28,33,38,43,48],
+      FC: [4,9,14,19,24,29,34,39,44,49],
+      AC: [5,10,15,20,25,30,35,40,45,50],
+    };
+
+    const LABELS = {
+      CP: "CP.掌控型父母",
+      NP: "NP.撫育型父母",
+      A:  "A.理智型成人",
+      FC: "FC.自由型小孩",
+      AC: "AC.順應型小孩",
+    };
+
+    const VALUE_MAP = { yes:2, maybe:1, no:0 };
+
+    // DOM
+    const intro = document.getElementById('intro');
+    const quiz = document.getElementById('quiz');
+    const qNum = document.getElementById('qNum');
+    const qText = document.getElementById('qText');
+    const progressText = document.getElementById('progressText');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressBar = document.getElementById('progressBar');
+    const btnStart = document.getElementById('btnStart');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const btnBackTop = document.getElementById('btnBack');
+    const btnFontSmall = document.getElementById('btnFontSmall');
+    const btnFontLarge = document.getElementById('btnFontLarge');
+
+    const resultWrap = document.getElementById('resultWrap');
+    const resultList = document.getElementById('resultList');
+    const btnRestart = document.getElementById('btnRestart');
+    const btnExport = document.getElementById('btnExport');
+    const btnGoFirst = document.getElementById('btnGoFirst');
+
+    // 字級控制
+    let baseFontPct = 100; // 80 ~ 150
+    const applyFont = () => { document.documentElement.style.fontSize = baseFontPct + '%'; };
+
+    let idx = 0; // 0-based
+    const answers = Array(50).fill(null); // 0/1/2
+
+    const toPercent = (v) => Math.round(v*100);
+
+    function updateProgressUI(){
+      const answered = answers.filter(v => v !== null).length;
+      progressText.textContent = `${answered} / 50`;
+      progressPercent.textContent = `${toPercent(answered/50)}%`;
+      progressBar.style.width = `${toPercent(answered/50)}%`;
+    }
+
+    function setQuestion(i){
+      idx = Math.max(0, Math.min(49, i));
+      qNum.textContent = String(idx+1).padStart(2,'0');
+      qText.textContent = QUESTIONS[idx];
+      // 控制上一題/下一題狀態與文案
+      btnPrev.disabled = idx === 0;
+      btnBackTop.disabled = idx === 0;
+      btnNext.textContent = (idx === 49 ? '看結果' : '下一題');
+      btnNext.disabled = false;
+    }
+
+    function autoAdvance(){
+      if(idx < 49){ setQuestion(idx+1); window.scrollTo({top:0, behavior:'smooth'}); }
+      else { finishAndShow(); }
+    }
+
+    function calcScores(){
+      const scores = { CP:0, NP:0, A:0, FC:0, AC:0 };
+      for (const k of Object.keys(DIM_MAP)){
+        for (const n of DIM_MAP[k]){
+          const v = answers[n-1];
+          if(v !== null) scores[k] += v;
+        }
+      }
+      return scores;
+    }
+
+    function finishAndShow(){
+      // 未答完提醒，但允許先看結果
+      const unanswered = answers.reduce((acc,v,i)=>{ if(v===null) acc.push(i+1); return acc; }, []);
+      if(unanswered.length){
+        const first = String(unanswered[0]).padStart(2,'0');
+        if(!confirm(`尚有 ${unanswered.length} 題未作答（最前面：${first}）。
+仍要產生結果嗎？`)){
+          setQuestion(unanswered[0]-1); return;
+        }
+      }
+      const s = calcScores();
+      renderResults(s);
+      quiz.classList.add('hidden');
+      resultWrap.classList.remove('hidden');
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function renderResults(scores){
+      resultList.innerHTML = '';
+      const order = ['CP','NP','A','FC','AC'];
+      order.forEach(key =>{
+        const row = document.createElement('div');
+        row.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <div class="font-medium">${LABELS[key]}</div>
+            <div class="tabular-nums font-semibold">${scores[key]}</div>
+          </div>
+          <div class="w-full h-3 bg-emerald-50 rounded-full overflow-hidden">
+            <div class="h-3 bar" style="width:${Math.round(scores[key]/20*100)}%"></div>
+          </div>`;
+        resultList.appendChild(row);
+      });
+    }
+
+    function exportCSV(scores){
+      const lines = [
+        'Dimension,Score',
+        `CP,${scores.CP}`,
+        `NP,${scores.NP}`,
+        `A,${scores.A}`,
+        `FC,${scores.FC}`,
+        `AC,${scores.AC}`,
+      ];
+      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `PAC_scores_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+
+    // 綁定事件
+    document.getElementById('qCard').addEventListener('click', (e)=>{
+      const btn = e.target.closest('.opt');
+      if(!btn) return;
+      const val = btn.getAttribute('data-val');
+      answers[idx] = VALUE_MAP[val];
+      updateProgressUI();
+      autoAdvance();
+    });
+
+    btnStart?.addEventListener('click', ()=>{
+      intro.classList.add('hidden');
+      quiz.classList.remove('hidden');
+      setQuestion(0); updateProgressUI();
+    });
+
+    btnPrev.addEventListener('click', ()=>{ setQuestion(idx-1); window.scrollTo({top:0, behavior:'smooth'}); });
+    btnNext.addEventListener('click', ()=>{ if(idx===49){ finishAndShow(); } else { setQuestion(idx+1); } window.scrollTo({top:0, behavior:'smooth'}); });
+    btnBackTop.addEventListener('click', ()=>{ setQuestion(idx-1); window.scrollTo({top:0, behavior:'smooth'}); });
+
+    // 結果按鈕
+    btnRestart.addEventListener('click', ()=>{
+      for(let i=0;i<answers.length;i++) answers[i]=null;
+      resultWrap.classList.add('hidden');
+      intro.classList.remove('hidden');
+      updateProgressUI();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+    btnExport.addEventListener('click', ()=> exportCSV(calcScores()));
+    btnGoFirst.addEventListener('click', ()=>{
+      for(let i=0;i<answers.length;i++) answers[i]=null;
+      resultWrap.classList.add('hidden');
+      quiz.classList.remove('hidden');
+      setQuestion(0);
+      updateProgressUI();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    // 字級控制
+    btnFontSmall?.addEventListener('click', ()=>{ baseFontPct = Math.max(80, baseFontPct-10); applyFont(); });
+    btnFontLarge?.addEventListener('click', ()=>{ baseFontPct = Math.min(150, baseFontPct+10); applyFont(); });
+    applyFont();
+
+    // ---- 簡易測試（不影響使用者操作） ----
+    (function runTests(){
+      const results=[];
+      const assert=(cond,name)=>{ results.push({name, pass: !!cond}); if(!cond){ console.error('Test failed:', name);} };
+      // 1) 維度數量
+      assert(Object.keys(DIM_MAP).length===5, '共有 5 個向度');
+      // 2) 每向度 10 題
+      for(const k in DIM_MAP){ assert(DIM_MAP[k].length===10, `${k} 向度包含 10 題`); }
+      // 3) 題號覆蓋 1..50（不重複）
+      const all=[...new Set([].concat(...Object.values(DIM_MAP)))].sort((a,b)=>a-b);
+      assert(all.length===50 && all[0]===1 && all[49]===50, '題號完整覆蓋 1..50');
+      // 4) 純函式測試：全部 2 分 → 每向度 20 分；全部 0 分 → 每向度 0 分
+      const calcScoresFrom=(arr)=>{
+        const s={CP:0,NP:0,A:0,FC:0,AC:0};
+        for(const k in DIM_MAP){ for(const n of DIM_MAP[k]) s[k]+= arr[n-1] ?? 0; }
+        return s;
+      };
+      let s=calcScoresFrom(Array(50).fill(2));
+      console.assert(s.CP===20 && s.NP===20 && s.A===20 && s.FC===20 && s.AC===20, '全選符合 → 各向度 20 分');
+      s=calcScoresFrom(Array(50).fill(0));
+      console.assert(s.CP===0 && s.NP===0 && s.A===0 && s.FC===0 && s.AC===0, '全選不符合 → 各向度 0 分');
+      document.getElementById('__test_status').textContent = results.every(r=>r.pass) ? 'TESTS PASS' : JSON.stringify(results);
+    })();
+  </script>
+</body>
+</html>
