@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#ff6600" />
-<title>10分鐘打造你的AI生涯教練｜SecondLife Plus (Scheme B v4 text-only selected list)</title>
+<title>10分鐘打造你的AI生涯教練｜SecondLife Plus (Flow explainer inserted)</title>
 <style>
   /* ---------- Base & Reset ---------- */
   *,*::before,*::after{box-sizing:border-box}
@@ -52,7 +52,7 @@
   .btn:hover{background:var(--brand-600)}
   .btn:active{transform:translateY(1px)}
   .btn.secondary{background:#444e60}
-  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--ring)}
+  .btn.ghost{background:transparent;color:#1f2328;border-color:var(--ring)}
   .btn.block{width:100%;justify-content:center}
 
   .toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
@@ -104,12 +104,12 @@
   /* ---- Selected items strip (Q12-14) text-only ---- */
   .sel-strip{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 10px}
   .sel-pill{
-    background:transparent;    /* 無底色 */
-    border:none;               /* 無邊框 */
-    color:#1f2328;             /* 深字 */
-    font-weight:600;           /* 微加粗 */
+    background:transparent;
+    border:none;
+    color:#1f2328;
+    font-weight:600;
     font-size:var(--fs-14);
-    padding:0;                 /* 無內距 */
+    padding:0;
   }
   .sel-pill b{font-variant-numeric:tabular-nums;color:#a04300}
   @media (prefers-color-scheme: dark){
@@ -172,7 +172,7 @@ try{
   const landing = document.getElementById('landing');
 
   // ---------- 狀態 ----------
-  const S = { step:0, total:17,
+  const S = { step:0, total:18,
     eduLevel:null,
     eduField:'', eduNone:false,
     skillPaper:'', skillNone:false,
@@ -297,7 +297,7 @@ try{
   function nav(){
     return '<div class="toolbar" role="toolbar" aria-label="導覽按鈕">'
       +(S.step>1&&S.step<=S.total?'<button class="btn ghost" id="prev" aria-label="上一題">← 上一題</button>':'')
-      +((S.step===16)
+      +((S.step===17)
   ? '<button class="btn" id="gen" aria-label="產生彙整">生成召喚ChatGPT的Prompt →</button>'
   : (S.step<S.total
       ? '<button class="btn" id="next" aria-label="下一題">下一題 →</button>'
@@ -341,7 +341,7 @@ try{
     stage.innerHTML = progress()+`<section class="card" style="padding:16px" aria-live="polite"><div class="qtitle">${title}</div>${hint?`<div class="hint">${hint}</div>`:''}<div class="grid" style="margin-top:10px">${inner}</div>${nav()}</section>`;
     const p=stage.querySelector('#prev'); if(p) p.onclick=()=>{S.step--; render();};
     const n=stage.querySelector('#next'); if(n) n.onclick=()=>{S.step++; render();};
-    const g=stage.querySelector('#gen'); if(g) g.onclick=()=>{S.step=17; render();};
+    const g=stage.querySelector('#gen'); if(g) g.onclick=()=>{S.step=18; render();};
     const firstFocusable = stage.querySelector('input, textarea, .chip, .btn');
     if(firstFocusable) firstFocusable.focus({preventScroll:true});
   }
@@ -437,70 +437,91 @@ try{
         stage.querySelector('#licensesNone').onchange=e=>{S.licensesNone=e.target.checked; render();};
         break;
       case 9:
-        qWrap('9. 我最有心流時光的一次生命經歷是？',
+        qWrap('心流時光說明','',
+         `<div style="line-height:1.8">
+            <p>♨ <b>何謂心流？</b><br>
+            當您在做一件自己全心投入熱愛的事，即便這件事需要您用盡所有的心力，但您仍覺得自己充滿能量，這時您就是進入了「心流」狀態。</p>
+
+            <p>😀 <b>進入心流時光會有什麼感受？</b><br>
+            有成就感、有挑戰感<br>
+            如魚得水、心想事成<br>
+            欲罷不能、忘記時間</p>
+
+            <p>★ <b>心流時光常會出現在這些生命經歷？</b><br>
+            曾參與過的活動：社團、球隊、教育訓練、留學交換、旅行…<br>
+            互動合作過的人：好友、同學、師長、幫助您的人、背叛您的人…<br>
+            看過的書或影片：漫畫、小說、散文、繪本、電影、動漫、連續劇…<br>
+            重要的人生經歷：做過的工作、去過的地方、得過的榮譽、失去的…</p>
+
+            <p>👉 接下來要您用直覺的方式，寫出「五個」讓您最有心流時光的生命事件。<br>
+            每段心流事件包含：<b>Time（時間/背景）</b>、<b>Flow（內容重點）</b>二個元素。</p>
+          </div>`);
+        break;
+      case 10:
+        qWrap('10. 我最有心流時光的一次生命經歷是？',
         '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。',
         `<textarea class="field" id="flow1" placeholder="請用 1~2 句寫下 Time 與 Flow 的重點。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1)}</textarea>
          <label class="hint"><input type="checkbox" id="flow1None" ${S.flow1None?'checked':''}> 無</label>`);
         stage.querySelector('#flow1').oninput=e=>S.flow1=e.target.value;
         stage.querySelector('#flow1None').onchange=e=>{S.flow1None=e.target.checked; render();};
         break;
-      case 10:
-        qWrap('10. 我另一個比較有心流時光感覺的生命經歷是？',
+      case 11:
+        qWrap('11. 我另一個比較有心流時光感覺的生命經歷是？',
         '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。',
         `<textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二" placeholder="請輸入你的第二個心流事件">${escape(S.flow2)}</textarea>
          <label class="hint"><input type="checkbox" id="flow2None" ${S.flow2None?'checked':''}> 無</label>`);
         stage.querySelector('#flow2').oninput=e=>S.flow2=e.target.value;
         stage.querySelector('#flow2None').onchange=e=>{S.flow2None=e.target.checked; render();};
         break;
-      case 11:
-        qWrap('11. 我另一個比較有心流時光感覺的生命經歷是？',
+      case 12:
+        qWrap('12. 我另一個比較有心流時光感覺的生命經歷是？',
         '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
         `<textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三" placeholder="請輸入你的第三個心流事件">${escape(S.flow3)}</textarea>
          <label class="hint"><input type="checkbox" id="flow3None" ${S.flow3None?'checked':''}> 無</label>`);
         stage.querySelector('#flow3').oninput=e=>S.flow3=e.target.value;
         stage.querySelector('#flow3None').onchange=e=>{S.flow3None=e.target.checked; render();};
         break;
-      case 12:
-        qWrap('12. 我另一個比較有心流時光感覺的生命經歷是？',
+      case 13:
+        qWrap('13. 我另一個比較有心流時光感覺的生命經歷是？',
         '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。',
         `<textarea class="field" id="flow4" ${S.flow4None?'disabled':''} aria-label="心流事件四" placeholder="請輸入你的第四個心流事件">${escape(S.flow4)}</textarea>
          <label class="hint"><input type="checkbox" id="flow4None" ${S.flow4None?'checked':''}> 無</label>`);
         stage.querySelector('#flow4').oninput=e=>S.flow4=e.target.value;
         stage.querySelector('#flow4None').onchange=e=>{S.flow4None=e.target.checked; render();};
         break;
-      case 13:
-        qWrap('13. 我另一個比較有心流時光感覺的生命經歷是？',
+      case 14:
+        qWrap('14. 我另一個比較有心流時光感覺的生命經歷是？',
         '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。',
         `<textarea class="field" id="flow5" ${S.flow4None?'disabled':''} aria-label="心流事件五" placeholder="請輸入你的第五個心流事件">${escape(S.flow5)}</textarea>
          <label class="hint"><input type="checkbox" id="flow5None" ${S.flow5None?'checked':''}> 無</label>`);
         stage.querySelector('#flow5').oninput=e=>S.flow5=e.target.value;
         stage.querySelector('#flow5None').onchange=e=>{S.flow5None=e.target.checked; render();};
         break;
-      case 14:
-        qWrap('14. 我比較在乎的三個職業價值觀是？',
+      case 15:
+        qWrap('15. 我比較在乎的三個職業價值觀是？',
         '請依序點選出三個在乎的職業價值觀。<a href="https://guide.104.com.tw/value/" target="_blank" rel="noopener">（若不清楚個人在乎的職業價值觀，可以用5分鐘試試「104職業價值觀檢測」）</a>',
         selView(valuesOpts,S.valuesSel)+
         chips(valuesOpts,S.valuesSel,true)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
         bindChips(id=>{toggleMulti(S.valuesSel,id,3)});
         break;
-      case 15:
-        qWrap('15. 我比較來勁的二個生涯興趣？',
+      case 16:
+        qWrap('16. 我比較來勁的二個生涯興趣？',
         '請依序點選出二個來勁的生涯興趣。<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">（若不清楚個人來勁的生涯興趣，可以用5分鐘試試「104生涯興趣檢測」）</a>',
         selView(interestOpts,S.interestsSel)+
         chips(interestOpts,S.interestsSel,true)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
         bindChips(id=>{toggleMulti(S.interestsSel,id,2)});
         break;
-      case 16:
-        qWrap('16. 我比較擅長的三個多元智能？','請依序點選出三個比較擅長的多元智能。',
+      case 17:
+        qWrap('17. 我比較擅長的三個多元智能？','請依序點選出三個比較擅長的多元智能。',
           selView(miOpts,S.miSel)+
           chips(miOpts,S.miSel,true)+`<div class="hint">已選 ${S.miSel.length} / 3</div>`);
         bindChips(id=>{toggleMulti(S.miSel,id,3)});
         break;
-      case 17:
+      case 18:
         const text = compiledText();
         stage.innerHTML = progress()+`<section class="card" style="padding:16px">
           <div class="qtitle">彙整完成</div>
-          <div class="hint">下方文字已包含 16 項彙整與 ABCDEFG 七題請求。點「一鍵複製」即可貼上使用。</div>
+          <div class="hint">下方文字已包含 17 項彙整與 ABCDEFG 七題請求。點「一鍵複製」即可貼上使用。</div>
           <textarea id="out" aria-label="彙整文字" class="field">${escape(text)}</textarea>
           <div class="toolbar">
             <button class="btn" id="copy">Step.1 一鍵複製貼到ChatGPT的 Prompt</button>
@@ -574,20 +595,21 @@ try{
     const L6 = `6.除了上述二個工作，我還從事過那個比較有成就感的工作是：${S.jobOtherNone?'無。':(S.jobOther||'')}`;
     const L7 = `7.我的管理經驗：${S.manageNone?'無。':(S.manageYears?S.manageYears+'年。':'（未填）')}`;
     const L8 = `8.我擁有的證照：${S.licensesNone?'無。':(S.licenses||'（未填）')}`;
-    const L9 = `9.我最有心流時光的一次生命經歷是：${S.flow1None?'無。':(S.flow1||'（未填）')}`;
-    const L10 = `10.我另一個比較有心流時光感覺的生命經歷是：${S.flow2None?'無。':(S.flow2||'（未填）')}`;
-    const L11 = `11.我另一個比較有心流時光感覺的生命經歷是：${S.flow3None?'無。':(S.flow3||'（未填）')}`;
-    const L12 = `12.我另一個比較有心流時光感覺的生命經歷是：${S.flow4None?'無。':(S.flow4||'（未填）')}`;
-    const L13 = `13.我另一個比較有心流時光感覺的生命經歷是：${S.flow5None?'無。':(S.flow5||'（未填）')}`;
-    const L14 = '14.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id}) ${findById(valuesOpts,id)}`).join('\n') : '未選擇');
-    const L15 = '15.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
-    const L16 = '16.我比較擅長的多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id}) ${findById(miOpts,id)}`).join('\n') : '未選擇');
+    const L9 = `9.心流時光說明：已閱讀。`;
+    const L10 = `10.我最有心流時光的一次生命經歷是：${S.flow1None?'無。':(S.flow1||'（未填）')}`;
+    const L11 = `11.我另一個比較有心流時光感覺的生命經歷是：${S.flow2None?'無。':(S.flow2||'（未填）')}`;
+    const L12 = `12.我另一個比較有心流時光感覺的生命經歷是：${S.flow3None?'無。':(S.flow3||'（未填）')}`;
+    const L13 = `13.我另一個比較有心流時光感覺的生命經歷是：${S.flow4None?'無。':(S.flow4||'（未填）')}`;
+    const L14 = `14.我另一個比較有心流時光感覺的生命經歷是：${S.flow5None?'無。':(S.flow5||'（未填）')}`;
+    const L15 = '15.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id}) ${findById(valuesOpts,id)}`).join('\n') : '未選擇');
+    const L16 = '16.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
+    const L17 = '17.我比較擅長的多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id}) ${findById(miOpts,id)}`).join('\n') : '未選擇');
 
     const tail = [
 '',
 '請根據上述彙整的各項生涯發展與探索資訊，回答我以下的問題。回答的內容，請用條列方式呈現，方便我的閱讀。',
-'A. 我有哪六個比較明確的熱情特質？每個熱情特質的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個熱情特質。接著請以我提供的五個心流時光事件（第9至13題）及各項職涯發展資訊（第1至8題，及第14至16題）做為佐證，說明我為何有這個熱情特質。並針對每個熱情特質提供200個字的「摘要說明」。',
-'B. 我有哪六個比較明確的專業才能？每個專業才能的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個專業才能。接著請以我提供的五個心流時光事件（第9至13題）及各項職涯發展資訊（第1至8題，及第14至16題）做為佐證，說明我為何有這個專業才能。並針對每個專業才能提供200個字的「摘要說明」。。',
+'A. 我有哪六個比較明確的熱情特質？每個熱情特質的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個熱情特質。接著請以我提供的五個心流時光事件（第10至14題）及各項職涯發展資訊（第1至8題，及第15至17題）做為佐證，說明我為何有這個熱情特質。並針對每個熱情特質提供200個字的「摘要說明」。',
+'B. 我有哪六個比較明確的專業才能？每個專業才能的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個專業才能。接著請以我提供的五個心流時光事件（第10至14題）及各項職涯發展資訊（第1至8題，及第15至17題）做為佐證，說明我為何有這個專業才能。並針對每個專業才能提供200個字的「摘要說明」。',
 'C. 推薦我適合從事的六個職業。每個推薦的職業，請用100個字介紹這個職業。並請說明這個職業目前發展的現況及未來發展的趨勢。然後提供150個字說明為何推薦我從事這個職業。最後請根據我的現況，舉出三個如果未來想要從事這個職業需要思考或面對的問題。',
 'D. 推薦我適合加入的六個產業，每個推薦的產業，請用100個字介紹這個產業。並請說明這個產業目前發展的現況及未來發展的趨勢。然後提供150個字說明為何推薦我加入這個產業。最後請根據我的現況，舉出三個如果未來想要加入這個產業需要思考或面對的問題。',
 'E. 推薦我適合從事的二個新興職業。每個推薦的新興職業，請用100個字介紹這個新興職業。並請說明這個新興職業目前發展的現況及未來發展的趨勢。然後提供150個字說明為何推薦我從事這個新興職業。最後請根據我的現況，舉出三個如果未來想要從事這個職業需要思考或面對的問題。',
@@ -596,7 +618,7 @@ try{
 'H. 請針對我目前職涯探索的的現況，給我三個具體的職涯建議。並說明每個建議我可以馬上執行的三項任務',
     ].join('\n');
 
-    return [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15,L16,'',tail].join('\n');
+    return [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15,L16,L17,'',tail].join('\n');
   }
 
   // 初始渲染
