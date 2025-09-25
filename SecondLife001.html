@@ -217,11 +217,11 @@ try{
     jobOther:'國立大學/心理系助理教授/5年。',
     manageYears:'15',
     licenses:'教育部助理教授證書、TA溝通交流分析。',
-    flow1:'大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
-    flow2:'在人力銀行服務期間，負責培訓150位職涯引導師。',
+    flow1:'大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。',
+    flow2:'在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。',
     flow3:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
-    flow4:'在人力銀行服務期間，負責培訓150位職涯引導師。',
-    flow5:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+    flow4:'在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。',
+    flow5:'在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。',
     values:[14,1,2], interests:[4,5], mi:[8,7,2]
   };
 
@@ -438,7 +438,7 @@ try{
         break;
       case 9:
         qWrap('9. 我最有心流時光的一次生命經歷是？',
-        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。',
         `<textarea class="field" id="flow1" placeholder="請用 1~2 句寫下 Time 與 Flow 的重點。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1)}</textarea>
          <label class="hint"><input type="checkbox" id="flow1None" ${S.flow1None?'checked':''}> 無</label>`);
         stage.querySelector('#flow1').oninput=e=>S.flow1=e.target.value;
@@ -446,7 +446,7 @@ try{
         break;
       case 10:
         qWrap('10. 我另一個比較有心流時光感覺的生命經歷是？',
-        '例如：在人力銀行服務期間，負責培訓150位職涯引導師。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。',
         `<textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二" placeholder="請輸入你的第二個心流事件">${escape(S.flow2)}</textarea>
          <label class="hint"><input type="checkbox" id="flow2None" ${S.flow2None?'checked':''}> 無</label>`);
         stage.querySelector('#flow2').oninput=e=>S.flow2=e.target.value;
@@ -454,7 +454,7 @@ try{
         break;
       case 11:
         qWrap('11. 我另一個比較有心流時光感覺的生命經歷是？',
-        '例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
         `<textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三" placeholder="請輸入你的第三個心流事件">${escape(S.flow3)}</textarea>
          <label class="hint"><input type="checkbox" id="flow3None" ${S.flow3None?'checked':''}> 無</label>`);
         stage.querySelector('#flow3').oninput=e=>S.flow3=e.target.value;
@@ -462,7 +462,7 @@ try{
         break;
       case 12:
         qWrap('12. 我另一個比較有心流時光感覺的生命經歷是？',
-        '例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。',
         `<textarea class="field" id="flow4" ${S.flow4None?'disabled':''} aria-label="心流事件四" placeholder="請輸入你的第四個心流事件">${escape(S.flow4)}</textarea>
          <label class="hint"><input type="checkbox" id="flow4None" ${S.flow4None?'checked':''}> 無</label>`);
         stage.querySelector('#flow4').oninput=e=>S.flow4=e.target.value;
@@ -470,7 +470,7 @@ try{
         break;
       case 13:
         qWrap('13. 我另一個比較有心流時光感覺的生命經歷是？',
-        '例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。',
         `<textarea class="field" id="flow5" ${S.flow4None?'disabled':''} aria-label="心流事件五" placeholder="請輸入你的第五個心流事件">${escape(S.flow5)}</textarea>
          <label class="hint"><input type="checkbox" id="flow5None" ${S.flow5None?'checked':''}> 無</label>`);
         stage.querySelector('#flow5').oninput=e=>S.flow5=e.target.value;
