@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#ff6600" />
+<title>104aicv001｜履歷自傳求職信調整工具</title>
+<style>
+  /* ---------- Base ---------- */
+  *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC",sans-serif;line-height:1.55;background:#f6f7fb;color:#1f2328;-webkit-font-smoothing:antialiased}
+  img,svg{display:block;max-width:100%}
+  button,input,textarea{font:inherit}
+  :root{
+    --brand:#ff6600;--brand-600:#e65a00;--ink:#1f2328;--muted:#5b616e;--ring:#e6e8ef;--card:#fff;--bg:#f6f7fb;
+    --radius:14px;--shadow:0 6px 18px rgba(23,26,31,.06);
+    --fs-12:clamp(12px, 0.75rem, 0.75rem);
+    --fs-14:clamp(13px, 0.9vw + 10px, 14px);
+    --fs-16:clamp(15px, 1.2vw + 10px, 16px);
+    --fs-18:clamp(16px, 1.4vw + 10px, 18px);
+    --fs-22:clamp(18px, 1.2rem + 0.8vw, 22px);
+    --fs-28:clamp(22px, 1.2rem + 1.6vw, 28px);
+    --zoom:1;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--ink:#e7e9ee;--muted:#aeb4c0;--ring:#2c3340;--card:#0e1116;--bg:#0a0d12}
+    body{background:var(--bg);color:var(--ink)}
+  }
+  header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(160%) blur(8px);
+    background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+    border-bottom:1px solid var(--ring)}
+  @media (prefers-color-scheme: dark){
+    header{background:linear-gradient(180deg, rgba(14,17,22,.85), rgba(14,17,22,.55))}
+  }
+  .header-inner{max-width:min(1000px, 92vw);margin:0 auto;padding:18px 8px 10px}
+  .title{font-weight:800;font-size:var(--fs-28);letter-spacing:.01em}
+  .sub{color:var(--muted);font-size:var(--fs-14);margin-top:2px}
+
+  .wrap{max-width:min(1000px, 92vw);margin:16px auto 40px;padding:0 4px}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .landing{padding:16px;display:grid;gap:12px}
+  .btn{appearance:none;border:1px solid transparent;background:var(--brand);color:#fff;border-radius:10px;padding:1rem 1.2rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.5em;box-shadow:0 1px 0 rgba(0,0,0,.05);transition:transform .06s ease, background .2s ease, box-shadow .2s ease}
+  .btn:hover{background:var(--brand-600)}
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:#444e60}
+  .btn.ghost{background:transparent;color:#1f2328;border-color:var(--ring)}
+  .btn.block{width:100%;justify-content:center}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
+
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .grid{display:grid;gap:10px}
+  .cols-2{grid-template-columns:1fr}
+  @media(min-width:640px){.cols-2{grid-template-columns:1fr 1fr}}
+  @media(min-width:900px){.cols-3{grid-template-columns:repeat(3,1fr)}}
+  .field{width:100%;padding:.8em .9em;border:1px solid var(--ring);border-radius:10px;font-size:var(--fs-16);background:var(--card);color:inherit;outline:2px solid transparent}
+  .field:focus{box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+  textarea{width:100%;min-height:36vh;resize:vertical;white-space:pre-wrap}
+
+  .progress{position:sticky;top:58px;height:10px;background:#e9ebf3;border-radius:999px;overflow:hidden;margin:0 0 14px}
+  .bar{height:100%;background:var(--brand);width:0;transition:width .25s ease}
+
+  .chip{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--ring);border-radius:999px;background:#f2f3f5;color:#1f2328;cursor:pointer;user-select:none;outline:none;font-weight:500}
+  .chip b{font-variant-numeric:tabular-nums}
+  .chip:hover{background:#e9eaee}
+  .chip:active{background:#ffd6bf}
+  .chip:focus-visible{box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+  .chip.sel{background:#ffe0cc;border-color:#ff6600;color:#1f2328;position:relative;overflow:hidden}
+  .chip.sel::before{content:'';position:absolute;inset:0;border-radius:999px;background:rgba(255,102,0,.08);pointer-events:none}
+  .chip.sel[data-order]::after{content:attr(data-order);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a04300;font-weight:800;font-size:20px;line-height:1;pointer-events:none;width:32px;height:32px;margin:auto;border-radius:50%;background:#fff}
+
+  @media (prefers-color-scheme: dark){
+    .chip{background:#1c2430;color:#e7e9ee;border-color:#2c3340}
+    .chip:hover{background:#212b39}
+    .chip:active{background:#40332a}
+    .chip.sel{background:#3a2a22;border-color:#ff8a4a;color:#fff}
+    .chip.sel::before{background:rgba(255,138,74,.12)}
+    .chip.sel[data-order]::after{background:#2b211b;color:#ffd6bf}
+  }
+
+  .sel-strip{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 10px}
+  .sel-pill{background:transparent;border:none;color:#1f2328;font-weight:600;font-size:var(--fs-14);padding:0}
+  .sel-pill b{font-variant-numeric:tabular-nums;color:#a04300}
+  @media (prefers-color-scheme: dark){
+    .sel-pill{color:#ffe0cc}
+    .sel-pill b{color:#ffb380}
+  }
+
+  .toolbar-top{position:fixed;right:10px;top:10px;z-index:50;display:flex;gap:6px}
+  .btn.icon{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+  .btn.icon small{font-weight:700}
+  .hint{color:var(--muted);font-size:var(--fs-12)}
+  .qtitle{font-size:var(--fs-22);font-weight:800;margin:4px 0}
+  .center-text{text-align:center;font-weight:700;margin:18px 0 10px;font-size:var(--fs-18);}
+
+  /* Icons grid */
+  .apps{margin-top:8px;border-top:1px dashed var(--ring);padding-top:14px}
+  .apps h3{font-size:var(--fs-16);margin:0 0 10px;text-align:center}
+  .app-grid{display:grid;gap:12px;grid-template-columns:1fr;max-width:820px;margin:0 auto}
+  @media (min-width:640px){.app-grid{grid-template-columns:repeat(4,1fr)}}
+  .app{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 14px;border:1px solid var(--ring);border-radius:14px;background:var(--card);text-decoration:none;color:inherit;box-shadow:var(--shadow);min-height:120px}
+  .app:hover{transform:translateY(-1px);transition:transform .1s ease}
+  .app svg{width:40px;height:40px}
+</style>
+</head>
+<body>
+  <div class="toolbar-top" aria-label="字級調整">
+    <button class="btn icon" id="zoomOut" title="縮小字級"><small>A−</small></button>
+    <button class="btn icon" id="zoomIn" title="放大字級"><small>A＋</small></button>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div class="title">履歷自傳求職信調整工具｜104aicv001</div>
+      <div class="sub">上傳或貼上你的資料 → 勾選職涯偏好（題號五～七）→ 一鍵產生可貼到 ChatGPT 的 Prompt</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card landing" id="landing" aria-label="起始畫面">
+      <div class="grid">
+        <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 開始填寫</button>
+        <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例，體驗看看</button>
+      </div>
+      <p class="hint">提醒：履歷/自傳/求職信可直接貼文字；若上傳檔案，建議使用 .txt 或 .md。</p>
+    </section>
+
+    <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
+  </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+try{
+  const stage = document.getElementById('stage');
+  const landing = document.getElementById('landing');
+
+  const S = {
+    step:0, total:10,
+    cvText:'', cvFileName:'', coverText:'', coverFileName:'', bioText:'', bioFileName:'',
+    salaryMonth:'', salaryYear:'',
+    valuesSel:[], interestsSel:[], miSel:[]
+  };
+
+  // Options
+  const valuesOpts=[[1,'具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。'],[2,'理念要有共鳴：工作或公司文化能符合我的核心價值。'],[3,'樂於接受挑戰：工作有挑戰性，使我能從工作中持續獲得成就感。'],[4,'終身學習最幸福：工作能提供學習成長機會，有利未來的專業發展或升遷。'],[5,'公平最重要：工作的分派、管理、賞罰、薪酬分配都公平合理。'],[6,'穩定生產力：工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。'],[7,'重視薪水福利：工作提供的薪資福利，可讓我維持良好生活品質。'],[8,'目標流程清楚：工作有清楚的流程及規範可依循，可以具體地評估工作成果。'],[9,'工作符合興趣：工作內容符合我的興趣，讓我能樂在工作。'],[10,'熱愛多樣化任務：工作內容豐富多元，不會一成不變。'],[11,'自由不受限：工作時我能自行規劃工作方式，不受別人的阻礙或控制。'],[12,'創意獨特：工作能發揮自己的長才與優勢，創造獨特的價值。'],[13,'工作生活平衡：工作能讓我兼顧家庭和休閒生活。'],[14,'服務他人：工作讓我能幫助他人，為社會大眾服務。'],[15,'鼓勵起手式：主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。'],[16,'歡樂工作氣氛：同事間能互助合作，有良好工作氛圍，讓人有歸屬感。']];
+  const interestOpts=[[1,'R.實作型：喜歡具體、動手操作的任務，常展現解決實際問題的行為。偏好戶外、機械、工具或體力活動。'],[2,'I.研究型：喜歡思考、探究、驗證理論，展現邏輯推理與獨立解決問題。'],[3,'A.藝術型：重視自我表達與創造，偏好音樂、繪畫、設計、表演等高自由度活動。'],[4,'S.社會型：喜歡助人、協作與引導他人，偏好溝通、人際互動與服務工作。'],[5,'E.企業型：喜歡影響與說服他人，展現領導、組織與決策的行為。'],[6,'C.事務型：喜歡有結構與秩序的環境，擅長處理數據、文件、流程。']];
+  const miOpts=[[1,'邏輯數學：擅長推理思考，喜歡提問尋找答案，對益智遊戲、推理解題活動很感興趣。'],[2,'語言文字：口齒伶俐，善於表達。用詞豐富，具說服力。能言善道，喜歡發問、閱讀、撰寫創作。'],[3,'自然觀察：喜歡觀察大自然生態，對飼養動物、栽種植物有濃厚興趣，對周圍環境充滿好奇心。'],[4,'肢體動覺：擅長運用身體表達想法和感受，喜歡動手操作，偏好以活動為主的工作與學習型態。'],[5,'空間藝術：習慣用意象及圖像來思考，喜歡拼圖、迷宮、愛繪畫、設計及空間規劃。'],[6,'音樂旋律：能輕易記住歌曲、旋律及辨別音調，可以輕鬆學會樂器，工作學習偏好搭配音樂旋律。'],[7,'人際互動：擅長觀察人的情緒，喜歡參與團體活動。善於激勵他人，喜歡扮演團體領導者的角色。'],[8,'內省同理：擅長探索自己及同理他人，能意識到自己情緒與想法，能安靜獨處，清楚自己的優缺點。']];
+
+  // Sample (trimmed)
+  const sample = {
+    cvText: `一路順風股份有限公司營運主任兼任區長
+高雄市大大學公共行政學系 大學畢業
+6~7年工作經歷｜希望職稱：運輸物流專案規劃、專案管理師`,
+    bioText: `我是王一中，七年交通物流相關經歷。`,
+    coverText: `敬啟者您好：我擅長以數據驅動營運效能。`,
+    salaryMonth:'6.5', salaryYear:'100',
+    valuesSel:[7,8,13],
+    interestsSel:[6,5],
+    miSel:[7,1,4]
+  };
+
+  function hideLanding(){ landing.hidden = true; landing.setAttribute('aria-hidden','true'); }
+  function showLanding(){ landing.hidden = false; landing.removeAttribute('aria-hidden'); }
+  function progress(){
+    const pct=Math.round(Math.min(S.step,S.total)/S.total*100);
+    return '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><div class="bar" style="width:'+pct+'%"></div></div>';
+  }
+  function nav(){
+    // 不在彙整頁顯示導覽鍵
+    if (S.step === 8) return '';
+    if (S.step < 1 || S.step >= S.total) return '';
+    return '<div class="toolbar" role="toolbar" aria-label="導覽按鈕">'
+      +(S.step>1?'<button class="btn ghost" id="prev" aria-label="上一題">← 上一題</button>':'')
+      +'<button class="btn" id="next" aria-label="下一題">下一題 →</button>'
+      +'</div>';
+  }
+  function qWrap(title, hint, inner){
+    stage.innerHTML = progress()+`<section class="card" style="padding:16px" aria-live="polite"><div class="qtitle">${title}</div>${hint?`<div class="hint">${hint}</div>`:''}<div class="grid" style="margin-top:10px">${inner}</div>${nav()}</section>`;
+    const p=stage.querySelector('#prev'); if(p) p.onclick=()=>{S.step--; render();};
+    const n=stage.querySelector('#next'); if(n) n.onclick=()=>{S.step++; render();};
+    const firstFocusable = stage.querySelector('input, textarea, .chip, .btn');
+    if(firstFocusable) firstFocusable.focus({preventScroll:true});
+  }
+  function chips(opts, selected, cap){
+    let html='<div class="grid cols-2">';
+    for(const [id, text] of opts){
+      const isSel = selected.includes(id);
+      const order = isSel ? (selected.indexOf(id)+1) : '';
+      html += '<button type="button" class="chip'+(isSel?' sel':'')+'" data-id="'+id+'" '+(order?('data-order="'+order+'"'):'')+'><b>(' + id + ')</b><span>'+text+'</span></button>';
+    }
+    html+='</div>';
+    return html;
+  }
+  function bindChips(arr,cap){
+    stage.querySelectorAll('.chip').forEach(el=>{
+      el.addEventListener('click',()=>{
+        const id=+el.getAttribute('data-id');
+        const i=arr.indexOf(id);
+        if(i>=0){arr.splice(i,1);} else if(arr.length<cap){arr.push(id);}
+        render();
+      });
+      el.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }});
+    });
+  }
+  function selView(opts, selected){
+    if(!selected || !selected.length) return '<div class="hint">尚未選擇。</div>';
+    let html='<div class="sel-strip" id="selStrip">';
+    for(const id of selected){
+      const o = opts.find(o=>o[0]===id); if(!o) continue;
+      html += '<span class="sel-pill"><b>(' + id + ')</b> '+o[1].replace(/<[^>]+>/g,'')+'</span>';
+    }
+    html+='</div>'; return html;
+  }
+  function toast(msg){
+    const n=document.createElement('div');
+    n.textContent=msg;
+    Object.assign(n.style,{position:'fixed',left:'50%',bottom:'calc(env(safe-area-inset-bottom,0) + 24px)',transform:'translateX(-50%)',background:'var(--ink)',color:'#fff',padding:'10px 14px',borderRadius:'999px',boxShadow:'var(--shadow)',zIndex:1000});
+    document.body.appendChild(n);
+    setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity .3s';},1200);
+    setTimeout(()=>n.remove(),1550);
+  }
+  function fallbackCopy(txt){
+    const ta=document.createElement('textarea');
+    ta.value=txt; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-9999px'; ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select(); ta.setSelectionRange(0, ta.value.length);
+    let ok=false; try{ ok=document.execCommand('copy'); }catch(_){ ok=false }
+    ta.remove();
+    if(ok){ toast('已複製到剪貼簿！'); } else { alert('複製被瀏覽器阻擋，請按 Ctrl/Cmd + C'); }
+  }
+
+  function start(){ S.step=1; hideLanding(); render(); }
+  function loadSample(){
+    Object.assign(S, {
+      step:1,
+      cvText:sample.cvText, bioText:sample.bioText, coverText:sample.coverText,
+      salaryMonth:sample.salaryMonth, salaryYear:sample.salaryYear,
+      valuesSel:sample.valuesSel.slice(), interestsSel:sample.interestsSel.slice(), miSel:sample.miSel.slice()
+    });
+    hideLanding(); render();
+  }
+  document.getElementById('startBtn').addEventListener('click', start);
+  document.getElementById('sampleBtn').addEventListener('click', loadSample);
+
+  (function(){
+    const root = document.documentElement;
+    const saved = localStorage.getItem('zoom') || '1';
+    root.style.setProperty('--zoom', saved);
+    function setZoom(z){
+      z = Math.max(0.85, Math.min(1.4, Math.round(z*100)/100));
+      root.style.setProperty('--zoom', z);
+      localStorage.setItem('zoom', z);
+    }
+    document.getElementById('zoomIn').addEventListener('click', ()=> setZoom(parseFloat(getComputedStyle(root).getPropertyValue('--zoom')) + 0.1));
+    document.getElementById('zoomOut').addEventListener('click', ()=> setZoom(parseFloat(getComputedStyle(root).getPropertyValue('--zoom')) - 0.1));
+  })();
+
+  function render(){
+    landing.hidden = (S.step >= 1);
+    switch(S.step){
+      case 0: showLanding(); break;
+      case 1:
+        qWrap('一、上傳或貼上你的【履歷】',
+          '可擇一使用。若上傳檔案，將嘗試讀取純文字內容。',
+          `<div class="grid">
+            <div class="row">
+              <input class="field" type="file" id="cvFile" accept=".txt,.md,.csv" aria-label="履歷檔案">
+              <button class="btn ghost" id="clearCv">清空</button>
+            </div>
+            <textarea class="field" id="cvText" placeholder="請貼上履歷文字">${escape(S.cvText||'')}</textarea>
+          </div>`);
+        stage.querySelector('#cvFile').onchange=e=>{
+          const f=e.target.files[0]; if(!f) return;
+          const r=new FileReader(); r.onload=()=>{ S.cvText=r.result; render(); }; r.readAsText(f);
+        };
+        stage.querySelector('#cvText').oninput=e=>S.cvText=e.target.value;
+        stage.querySelector('#clearCv').onclick=()=>{S.cvText=''; render();};
+        break;
+
+      case 2:
+        qWrap('二、上傳或貼上你的【自傳】','',
+          `<div class="grid">
+            <div class="row">
+              <input class="field" type="file" id="bioFile" accept=".txt,.md,.csv" aria-label="自傳檔案">
+              <button class="btn ghost" id="clearBio">清空</button>
+            </div>
+            <textarea class="field" id="bioText" placeholder="請貼上自傳文字">${escape(S.bioText||'')}</textarea>
+          </div>`);
+        stage.querySelector('#bioFile').onchange=e=>{
+          const f=e.target.files[0]; if(!f) return;
+          const r=new FileReader(); r.onload=()=>{ S.bioText=r.result; render(); }; r.readAsText(f);
+        };
+        stage.querySelector('#bioText').oninput=e=>S.bioText=e.target.value;
+        stage.querySelector('#clearBio').onclick=()=>{S.bioText=''; render();};
+        break;
+
+      case 3:
+        qWrap('三、上傳或貼上你的【求職信】','',
+          `<div class="grid">
+            <div class="row">
+              <input class="field" type="file" id="coverFile" accept=".txt,.md,.csv" aria-label="求職信檔案">
+              <button class="btn ghost" id="clearCover">清空</button>
+            </div>
+            <textarea class="field" id="coverText" placeholder="請貼上求職信文字">${escape(S.coverText||'')}</textarea>
+          </div>`);
+        stage.querySelector('#coverFile').onchange=e=>{
+          const f=e.target.files[0]; if(!f) return;
+          const r=new FileReader(); r.onload=()=>{ S.coverText=r.result; render(); }; r.readAsText(f);
+        };
+        stage.querySelector('#coverText').oninput=e=>S.coverText=e.target.value;
+        stage.querySelector('#clearCover').onclick=()=>{S.coverText=''; render();};
+        break;
+
+      case 4:
+        qWrap('四、期望的月薪及年薪總額',
+          '請直接填入數字（萬元）。',
+          `<div class="grid cols-2">
+            <div class="row" style="flex-direction:column;align-items:stretch;">
+              <div class="hint" style="margin:2px 2px 6px;">月薪</div>
+              <input class="field" id="salaryMonth" inputmode="decimal" placeholder="例如 6.5" value="${escape(S.salaryMonth||'')}">
+            </div>
+            <div class="row" style="flex-direction:column;align-items:stretch;">
+              <div class="hint" style="margin:2px 2px 6px;">年薪總額</div>
+              <input class="field" id="salaryYear" inputmode="decimal" placeholder="例如 100" value="${escape(S.salaryYear||'')}">
+              <div class="hint" style="margin-top:6px;">年薪總額包含：固定薪資、年終獎金、績效獎金、紅利…</div>
+            </div>
+          </div>`);
+        stage.querySelector('#salaryMonth').oninput=e=>S.salaryMonth=e.target.value;
+        stage.querySelector('#salaryYear').oninput=e=>S.salaryYear=e.target.value;
+        break;
+
+      case 5:
+        qWrap('五、比較在乎的三個職業價值觀（依序）',
+          '請依序點選三個。若不清楚，可先做 5 分鐘檢測：<a href="https://guide.104.com.tw/value" target="_blank" rel="noopener">104 職業價值觀測驗</a>',
+          selView(valuesOpts,S.valuesSel)+
+          chips(valuesOpts,S.valuesSel,3)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
+        bindChips(S.valuesSel,3);
+        break;
+
+      case 6:
+        qWrap('六、比較來勁的二個生涯興趣（依序）',
+          '請依序點選二個。若不清楚，可先做 5 分鐘檢測：<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">104 生涯興趣測驗</a>',
+          selView(interestOpts,S.interestsSel)+
+          chips(interestOpts,S.interestsSel,2)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
+        bindChips(S.interestsSel,2);
+        break;
+
+      case 7:
+        qWrap('七、比較擅長的三個多元智能（依序）','請依序點選三個。',
+          selView(miOpts,S.miSel)+
+          chips(miOpts,S.miSel,3)+`<div class="hint">已選 ${S.miSel.length} / 3</div>`);
+        bindChips(S.miSel,3);
+        break;
+
+      case 8:
+        const text = compiledText();
+        stage.innerHTML = progress()+`<section class="card" style="padding:16px">
+          <div class="qtitle">彙整完成</div>
+          <div class="hint">下方文字已依你指定的格式整理完成。</div>
+          <textarea id="out" aria-label="彙整文字" class="field">${escape(text)}</textarea>
+
+          <div class="center-text">Step1.請點選『一鍵複製貼到 AI 的 Prompt』按鈕，將「彙整完成」頁內容，複製成 Prompt 內容</div>
+          <div style="display:flex;justify-content:center;margin:12px 0 18px;">
+            <button class="btn" id="copyBtn" style="font-size:var(--fs-22);padding:1rem 2rem;">一鍵複製貼到 AI 的 Prompt</button>
+          </div>
+
+          <div class="apps">
+            <h3>Step2.將複製的 Prompt 貼到下列任何一個 AI網站</h3>
+            <div class="app-grid">
+              <a class="app" href="https://chat.openai.com" target="_blank" rel="noopener" aria-label="開啟 ChatGPT">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#10a37f" stroke-width="2"/><path d="M7 9a5 5 0 0 1 10 0v1h1a3 3 0 1 1-1 5.83V17a5 5 0 1 1-8 4.33A5 5 0 0 1 5 12a3 3 0 0 1 2-3z" fill="#10a37f" opacity=".25"/></svg>
+                <div>ChatGPT</div>
+              </a>
+
+              <a class="app" href="https://gemini.google.com/app" target="_blank" rel="noopener" aria-label="開啟 Gemini">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2" fill="#4285F4"/><rect x="13" y="3" width="8" height="8" rx="2" fill="#34A853"/><rect x="3" y="13" width="8" height="8" rx="2" fill="#FBBC05"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#EA4335"/></svg>
+                <div>Gemini</div>
+              </a>
+
+              <a class="app" href="https://copilot.microsoft.com" target="_blank" rel="noopener" aria-label="開啟 Copilot">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="8" cy="12" r="5" fill="#8A2BE2"/><circle cx="16" cy="12" r="5" fill="#4B0082" opacity=".5"/></svg>
+                <div>Copilot</div>
+              </a>
+
+              <a class="app" href="#" id="restartLink" aria-label="重新開始">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4v6h6" stroke="#1f2328" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20v-6h-6" stroke="#1f2328" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 8a8 8 0 0 0-14.83-3M4 16a8 8 0 0 0 14.83 3" stroke="#1f2328" stroke-width="2" stroke-linecap="round"/></svg>
+                <div>重新開始</div>
+              </a>
+            </div>
+          </div>
+        </section>`;
+
+        document.getElementById('copyBtn').onclick=async()=>{
+          const txt = document.getElementById('out').value;
+          try{
+            if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(txt);
+              toast('已複製到剪貼簿！');
+            }else{
+              fallbackCopy(txt);
+            }
+          }catch(_){ fallbackCopy(txt); }
+        };
+        document.getElementById('restartLink').onclick=(e)=>{
+          e.preventDefault();
+          const home = location.origin + location.pathname.split('#')[0].split('?')[0];
+          location.href = home;
+        };
+        break;
+
+      case 9:
+        // not used
+        break;
+    }
+  }
+
+  function compiledText(){
+    function linesFromSelected(opts, arr){
+      if(!arr || !arr.length) return '';
+      return arr.map(id=>{
+        const it = opts.find(o=>o[0]===id);
+        return it ? it[1] : '';
+      }).join('\n');
+    }
+    const part1 = [
+'我的個人資料',
+'',
+'一、履歷',
+'',
+(S.cvText||'（未提供）'),
+'',
+'二、自傳',
+'',
+(S.bioText||'（未提供）'),
+'',
+'三、求職信',
+'',
+(S.coverText||'（未提供）'),
+'',
+`四、期望的月薪及年薪總額：月薪是${S.salaryMonth?S.salaryMonth:'（未填）'}萬元。年薪總和是${S.salaryYear?S.salaryYear:'（未填）'}萬元。`,
+'',
+'五、比較在乎的三個職業價值觀依序是：',
+linesFromSelected(valuesOpts, S.valuesSel),
+'',
+'六、比較的二個生涯興趣依序是：',
+linesFromSelected(interestOpts, S.interestsSel),
+'',
+'七、比較的三個多元智能依序是：',
+linesFromSelected(miOpts, S.miSel),
+'',
+''
+].join('\n');
+
+    const part2 = [
+'請根據我提供的個人資料，協助我解決ABC三個求職需求。 ',
+'',
+'A.提供我修改履歷、自傳、求職信的具體建議，並且提供我改寫的範例。',
+'',
+'請根據我提供的：',
+'一、履歷',
+'二、自傳',
+'三、求職信',
+'四、期望的月薪及年薪總額',
+'五、比較在乎的三個職業價值觀',
+'六、比較來勁的二個生涯興趣',
+'七、比較擅長的三個多元智能',
+'',
+'幫我選定一個「最適合加入的一個產業，並從該產業中選擇一個使用者最適合從事的職業」。',
+'並以這個產業的職業為求職目標，提供我修改履歷、自傳、求職信的具體建議，並且提供我改寫的範例。',
+'',
+'B.建議我三個適合從事的職業',
+'請提供這三個職業的名稱，並且用200個字介紹這個職業的工作內容。',
+'並且以我的履歷自傳內容、期望的月薪與年薪總額、三個比較在乎的職業價值觀、二個比較來勁的生涯興趣及三個比較擅長的多元智能...這個資訊，用200個字說明每個職業的推薦五大原因？',
+'以及說明我從事這三個職業要思考的問題。',
+'',
+'C.建議我三個適合加入的產業',
+'請提供這三個產業的名稱，並且用200個字介紹這個產業的現況與發展趨勢。',
+'並且以我的履歷自傳內容、期望的月薪與年薪總額、三個比較在乎的職業價值觀、二個比較來勁的生涯興趣及三個比較擅長的多元智能...這個資訊，用200個字說明每個產業的推薦五大原因？',
+'以及說明我加入這三個產業要思考的問題。',
+''
+].join('\n');
+
+    return part1 + part2;
+  }
+
+  render();
+
+  function escape(s){ return String(s??'').replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch])); }
+
+}catch(e){
+  console.error(e);
+}});
+</script>
+</body>
+</html>
