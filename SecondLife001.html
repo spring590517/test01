@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#ff6600" />
-<title>10分鐘打造你的AI生涯教練｜SecondLife Plus (Fixed)</title>
+<title>召喚我的AI職涯教練｜SecondLife Plus (Fixed)</title>
 <style>
   /* ---------- Base & Reset ---------- */
   *,*::before,*::after{box-sizing:border-box}
@@ -162,7 +162,7 @@
 
   <header>
     <div class="header-inner">
-      <div class="title">10分鐘打造你的AI生涯教練</div>
+      <div class="title">召喚我的AI職涯教練</div>
       <div class="sub"> 一鍵生成啓動AI職涯教練的 Prompt → 將生成的 Prompt 貼到 ChatGPT、Gremine 或 Copilot → 取得職涯競爭力報告＆啓動你的AI職涯教練</div>
     </div>
   </header>
@@ -170,7 +170,7 @@
   <main class="wrap">
     <section class="card landing" id="landing" aria-label="起始畫面">
         <div class="grid">
-        <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 啟動我的AI職涯教練</button>
+        <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 召喚我的AI職涯教練</button>
         <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例，先體驗看看</button>
       </div>
       <p class="hint">提示：沒有相關資訊可勾選「無」。</p>
@@ -186,9 +186,9 @@ try{
   const landing = document.getElementById('landing');
 
   // ---------- 狀態 ----------
-  const S = { step:0, total:21,
+  const S = { step:0, total:22,
     eduLevel:null,
-    eduField:'', eduNone:false,
+    eduField:'', eduLike:null, eduNone:false,
     skillPaper:'', skillNone:false,
     groupNow:'', groupNowNone:false,
     groupNext:'', groupNextNone:false,
@@ -221,6 +221,7 @@ try{
   // ---------- 範例資料 ----------
   const sample = {
     eduLevel:8,
+    eduLike:5,
     eduField:
 `大學是念心理系，主修工商心理學組。輔系是修讀企管系與新聞系。
 碩士是念心理研究所，主修工商心理學。
@@ -254,6 +255,7 @@ try{
       step:1,
       eduLevel:sample.eduLevel,
       eduField:sample.eduField, eduNone:false,
+      eduLike: (sample.eduLike ?? 5),
       skillPaper:sample.skillPaper, skillNone:false,
       groupNow:sample.groupNow, groupNowNone:false,
       groupNext:sample.groupNext, groupNextNone:false,
@@ -418,7 +420,7 @@ try{
         break;
       case 2:
         qWrap('2. 我就讀的專業領域？',
-        '請參考下方輸入框中的「範例」，依相同格式填寫；若無可勾選「無」。',
+        '請參考下方輸入框中的「範例」，依相同格式填寫。例如：大學念心理系。主修工商心理學。輔系是修讀企管系與新聞系。若無可勾選「無」。',
         `<div class="row">
            <textarea class="field" id="eduField" ${S.eduNone?'disabled':''} aria-label="就讀專業領域" placeholder="
 範例：（輸入示意）
@@ -431,8 +433,15 @@ try{
         stage.querySelector('#eduNone').onchange=e=>{S.eduNone=e.target.checked; render();};
         break;
       case 3:
+        qWrap('3. 我對就讀專業領域的喜歡程度',
+        '請從下列五個選項選擇其一。例如：選擇(5)，表示「非常喜歡」就讀的專業領域。',
+        chips([[1,'非常不喜歡'],[2,'不喜歡'],[3,'普普通通'],[4,'喜歡'],[5,'非常喜歡']],S.eduLike,false));
+        bindChips(toggleSingle((id)=>S.eduLike=id));
+        break;
+
+      case 4:
         qWrap('3. 我擅長的科目、做過的專題、論文或參與過的競賽：',
-        '請參考下方輸入框中的「範例」，依相同格式填寫；若無可勾選「無」。',
+        '請參考下方輸入框中的「範例」，依相同格式填寫。例如：擅長科目有：人力資源管理、組織心理學、心理輔導、心理測驗、統計。若無可勾選「無」。',
         `<div class="row">
            <textarea class="field" id="skillPaper" ${S.skillNone?'disabled':''} aria-label="擅長科目/論文/競賽" placeholder="
 範例：（輸入示意）
@@ -442,23 +451,23 @@ try{
            <label class="hint"><input type="checkbox" id="skillNone" ${S.skillNone?'checked':''}> 無</label>
          </div>`);
         stage.querySelector('#skillPaper').oninput=e=>S.skillPaper=e.target.value;
-        stage.querySelector('#skillNone').onchange=e=>{S.skillPaperNone=e.target.checked; render();};
+        stage.querySelector('#skillNone').onchange=e=>{S.skillNone=e.target.checked; render();};
         break;
-      case 4:
+      case 5:
         qWrap('4. 我最近或目前參與的社團是？',
         '請參考下方輸入框中的「範例」輸入：社團名稱/擔任職務或角色/獲得的收穫/參與時間。例如：蘭友會返鄉服務隊/總召,隊輔/看見自己喜歡和大家一起用寓教於樂的方式幫助別人/3年。如果你沒有相關資訊提供，請點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="groupNow" placeholder="
 範例：（輸入示意）
 政大蘭友會返鄉服務隊/總召,隊輔/看見自己喜歡和大家一起用寓教於樂的方式幫助別人/3年。" ${S.groupNowNone?'disabled':''} value="${escape(S.groupNow||'')}" aria-label="社團經驗1">
-           <label class="hint"><input type="checkbox" id="groupNow" ${S.groupNowNone?'checked':''}> 無</label>
+           <label class="hint"><input type="checkbox" id="groupNowNone" ${S.groupNowNone?'checked':''}> 無</label>
          </div>`);
         stage.querySelector('#groupNow').oninput=e=>S.groupNow=e.target.value;
-        stage.querySelector('groupNowNone').onchange=e=>{S.groupNowNone=e.target.checked; render();};
+        stage.querySelector('#groupNowNone').onchange=e=>{S.groupNowNone=e.target.checked; render();};
         break;
-      case 5:
+      case 6:
         qWrap('5. 我還有參與過那個讓我印象深刻，收穫滿滿的社團？',
-        '請參考下方輸入框中的「範例」輸入：社團名稱/擔任職務或角色/獲得的收穫/參與時間。例如：心理系學會/系代/和一群志同道合的伙伴完成20週年系慶各項活動/1年。。',
+        '請參考下方輸入框中的「範例」輸入：社團名稱/擔任職務或角色/獲得的收穫/參與時間。例如：心理系學會/系代/和一群志同道合的伙伴完成20週年系慶各項活動/1年。如果你沒有相關資訊提供，請點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="groupNext" placeholder="
 範例：（輸入示意）
@@ -468,9 +477,9 @@ try{
         stage.querySelector('#groupNext').oninput=e=>S.groupNext=e.target.value;
         stage.querySelector('#groupNextNone').onchange=e=>{S.groupNextNone=e.target.checked; render();};
         break;
-      case 6:
+      case 7:
         qWrap('6. 我最近或目前從事的工作是？（含兼職、實習與志工…）',
-        '請參考下方輸入框中的「範例」輸入：公司名稱或產業類型/擔任職務/工作重點/累積年資。例如：人力銀行/職涯永續長/執行中學生、大學生職涯教育工作，發展職涯探索工具與服務，培訓職涯引導師與職涯志工/15年。',
+        '請參考下方輸入框中的「範例」輸入：公司名稱或產業類型/擔任職務/工作重點/累積年資。例如：人力銀行/職涯永續長/執行中學生、大學生職涯教育工作，發展職涯探索工具與服務，培訓職涯引導師與職涯志工/15年。如果你沒有相關資訊提供，請點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="jobNow" placeholder="
 範例：（輸入示意）
@@ -480,9 +489,9 @@ try{
         stage.querySelector('#jobNow').oninput=e=>S.jobNow=e.target.value;
         stage.querySelector('#jobNowNone').onchange=e=>{S.jobNowNone=e.target.checked; render();};
         break;
-      case 7:
+      case 8:
         qWrap('7. 我更早之前從事的工作是？（含兼職、實習與志工…）',
-        '請參考下方輸入框中的「範例」輸入：公司名稱或產業類型/擔任職務/工作重點/累積年資。例如：資訊科技製造產業/員工發展室專案顧問/發展＆執行員工職涯規劃方案，協助各部門團隊建立活動/3年。',
+        '請參考下方輸入框中的「範例」輸入：公司名稱或產業類型/擔任職務/工作重點/累積年資。例如：資訊科技製造產業/員工發展室專案顧問/發展＆執行員工職涯規劃方案，協助各部門團隊建立活動/3年。如果你沒有相關資訊提供，請點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="jobPrev" placeholder="
 範例：（輸入示意）
@@ -492,21 +501,21 @@ try{
         stage.querySelector('#jobPrev').oninput=e=>S.jobPrev=e.target.value;
         stage.querySelector('#jobPrevNone').onchange=e=>{S.jobPrevNone=e.target.checked; render();};
         break;
-      case 8:
+      case 9:
         qWrap('8. 除了上述二個工作，我還從事過那個讓我有成就感的工作？（含兼職、實習與志工…）',
-        '請參考下方輸入框中的「範例」輸入：公司名稱或產業類型/擔任職務/工作重點/累積年資。例如：例如：國立大學/心理系助理教授/負責人力資源管理、領導心理學、統計、質化研究...課程，主持國科會、國防部研究專案，協助企業甄選測驗建置計畫/5年。',
+        '請參考下方輸入框中的「範例」輸入：公司名稱或產業類型/擔任職務/工作重點/累積年資。例如：例如：國立大學/心理系助理教授/負責人力資源管理、領導心理學、統計、質化研究...課程，主持國科會、國防部研究專案，協助企業甄選測驗建置計畫/5年。如果你沒有相關資訊提供，請點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="jobOther" placeholder="
 範例：（輸入示意）
-國立大學/心理系助理教授/負責人力資源管理、領導心理學、統計、質化研究...課程，主持國科會、國防部研究專案，指導研究生論文計畫，協助企業執行甄選測驗建置計畫/5年。" ${S.jobOtherNone?'disabled':''} value="${escape(S.jobOther||'')}" aria-label="讓我有成就感的工作">
+國立大學/心理系助理教授/負責人力資源管理、領導心理學、統計、質化研究...課程，主持國科會、國防部研究專案，指導研究生論文計畫，協助企業執行甄選測驗建置計畫/5年。如果你沒有相關資訊提供，請點選下方「無」這個選項。" ${S.jobOtherNone?'disabled':''} value="${escape(S.jobOther||'')}" aria-label="讓我有成就感的工作">
            <label class="hint"><input type="checkbox" id="jobOtherNone" ${S.jobOtherNone?'checked':''}> 無</label>
          </div>`);
         stage.querySelector('#jobOther').oninput=e=>S.jobOther=e.target.value;
         stage.querySelector('#jobOtherNone').onchange=e=>{S.jobOtherNone=e.target.checked; render();};
         break;
-      case 9:
+      case 10:
         qWrap('9. 我擁有的證照？',
-        '多張證照請用逗號（,）分開。例如：教育部助理教授證書，TA溝通交流分析。若無可勾選「無」。',
+        '多張證照請用逗號（,）分開。例如：教育部助理教授證書，TA溝通交流分析。如果你沒有證照、認證...，請點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="licenses" placeholder="
 範例：（輸入示意）
@@ -516,9 +525,9 @@ try{
         stage.querySelector('#licenses').oninput=e=>S.licenses=e.target.value;
         stage.querySelector('#licensesNone').onchange=e=>{S.licensesNone=e.target.checked; render();};
         break;
-      case 10:
+      case 11:
         qWrap('10. 我擅長的技能？',
-        '請以逗號分隔；例如：職涯講座/工作坊帶領，職涯諮詢，教育訓練設計與執行，員工招募與甄選規劃與執行，心理測驗編製，統計分析。若無可勾選「無」。',
+        '請以逗號分隔；例如：職涯講座/工作坊帶領，職涯諮詢，教育訓練設計與執行，員工招募與甄選規劃與執行，心理測驗編製，統計分析。如果你沒有技能資訊提供，請點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="skill" placeholder="
 範例：（輸入示意）
@@ -528,9 +537,9 @@ try{
         stage.querySelector('#skill').oninput=e=>S.skill=e.target.value;
         stage.querySelector('#skillNone').onchange=e=>{S.skillNone=e.target.checked; render();};
         break;
-      case 11:
+      case 12:
         qWrap('11. 我累積的管理經驗？',
-        '例如：5年。請直接輸入幾年；若不適用可勾選「無」。',
+        '例如：5年。請直接輸入幾年。如果你沒有管理經驗，可輸入「0」。或是點選下方「無」這個選項。',
         `<div class="row">
            <input class="field" id="manageYears" inputmode="numeric" placeholder="
 範例：（輸入示意）
@@ -540,7 +549,7 @@ try{
         stage.querySelector('#manageYears').oninput=e=>S.manageYears=e.target.value;
         stage.querySelector('#manageNone').onchange=e=>{S.manageNone=e.target.checked; render();};
         break;
-      case 12:
+      case 13:
         qWrap('心流時光說明','',
          `<div style="line-height:1.8">
             <p>♨ <b>何謂心流？</b><br>
@@ -562,16 +571,16 @@ try{
             例如：在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。</p>
           </div>`);
         break;
-      case 13:
+      case 14:
         qWrap('12. 我最有心流時光的生命經歷是？',
-        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow1" placeholder="
 範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
 大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1||'')}</textarea><label class="hint"><input type="checkbox" id="flow1None" ${S.flow1None?'checked':''}> 無</label>`);stage.querySelector('#flow1').oninput=e=>S.flow1=e.target.value;stage.querySelector('#flow1None').onchange=e=>{S.flow1None=e.target.checked; render();};
         break;
-      case 14:
+      case 15:
         qWrap('13. 我第二個比較有心流時光的生命經歷是？',
-        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二" placeholder="
 範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
 在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。">${escape(S.flow2||'')}</textarea>
@@ -579,9 +588,9 @@ try{
         stage.querySelector('#flow2').oninput=e=>S.flow2=e.target.value;
         stage.querySelector('#flow2None').onchange=e=>{S.flow2None=e.target.checked; render();};
         break;
-      case 15:
+      case 16:
         qWrap('14. 我第三個比較有心流時光的生命經歷是？',
-        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三" placeholder="
 範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
 在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。">${escape(S.flow3||'')}</textarea>
@@ -589,9 +598,9 @@ try{
         stage.querySelector('#flow3').oninput=e=>S.flow3=e.target.value;
         stage.querySelector('#flow3None').onchange=e=>{S.flow3None=e.target.checked; render();};
         break;
-      case 16:
+      case 17:
         qWrap('15. 我第四個比較有心流時光的生命經歷是？',
-        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow4" ${S.flow4None?'disabled':''} aria-label="心流事件四" placeholder="
 範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
 在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。">${escape(S.flow4||'')}</textarea>
@@ -599,9 +608,9 @@ try{
         stage.querySelector('#flow4').oninput=e=>S.flow4=e.target.value;
         stage.querySelector('#flow4None').onchange=e=>{S.flow4None=e.target.checked; render();};
         break;
-      case 17:
+      case 18:
         qWrap('16. 我第五個比較有心流時光的生命經歷是？',
-        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。',
+        '每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow5" ${S.flow5None?'disabled':''} aria-label="心流事件五" placeholder="
 範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
 在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。">${escape(S.flow5||'')}</textarea>
@@ -609,28 +618,77 @@ try{
         stage.querySelector('#flow5').oninput=e=>S.flow5=e.target.value;
         stage.querySelector('#flow5None').onchange=e=>{S.flow5None=e.target.checked; render();};
         break;
-      case 18:
+      case 19:
         qWrap('17. 我比較在乎的三個職業價值觀是？',
         '請依序點選出三個在乎的職業價值觀。<a href="https://guide.104.com.tw/value/" target="_blank" rel="noopener">（若不清楚個人在乎的職業價值觀，可以用5分鐘試試「104職業價值觀檢測」）</a>',
         selView(valuesOpts,S.valuesSel)+
         chips(valuesOpts,S.valuesSel,true)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
         bindChips(id=>{toggleMulti(S.valuesSel,id,3)});
         break;
-      case 19:
+      case 20:
         qWrap('18. 我比較來勁的二個生涯興趣？',
         '請依序點選出二個來勁的生涯興趣。<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">（若不清楚個人來勁的生涯興趣，可以用5分鐘試試「104生涯興趣檢測」）</a>',
         selView(interestOpts,S.interestsSel)+
         chips(interestOpts,S.interestsSel,true)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
         bindChips(id=>{toggleMulti(S.interestsSel,id,2)});
         break;
-      case 20:
+      case 21:
         qWrap('19. 我比較擅長的三個多元智能？','請依序點選出三個比較擅長的多元智能。',
           selView(miOpts,S.miSel)+
           chips(miOpts,S.miSel,true)+`<div class="hint">已選 ${S.miSel.length} / 3</div>`);
         bindChips(id=>{toggleMulti(S.miSel,id,3)});
         break;
-      case 21:
-        const text = compiledText();
+      case 22:
+        
+const tail = `
+
+請根據上述彙整的各項生涯發展與探索資訊，回答我以下的問題。回答的內容，請用條列方式呈現，方便我的閱讀。
+**********************
+A.我有哪六個比較明確突出的熱情特質？
+熱情特質的名稱與描述這個熱情特質的一句話。每個熱情特質的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個熱情特質。
+從心流時光解析我為何具備這個熱情特質：請以我提供的五個心流時光事件（第12至16題）做為佐證，詳細說明我為何有這個熱情特質。
+從學經歷與我在乎的職業價值觀、來勁的生涯興趣及擅長的多元智能，解析我為何具備這個熱情特質：請以我提供的學經歷資訊（第1至11題）及心理測驗結果（第17至19題）做為佐證，詳細說明我為何有這個熱情特質。運用心理測驗佐證時，請提供向度英文代碼與完整的向度中文名稱。
+摘要說明：最後針對每個熱情特質提供至少200個字「摘要說明」。
+**********************
+B.我有哪六個比較明確突出的專業才能？
+專業才能的名稱與描述這個專業才能的一句話。每個專業才能的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個專業才能。
+從心流時光解析我為何具備這個專業才能：請以我提供的五個心流時光事件（第12至16題）做為佐證，詳細說明我為何有這個專業才能。
+從學經歷與我在乎的職業價值觀、來勁的生涯興趣及擅長的多元智能，解析我為何具備這個專業才能：請以我提供的學經歷資訊（第1至11題）及心理測驗結果（第17至19題）做為佐證，詳細說明我為何有這個專業才能。運用心理測驗佐證時，請提供向度英文代碼與完整的向度中文名稱。
+**********************
+C.推薦我適合從事的六個職業。
+每個推薦我從事的職業，都包括以下的說明：
+1.職業介紹：請用100個字介紹這個職業。
+2.職業現況＆發展趨勢：請用100個字，說明這個職業目前的發展現況及未來發展趨勢。
+3.推薦原因：請提供150個字的內容，說明為何推薦我從事這個職業。
+4.思考問題：最後請根據我的現況，舉出如果我未來想要從事這六個職業，在每個職業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？
+**********************
+D.推薦我適合加入的六個產業。
+每個推薦我加入的產業，都包括以下的說明：
+1.產業介紹：請用100個字介紹這個產業。
+2.產業現況＆發展趨勢：請用100個字，說明這個產業目前的發展現況及未來發展趨勢。
+3.推薦原因：請提供150個字的內容，說明為何推薦我加入這個產業。
+4.思考問題：最後請根據我的現況，舉出如果我未來想要加入這六個產業，在每個產業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？
+**********************
+E.推薦我適合從事的二個新興職業。
+每個推薦我從事的新興職業，都包括以下的說明：
+1.職業介紹：請用100個字介紹這個新興職業。
+2.職業現況＆發展趨勢：請用100個字，說明這個新興職業目前的發展現況及未來發展趨勢。
+3.推薦原因：請提供150個字的內容，說明為何推薦我從事這個新興職業。
+4.思考問題：最後請根據我的現況，舉出如果我未來想要從事這個新興職業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？
+**********************
+F.推薦我適合加入的二個新興產業。
+每個推薦我加入的新興產業，都包括以下的說明：
+1.產業介紹：請用100個字介紹這個新興產業。
+2.產業現況＆發展趨勢：請用100個字，說明這個新興產業目前的發展狀況及未來發展趨勢。
+3.推薦原因：請提供150個字的內容，說明為何推薦我從事這個新興產業。
+4.思考問題：最後請根據我的現況，舉出如果我未來想要從事這個新興產業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？
+**********************
+G.請提供一個彙整表，讓我清楚知悉ABCDEF的重點內容。
+**********************
+H.請針對我目前職涯探索的現況，給我三個具體的職涯方向建議。每個職涯方向的建議，請至少用200個字說明為何會給我這個建議。並且列出每個建議我可以馬上執行的三項任務。
+`;
+
+const text = compiledText() + tail;
         stage.innerHTML = progress()+`<section class="card" style="padding:16px">
           <div class="qtitle">彙整完成</div>
           <div class="hint">下方文字已包含 19 項彙整與 ABCDEFG 七題請求。點「一鍵複製」即可貼上使用。</div>
@@ -696,7 +754,7 @@ try{
   function escape(s){ return String(s??'').replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch])); }
   function findById(arr,id){ const f=arr.find(a=>a[0]===id); return f?f[1]:''; }
 
-  function reset(){ Object.assign(S, { step:0, total:21,
+  function reset(){ Object.assign(S, { step:0, total:22,
     eduLevel:null, eduField:'', eduNone:false,
     skillPaper:'', skillNone:false,
     groupNow:'', groupNowNone:false,
@@ -717,77 +775,33 @@ try{
 
   // ---------- 彙整文字（含 ABCDEF 七題） ----------
   function compiledText(){
-    const L1 = `1.我的最高學歷是：${(S.eduLevel?`(${S.eduLevel})`:'')}${findById(eduLevelOpts,S.eduLevel)}`;
+    const levelTxt = (S.eduLevel ? '(' + S.eduLevel + ')' : '');
+    const likeMap = {1:'非常不喜歡',2:'不喜歡',3:'普普通通',4:'喜歡',5:'非常喜歡'};
+
+    const L1 = `1.我的最高學歷是：${levelTxt}${findById(eduLevelOpts,S.eduLevel)}`;
     const L2 = `2.我就讀的專業領域有：${S.eduNone?'無。':(S.eduField||'')}`;
-    const L3 = `3.我擅長的科目、做過的專題、論文或參與過的競賽：${S.skillNone?'無。':(S.skillPaper||'')}`;
-    const L4 = `4.我最近或目前參與的社團是：${S.groupNowNone?'無。':(S.groupNow||'')}`;
-    const L5 = `5.我還有參與過那個讓我印象深刻，收穫滿滿的社團：${S.groupNextNone?'無。':(S.groupNext||'')}`;
-    const L6 = `6.我最近或目前從事的工作是：${S.jobNowNone?'無。':(S.jobNow||'')}`;
-    const L7 = `7.我更早之前從事的工作是：${S.jobPrevNone?'無。':(S.jobPrev||'')}`;
-    const L8 = `8.我還從事過那個比較有成就感的工作：${S.jobOtherNone?'無。':(S.jobOther||'')}`;
-    const L9 = `9.我擁有的證照：${S.licensesNone?'無。':(S.licenses||'（未填）')}`;
-    const L10 = `10.我累積的技能：${S.skillNone?'無。':(S.skill||'（未填）')}`;
-    const L11 = `11.我的管理經驗：${S.manageNone?'無。':(S.manageYears?S.manageYears+'年。':'（未填）')}`;
-    const L12 = `心流時光說明：已閱讀。`;
-    const L13 = `12.我最有心流時光的生命經歷是：${S.flow1None?'無。':(S.flow1||'（未填）')}`;
-    const L14 = `13.我第二個比較有心流時光的生命經歷是：${S.flow2None?'無。':(S.flow2||'（未填）')}`;
-    const L15 = `14.我第三個比較有心流時光的生命經歷是：${S.flow3None?'無。':(S.flow3||'（未填）')}`;
-    const L16 = `15.我第四個比較有心流時光的生命經歷是：${S.flow4None?'無。':(S.flow4||'（未填）')}`;
-    const L17 = `16.我第五個比較有心流時光的生命經歷是：${S.flow5None?'無。':(S.flow5||'（未填）')}`;
-    const L18 = '17.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id}) ${findById(valuesOpts,id)}`).join('\n') : '未選擇');
-    const L19 = '18.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
-    const L20 = '19.我比較擅長的三個多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id}) ${findById(miOpts,id)}`).join('\n') : '未選擇');
+    const L3 = `3.我對就讀專業領域的喜歡程度：${S.eduLike?('('+S.eduLike+')'):''}${S.eduLike?likeMap[S.eduLike]:'（未選擇）'}`;
+    const L4 = `4.我擅長的科目、做過的專題、論文或參與過的競賽：${S.skillNone?'無。':(S.skillPaper||'')}`;
+    const L5 = `5.我最近或目前參與的社團是：${S.groupNowNone?'無。':(S.groupNow||'')}`;
+    const L6 = `6.我還有參與過那個讓我印象深刻，收穫滿滿的社團：${S.groupNextNone?'無。':(S.groupNext||'')}`;
+    const L7 = `7.我最近或目前從事的工作是：${S.jobNowNone?'無。':(S.jobNow||'')}`;
+    const L8 = `8.我更早之前從事的工作是：${S.jobPrevNone?'無。':(S.jobPrev||'')}`;
+    const L9 = `9.我還從事過那個比較有成就感的工作：${S.jobOtherNone?'無。':(S.jobOther||'')}`;
+    const L10 = `10.我擁有的證照：${S.licensesNone?'無。':(S.licenses||'（未填）')}`;
+    const L11 = `11.我累積的技能：${S.skillNone?'無。':(S.skill||'（未填）')}`;
+    const L12 = `12.我的管理經驗：${S.manageNone?'無。':(S.manageYears?S.manageYears+'年。':'（未填）')}`;
+    const L13 = `心流時光說明：已閱讀。`;
+    const L14 = `13.我最有心流時光的生命經歷是：${S.flow1None?'無。':(S.flow1||'（未填）')}`;
+    const L15 = `14.我第二個比較有心流時光的生命經歷是：${S.flow2None?'無。':(S.flow2||'（未填）')}`;
+    const L16 = `15.我第三個比較有心流時光的生命經歷是：${S.flow3None?'無。':(S.flow3||'（未填）')}`;
+    const L17 = `16.我第四個比較有心流時光的生命經歷是：${S.flow4None?'無。':(S.flow4||'（未填）')}`;
+    const L18 = `17.我第五個比較有心流時光的生命經歷是：${S.flow5None?'無。':(S.flow5||'（未填）')}`;
+    const L19 = '18.我比較在乎的三個職業價值觀是：\n' + (S.valuesSel.length? S.valuesSel.map(id=>`(${id}) ${findById(valuesOpts,id)}`).join('\n') : '未選擇');
+    const L20 = '19.我比較來勁的二個生涯興趣是：\n' + (S.interestsSel.length? S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n') : '未選擇');
+    const L21 = '20.我比較擅長的三個多元智能是：\n' + (S.miSel.length? S.miSel.map(id=>`(${id}) ${findById(miOpts,id)}`).join('\n') : '未選擇');
 
-    const tail = [
-'',
-'請根據上述彙整的各項生涯發展與探索資訊，回答我以下的問題。回答的內容，請用條列方式呈現，方便我的閱讀。',
-'**********************',
-'A.我有哪六個比較明確的熱情特質？',
-'熱情特質的名稱與描述這個熱情特質的一句話。每個熱情特質的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個熱情特質。',
-'從心流時光解析我為何具備這個熱情特質：請以我提供的五個心流時光事件（第12至16題）做為佐證，詳細說明我為何有這個熱情特質。',
-'從學經歷與我在乎的職業價值觀、來勁的生涯興趣及擅長的多元智能，解析我為何具備這個熱情特質：請以我提供的學經歷資訊（第1至11題）及心理測驗結果（第17至19題）做為佐證，詳細說明我為何有這個熱情特質。運用心理測驗佐證時，請提供向度英文代碼與完整的向度中文名稱。',
-'摘要說明：最後針對每個熱情特質提供至少200個字「摘要說明」。',
-'**********************',
-'B.我有哪六個比較明確的專業才能？',
-'專業才能的名稱與描述這個專業才能的一句話。每個專業才能的標題，請用四個字表示。後面加上一句話，讓我可以清楚地知悉這個專業才能。',
-'從心流時光解析我為何具備這個專業才能：請以我提供的五個心流時光事件（第12至16題）做為佐證，詳細說明我為何有這個專業才能。',
-'從學經歷與我在乎的職業價值觀、來勁的生涯興趣及擅長的多元智能，解析我為何具備這個專業才能：請以我提供的學經歷資訊（第1至11題）及心理測驗結果（第17至19題）做為佐證，詳細說明我為何有這個專業才能。運用心理測驗佐證時，請提供向度英文代碼與完整的向度中文名稱。',
-'**********************',
-'C.推薦我適合從事的六個職業。',
-'每個推薦我從事的職業，都包括以下的說明：',
-'1.職業介紹：請用100個字介紹這個職業。',
-'2.職業現況＆發展趨勢：請用100個字，說明這個職業目前的發展現況及未來發展趨勢。',
-'3.推薦原因：請提供150個字的內容，說明為何推薦我從事這個職業。',
-'4.思考問題：最後請根據我的現況，舉出如果我未來想要從事這六個職業，在每個職業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？',
-'**********************',
-'D.推薦我適合加入的六個產業。',
-'每個推薦我加入的產業，都包括以下的說明：',
-'1.產業介紹：請用100個字介紹這個產業。',
-'2.產業現況＆發展趨勢：請用100個字，說明這個產業目前的發展現況及未來發展趨勢。',
-'3.推薦原因：請提供150個字的內容，說明為何推薦我加入這個產業。',
-'4.思考問題：最後請根據我的現況，舉出如果我未來想要加入這六個產業，在每個產業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？',
-'**********************',
-'E.推薦我適合從事的二個新興職業。',
-'每個推薦我從事的新興職業，都包括以下的說明：',
-'1.職業介紹：請用100個字介紹這個新興職業。',
-'2.職業現況＆發展趨勢：請用100個字，說明這個新興職業目前的發展現況及未來發展趨勢。',
-'3.推薦原因：請提供150個字的內容，說明為何推薦我從事這個新興職業。',
-'4.思考問題：最後請根據我的現況，舉出如果我未來想要從事這個新興職業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？',
-'**********************',
-'F.推薦我適合加入的二個新興產業。',
-'每個推薦我加入的新興產業，都包括以下的說明：',
-'1.產業介紹：請用100個字介紹這個新興產業。',
-'2.產業現況＆發展趨勢：請用100個字，說明這個新興產業目前的發展現況及未來發展趨勢。',
-'3.推薦原因：請提供150個字的內容，說明為何推薦我從事這個新興產業。',
-'4.思考問題：最後請根據我的現況，舉出如果我未來想要從事這個新興產業，我需要仔細思考的三個關鍵問題。每個關鍵問題，請用100個字詳細描述問題內容，並說明為何我需要釐清這個關鍵問題？',
-'**********************',
-'G.請提供一個彙整表，讓我清楚知悉ABCDEF的重點內容。',
-'**********************',
-'H.請針對我目前職涯探索的現況，給我三個具體的職涯方向建議。每個職涯方向的建議，請至少用200個字說明為何會給我這個建議。並且列出每個建議我可以馬上執行的三項任務。',
-    ].join('\n');
-
-    return [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15,L16,L17,L18,L19,L20,'',tail].join('\n');
-  }
+    return [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15,L16,L17,L18,L19,L20,L21].join('\n');
+}
 
   // 初始渲染
   render();
