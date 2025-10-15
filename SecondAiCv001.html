@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#ff6600" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="#ff6600" name="theme-color"/>
 <title>104AI求職顧問｜用AI陪你寫好履歷自傳求職信</title>
 <style>
   /* ---------- Base ---------- */
@@ -102,33 +103,31 @@
   .app{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 14px;border:1px solid var(--ring);border-radius:14px;background:var(--card);text-decoration:none;color:inherit;box-shadow:var(--shadow);min-height:120px}
   .app:hover{transform:translateY(-1px);transition:transform .1s ease}
   .app svg{width:40px;height:40px}
+
+html { font-size: calc(16px * var(--zoom)); }
 </style>
 </head>
 <body>
-  <div class="toolbar-top" aria-label="字級調整">
-    <button class="btn icon" id="zoomOut" title="縮小字級"><small>A−</small></button>
-    <button class="btn icon" id="zoomIn" title="放大字級"><small>A＋</small></button>
-  </div>
-
-  <header>
-    <div class="header-inner">
-      <div class="title">104AI求職顧問｜用AI陪你寫好履歷自傳求職信</div>
-      <div class="sub">上傳或貼上你的履歷自傳求職信資料 → 勾選職涯偏好 → 一鍵產生可貼到 AI 的 Prompt</div>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="card landing" id="landing" aria-label="起始畫面">
-      <div class="grid">
-        <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 開始填寫</button>
-        <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例，體驗看看</button>
-      </div>
-      <p class="hint">提醒：履歷/自傳/求職信可直接貼文字；若上傳檔案，建議使用 .txt 或 .md。</p>
-    </section>
-
-    <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
-  </main>
-
+<div aria-label="字級調整" class="toolbar-top">
+<button class="btn icon" id="zoomOut" title="縮小字級"><small>A−</small></button>
+<button class="btn icon" id="zoomIn" title="放大字級"><small>A＋</small></button>
+</div>
+<header>
+<div class="header-inner">
+<div class="title">104AI求職顧問｜用AI陪你寫好履歷自傳求職信</div>
+<div class="sub">上傳或貼上你的履歷自傳求職信資料 → 勾選職涯偏好 → 一鍵產生可貼到 AI 的 Prompt</div>
+</div>
+</header>
+<main class="wrap">
+<section aria-label="起始畫面" class="card landing" id="landing">
+<div class="grid">
+<button aria-label="啟動引導" class="btn block" id="startBtn">▶︎ 開始填寫</button>
+<button aria-label="載入範例" class="btn secondary block" id="sampleBtn">✨ 載入範例，體驗看看</button>
+</div>
+<p class="hint">提醒：履歷/自傳/求職信可直接貼文字；若上傳檔案，建議使用 .txt 或 .md。</p>
+</section>
+<div class="safe-bottom" id="stage" style="margin-top:14px"></div>
+</main>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
 try{
