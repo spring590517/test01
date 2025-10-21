@@ -47,11 +47,26 @@
       transition: border .2s, background .2s, box-shadow .2s, transform .15s, color .2s;
       box-shadow: 0 2px 8px rgba(255,152,0,0.04); color: #3e3e3e; user-select: none;
     }
+.option:focus-visible {
+  outline: 3px solid #90caf9;
+  outline-offset: 2px;
+}
+
     .option.selected {
-      border: 2px solid #ff9800; background: #ffe0b2; box-shadow: 0 4px 16px rgba(255,152,0,0.13);
-      transform: scale(1.04); color: #8a5a00; font-weight: 900; font-size: 1.22rem;
-    }
-    .option:hover:not(.option-disabled) { border: 2px solid #ffb74d; background: #fff8e1; box-shadow: 0 4px 16px rgba(255,152,0,0.10); transform: scale(1.03); }
+  border: 2px solid #64b5f6;
+  background: #cce4ff;
+  box-shadow: 0 4px 16px rgba(100,181,246,0.25);
+  transform: scale(1.04);
+  color: #0d47a1;
+  font-weight: 900;
+  font-size: 1.22rem;
+}
+    .option:hover:not(.option-disabled) {
+  border: 2px solid #64b5f6;
+  background: #e3f2fd;
+  box-shadow: 0 4px 16px rgba(100,181,246,0.15);
+  transform: scale(1.03);
+}
     .option.option-disabled { cursor: not-allowed; }
     .actions { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
     .btn {
