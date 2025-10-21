@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>個人風格檢核 · 長輩友善版</title>
+  <title>個人風格檢核</title>
   <style>
     :root { --font-scale: 1; }
     html { font-size: calc(16px * var(--font-scale)); }
@@ -118,12 +118,12 @@
     ["R","R","I","I","O","O","F","F"]
   ];
   const styleList = [
-    { key:'R', name:'理智型風格', color:'#64b5f6', feature:{behavior:'邏輯分析特質強，重視證據、數據，追根究底。', advantage:'邏輯分析、就事論事。', disadvantage:'義正嚴辭、心直口快。'} },
-    { key:'I', name:'開創型風格', color:'#ff9800', feature:{behavior:'想法鮮活多變，勇於嘗試，強調創新與嘗試。', advantage:'創意思考、勇於嘗試。', disadvantage:'天馬行空、不切實際。'} },
-    { key:'O', name:'組織型風格', color:'#81c784', feature:{behavior:'事務管理特質強，強調按部就班，謹慎可靠。', advantage:'組織條理、按部就班。', disadvantage:'較少彈性、不愛變通。'} },
-    { key:'F', name:'情感型風格', color:'#e57373', feature:{behavior:'人際互動特質強，樂於助人，強調團隊和諧。', advantage:'關懷可親、樂於助人。', disadvantage:'感情用事、優柔寡斷。'} },
+    { key:'R', name:'R.理智型風格', color:'#64b5f6', feature:{behavior:'邏輯分析特質強，重視證據、數據，追根究底。', advantage:'邏輯分析、就事論事。', disadvantage:'義正嚴辭、心直口快。'} },
+    { key:'I', name:'I.開創型風格', color:'#ff9800', feature:{behavior:'想法鮮活多變，勇於嘗試，強調創新與嘗試。', advantage:'創意思考、勇於嘗試。', disadvantage:'天馬行空、不切實際。'} },
+    { key:'O', name:'O.組織型風格', color:'#81c784', feature:{behavior:'事務管理特質強，強調按部就班，謹慎可靠。', advantage:'組織條理、按部就班。', disadvantage:'較少彈性、不愛變通。'} },
+    { key:'F', name:'F.情感型風格', color:'#e57373', feature:{behavior:'人際互動特質強，樂於助人，強調團隊和諧。', advantage:'關懷可親、樂於助人。', disadvantage:'感情用事、優柔寡斷。'} },
   ];
-  const stepSelectNum = [4,2,1]; // 每題三輪：先選4，再選2，再選1
+  const stepSelectNum = [4,2,1]; // 每題三輪：先從8選4，再從4選2，再從2選1
 
   // ====== 狀態 ======
   let state = {
