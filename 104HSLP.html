@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>【高中職】生涯興趣Ｘ心流時光 → 學習歷程檔案</title>
-<meta name="description" content="輸入生涯興趣測驗結果＆心流時光事件，一鍵生成出可以貼到ChatGPT的學習歷程檔案Prompt。" />
+<meta name="description" content="輸入生涯興趣測驗結果＆心流時光事件，就可以生成貼到AI產生學習歷程檔案初稿的Prompt。" />
 <style>
   *,*::before,*::after{box-sizing:border-box}
   [hidden]{display:none !important}
@@ -60,6 +60,24 @@
   .sel-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px dashed var(--brand);background:#fff7f0;border-radius:999px;font-size:.95rem}
   .sel-pill button{all:unset;cursor:pointer;padding:2px 4px;border-radius:6px}
   .safe-bottom{padding-bottom:calc(env(safe-area-inset-bottom,0) + 8px)}
+
+  .apps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+  .appbtn{display:flex;align-items:center;justify-content:center;gap:10px;padding:.9em 1.1em;border:1px solid var(--ring);border-radius:12px;background:#fff;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}
+  .appbtn:hover{background:#fff7f0;border-color:#ffd0ae}
+  .appbtn svg{width:22px;height:22px;display:block}
+  .stepcap{font-weight:800;margin-top:8px;margin-bottom:4px}
+
+
+  .center{text-align:center}
+  .bigcopy{display:flex;justify-content:center;margin:8px 0 14px}
+  .btn.xl{font-size:1.05em;padding:1.05em 1.4em;border-radius:12px}
+  .appgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 6px}
+  .appcard{background:#fff;border:1px solid var(--ring);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;box-shadow:var(--shadow)}
+  .appcard:hover{background:#fff7f0;border-color:#ffd0ae}
+  .appicon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;border:1px solid #eee}
+  .appname{font-weight:800}
+  .restartwrap{display:flex;justify-content:center;margin-top:10px}
+
 </style>
 </head>
 <body>
@@ -68,7 +86,7 @@
     <div class="head-row">
       <div>
         <div class="title">【高中職】生涯興趣Ｘ心流時光 → 學習歷程檔案</div>
-        <div class="sub">彙整「生涯興趣Ｘ心流時光」探索成果，一鍵生成可以丟給ChatGPT產出學習歷程檔案的Prompt</div>
+        <div class="sub">彙整「生涯興趣Ｘ心流時光」探索成果，就可以生成貼到AI產生學習歷程檔案初稿的Prompt</div>
       </div>
       <div class="fs-ctrl" aria-label="字級調整">
         <button class="btn ghost sm" id="fsDown" title="縮小字級">A−</button>
@@ -106,7 +124,7 @@
 
   /* --------- State --------- */
   const S = {
-    step:0,total:12,
+    step:0,total:13, // ← 新增心流說明頁，總步驟+1
     g1: null, // current grade group
     g2_dept: '', g2_isHS: false,
     club: '', club_none:false,
@@ -149,14 +167,14 @@
     g1:2,
     g2_dept:'我是普通高中學生',
     g2_isHS:true,
-    club:'吉他社/教學組組長，偏鄉服務隊/活動部部長',
+    club:'吉他社/教學組組長/設計與執行吉他教學課程，偏鄉服務隊/活動部部長/統籌設計讓國小學生探索工作世界的各項活動。',
     riasec:[4,5],
     mi:[8,7,2],
-    flow1:'國一的寒假，參加四天三夜的全國大露營擔任小隊長。',
-    flow2:'國三升高一暑假，用二週的時間跟教會弟兄姊妹騎自行車環島。',
-    flow3:'高一下學期，擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。',
-    flow4:'高二上學期，擔任學校樂隊指揮，並在高二下帶領樂隊獲得全國軍樂競賽亞軍。',
-    flow5:'高二升高三暑假，擔任原鄉音樂夏令營副總召，陪伴原住民孩童進行音樂成果發表。'
+    flow1:'國一的寒假參加四天三夜的全國大露營，擔任小隊長負責帶領小隊成員執行各項任務與競賽，領導的小組獲得精神總錦標的第三名。',
+    flow2:'國三升高一暑假用二週的時間跟教會弟兄姊妹騎自行車環島，雖然過程遇到很多狀況與問題，但是在大家團隊合作與互相協助下還是順利完成挑戰。這個活動不僅培養了我的心理素質，也讓我重新認識台灣。',
+    flow3:'高一下學期擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。看見自己喜歡用寓教於樂的方式幫忙大家。',
+    flow4:'高二上學期擔任學校樂隊指揮，利用課餘時間＆星期假日揮汗練習。在高二下帶領樂隊獲得全國軍樂競賽亞軍，個人也獲得最佳指揮。',
+    flow5:'高二升高三暑假擔任原鄉音樂夏令營副總召，陪伴原住民孩童學習用音樂表達自己，並且讓孩童在部落豐年祭進行演出，獲得部落長老們及縣府教育局長的肯定。'
   };
 
   /* --------- UI Helpers --------- */
@@ -164,7 +182,7 @@
     const pct = Math.round(Math.min(S.step,S.total)/S.total*100);
     return `<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div class="bar" style="width:${pct}%"></div></div>`;
   };
-  const nav = () => `<div class="toolbar">${S.step>1?'<button class="btn ghost" id="prev">← 上一題</button>':''}${S.step<S.total?'<button class="btn" id="next">下一題 →</button>':'<button class="btn" id="gen">生成彙整 →</button>'}</div>`;
+  const nav = () => { const nextLabel = (S.step===12)?'生成召喚AI的Prompt →':'下一題 →'; return `<div class="toolbar">${S.step>1?'<button class="btn ghost" id="prev">← 上一題</button>':''}${S.step<S.total?`<button class="btn" id="next">${nextLabel}</button>`:'<button class="btn" id="gen">生成彙整 →</button>'}</div>`; };
 
   const chips = (opts, selected, capOrSingle) => {
     const multi = Array.isArray(selected);
@@ -217,11 +235,15 @@
     const prev = stage.querySelector('#prev'), next = stage.querySelector('#next'), gen = stage.querySelector('#gen');
     if(prev) prev.onclick = ()=>{ S.step--; render(); };
     if(next) next.onclick = ()=>{ S.step++; render(); };
-    if(gen)  gen.onclick  = ()=>{ S.step = 12; render(); };
+    if(gen)  gen.onclick  = ()=>{ S.step = S.total; render(); };
   };
   const escapeHTML = s => String(s??'').replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
 
-  /* --------- Open ChatGPT App (mobile-friendly) --------- */
+  /* --------- Open ChatGPT / Gemini / Copilot --------- */
+  
+  function openGemini(){ window.open('https://gemini.google.com/app', '_blank', 'noopener'); }
+  function openCopilot(){ window.open('https://copilot.microsoft.com/', '_blank', 'noopener'); }
+
   function openChatGPTApp(){
     const webUrl = 'https://chatgpt.com/';
     const universalUrl = 'https://chat.openai.com/';
@@ -273,73 +295,117 @@
         stage.querySelector('#hs').onchange = e=>{ S.g2_isHS = e.target.checked; if(S.g2_isHS){ S.g2_dept='我是普通高中學生'; } else { S.g2_dept=''; } render(); };
         break;
       case 3:
-        qWrap('3. 我在以前（高中職、國中...）參加過哪些社團，擔任什麼職務？','請按照範例的格式撰寫。可輸入多個社團/職務，不同社團/職務間，請用「，」區隔。例如：吉他社/教學組組長，偏鄉服務隊/活動部部長。', `<div class="row">
-          <textarea class="field" id="club" ${S.club_none?'disabled':''} placeholder="吉他社教學組組長，偏鄉服務隊活動部部長">${escapeHTML(S.club)}</textarea>
+        qWrap('3. 我在以前（高中職、國中小...）參加過哪些社團，擔任什麼職務？','請按照範例的格式撰寫。可輸入多個社團名稱/職務名稱/負責工作，不同社團名稱/職務名稱/負責工作間，請用「，」區隔。例如：吉他社/教學組組長/設計與執行吉他教學課程，偏鄉服務隊/活動部部長/統籌設計讓國小學生探索工作世界的各項活動。', `<div class="row">
+          <textarea class="field" id="club" ${S.club_none?'disabled':''} placeholder="吉他社/教學組組長/設計與執行吉他教學課程，偏鄉服務隊/活動部部長/統籌設計讓國小學生探索工作世界的各項活動。">${escapeHTML(S.club)}</textarea>
           <label class="hint"><input type="checkbox" id="clubn" ${S.club_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#club').oninput = e=> S.club = e.target.value;
         stage.querySelector('#clubn').onchange = e=>{ S.club_none = e.target.checked; render(); };
         break;
       case 4:
-        qWrap('4. 我的生涯興趣測驗結果顯示，比較來勁的二個生涯興趣？（選 2）','請從六個選項中選擇兩個。若不清楚，可先做 104 生涯興趣測驗：<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">前往測驗</a>', selStrip(riasecOpts, S.riasec, S.riasec) + chips(riasecOpts, S.riasec, 2) + `<div class="hint">已選 ${S.riasec.length} / 2（可點選取消，號碼會自動前移）</div>`);
+        qWrap('4. 我的生涯興趣測驗結果顯示，我比較來勁的二個生涯興趣依序是？','請從六個選項中依序選擇兩個。若不清楚自己的生涯興趣，可先用104生涯興趣測驗進行探索：<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">前往104生涯興趣測驗</a>', selStrip(riasecOpts, S.riasec, S.riasec) + chips(riasecOpts, S.riasec, 2) + `<div class="hint">已選 ${S.riasec.length} / 2（可點選取消，號碼會自動前移）</div>`);
         break;
       case 5:
-        qWrap('5. 我比較擅長的三個多元智能？（選 3）','請從八個選項中選擇三個。', selStrip(miOpts, S.mi, S.mi) + chips(miOpts, S.mi, 3) + `<div class="hint">已選 ${S.mi.length} / 3</div>`);
+        qWrap('5. 根據我對自己的瞭解與別人的回饋，我比較擅長的三個多元智能依序是？','請從八個選項中依序選擇三個。', selStrip(miOpts, S.mi, S.mi) + chips(miOpts, S.mi, 3) + `<div class="hint">已選 ${S.mi.length} / 3</div>`);
         break;
+      /* 新增的心流時光說明頁 */
       case 6:
-        qWrap('6. 我最有心流時光的一次生命事件是？','「所謂的『心流時光』，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流時光事件組合包含：Time。Flow。二個元素。第一句的 Time，表示這個心流時光事件發生的時間或背景。第二句的 Flow，簡述這個心流時光事件的內容重點。 例如：國一的寒假，參加四天三夜的全國大露營擔任小隊長。」', `<div class="row">
-          <textarea class="field" id="flow1" ${S.flow1_none?'disabled':''} placeholder="國一的寒假，參加四天三夜的全國大露營擔任小隊長。">${escapeHTML(S.flow1)}</textarea>
+        qWrap('心流時光說明','',`
+          <p>♨ <b>何謂心流？</b><br>
+          當您在做一件自己全心投入熱愛的事，即便這件事需要您用盡所有的心力，但您仍覺得自己充滿能量，這時您就是進入了「心流」狀態。</p>
+          <p>😀 <b>進入心流時光會有什麼感受？</b><br>
+          有成就感、有挑戰感、如魚得水、心想事成、欲罷不能、忘記時間。</p>
+          <p>★ <b>心流時光常會出現在這些生命經歷：</b><br>
+          曾參與過的活動：社團、球隊、教育訓練、留學交換、旅行…<br>
+          互動合作過的人：好友、同學、師長、幫助您的人、背叛您的人…<br>
+          看過的書或影片：漫畫、小說、散文、繪本、電影、動漫、連續劇…<br>
+          重要的人生經歷：做過的工作、去過的地方、得過的榮譽、失去的…</p>
+          <p>👉 接下來要您用直覺的方式，寫出「五個」讓您最有心流時光的生命事件。<br>
+          每段心流事件包含：<b>BAR三個元素</b>。其中<b>Backgroud（背景）</b>，指的是這個心流時光事件發生的時間或背景。第二句的<b>Action（行動）</b>，表示在這個心流時光事件你做了哪些事情。第三句的<b>Result（結果）</b>，表示這個心流時光事件讓你獲得哪些學習成果。<br>
+          例如：（Backgroud，背景）國一的寒假參加四天三夜的全國大露營，（Action，行動）擔任小隊長負責帶領小隊成員執行各項任務與競賽，（Result，結果）領導的小組獲得精神總錦標的第三名。</p>
+        `);
+        break;
+      /* 下面題目全部順延一號 */
+      case 7:
+        qWrap('6. 我最有心流時光的一次生命事件是？','「所謂的『心流時光』，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流時光事件組合包含：BAR三個元素。其中Backgroud（背景），指的是這個心流時光事件發生的時間或背景。第二句的Action（行動），表示在這個心流時光事件你做了哪些事情。第三句的Result（結果），表示這個心流時光事件讓你獲得哪些學習成果。例如：（Backgroud，背景）國一的寒假參加四天三夜的全國大露營，（Action，行動）擔任小隊長負責帶領小隊成員執行各項任務與競賽，（Result，結果）領導的小組獲得精神總錦標的第三名。」', `<div class="row">
+          <textarea class="field" id="flow1" ${S.flow1_none?'disabled':''} placeholder="國一的寒假參加四天三夜的全國大露營，擔任小隊長負責帶領小隊成員執行各項任務與競賽，領導的小組獲得精神總錦標的第三名。">${escapeHTML(S.flow1)}</textarea>
           <label class="hint"><input type="checkbox" id="flow1n" ${S.flow1_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow1').oninput = e=> S.flow1 = e.target.value;
         stage.querySelector('#flow1n').onchange = e=>{ S.flow1_none = e.target.checked; render(); };
         break;
-      case 7:
-        qWrap('7. 我另一個比較有心流時光感覺的生命經歷是？','例如：國三升高一暑假，用二週的時間跟教會弟兄姊妹騎自行車環島。', `<div class="row">
-          <textarea class="field" id="flow2" ${S.flow2_none?'disabled':''} placeholder="國三升高一暑假，用二週的時間跟教會弟兄姊妹騎自行車環島。">${escapeHTML(S.flow2)}</textarea>
+      case 8:
+        qWrap('7. 我另一個比較有心流時光感覺的生命經歷是？','例如：國三升高一暑假用二週的時間跟教會弟兄姊妹騎自行車環島，雖然過程遇到很多狀況與問題，但是在大家團隊合作與互相協助下還是順利完成挑戰。這個活動不僅培養了我的心理素質，也讓我重新認識台灣。', `<div class="row">
+          <textarea class="field" id="flow2" ${S.flow2_none?'disabled':''} placeholder="國三升高一暑假用二週的時間跟教會弟兄姊妹騎自行車環島，雖然過程遇到很多狀況與問題，但是在大家團隊合作與互相協助下還是順利完成挑戰。這個活動不僅培養了我的心理素質，也讓我重新認識台灣。">${escapeHTML(S.flow2)}</textarea>
           <label class="hint"><input type="checkbox" id="flow2n" ${S.flow2_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow2').oninput = e=> S.flow2 = e.target.value;
         stage.querySelector('#flow2n').onchange = e=>{ S.flow2_none = e.target.checked; render(); };
         break;
-      case 8:
-        qWrap('8. 我另一個比較有心流時光感覺的生命經歷是？','例如：高一下學期，擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。', `<div class="row">
-          <textarea class="field" id="flow3" ${S.flow3_none?'disabled':''} placeholder="高一下學期，擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。">${escapeHTML(S.flow3)}</textarea>
+      case 9:
+        qWrap('8. 我另一個比較有心流時光感覺的生命經歷是？','例如：高一下學期擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。看見自己喜歡用寓教於樂的方式幫忙大家。', `<div class="row">
+          <textarea class="field" id="flow3" ${S.flow3_none?'disabled':''} placeholder="高一下學期擔任輔導志工團心靈電影院總召集人，讓全校同學用電影認識自己。看見自己喜歡用寓教於樂的方式幫忙大家。">${escapeHTML(S.flow3)}</textarea>
           <label class="hint"><input type="checkbox" id="flow3n" ${S.flow3_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow3').oninput = e=> S.flow3 = e.target.value;
         stage.querySelector('#flow3n').onchange = e=>{ S.flow3_none = e.target.checked; render(); };
         break;
-      case 9:
-        qWrap('9. 我另一個比較有心流時光感覺的生命經歷是？','例如：高二上學期，擔任學校樂隊指揮，並在高二下帶領樂隊獲得全國軍樂競賽亞軍。', `<div class="row">
-          <textarea class="field" id="flow4" ${S.flow4_none?'disabled':''} placeholder="高二上學期，擔任學校樂隊指揮，並在高二下帶領樂隊獲得全國軍樂競賽亞軍。">${escapeHTML(S.flow4)}</textarea>
+      case 10:
+        qWrap('9. 我另一個比較有心流時光感覺的生命經歷是？','例如：高二上學期擔任學校樂隊指揮，利用課餘時間＆星期假日揮汗練習。在高二下帶領樂隊獲得全國軍樂競賽亞軍，個人也獲得最佳指揮。', `<div class="row">
+          <textarea class="field" id="flow4" ${S.flow4_none?'disabled':''} placeholder="高二上學期擔任學校樂隊指揮，利用課餘時間＆星期假日揮汗練習。在高二下帶領樂隊獲得全國軍樂競賽亞軍，個人也獲得最佳指揮。">${escapeHTML(S.flow4)}</textarea>
           <label class="hint"><input type="checkbox" id="flow4n" ${S.flow4_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow4').oninput = e=> S.flow4 = e.target.value;
         stage.querySelector('#flow4n').onchange = e=>{ S.flow4_none = e.target.checked; render(); };
         break;
-      case 10:
-        qWrap('10. 我另一個比較有心流時光感覺的生命經歷是？','例如：高二升高三暑假，擔任原鄉音樂夏令營副總召，陪伴原住民孩童進行音樂成果發表。', `<div class="row">
-          <textarea class="field" id="flow5" ${S.flow5_none?'disabled':''} placeholder="高二升高三暑假，擔任原鄉音樂夏令營副總召，陪伴原住民孩童進行音樂成果發表。">${escapeHTML(S.flow5)}</textarea>
+      case 11:
+        qWrap('10. 我另一個比較有心流時光感覺的生命經歷是？','例如：高二升高三暑假擔任原鄉音樂夏令營副總召，陪伴原住民孩童學習用音樂表達自己，並且讓孩童在部落豐年祭進行演出，獲得部落長老們及縣府教育局長的肯定。', `<div class="row">
+          <textarea class="field" id="flow5" ${S.flow5_none?'disabled':''} placeholder="高二升高三暑假擔任原鄉音樂夏令營副總召，陪伴原住民孩童學習用音樂表達自己，並且讓孩童在部落豐年祭進行演出，獲得部落長老們及縣府教育局長的肯定。">${escapeHTML(S.flow5)}</textarea>
           <label class="hint"><input type="checkbox" id="flow5n" ${S.flow5_none?'checked':''}> 無</label>
         </div>`);
         stage.querySelector('#flow5').oninput = e=> S.flow5 = e.target.value;
         stage.querySelector('#flow5n').onchange = e=>{ S.flow5_none = e.target.checked; render(); };
         break;
-      case 11:
-        qWrap('生成召喚ChatGPT的Prompt','如果要返回修改內容，請點選「←上一題」。', `<div class="hint">如果要直接生成生成召喚ChatGPT的Prompt，請點「下一題→」。</div>`);
-        break;
       case 12:
+        qWrap('生成召喚AI的Prompt','如果要返回修改內容，請點選「←上一題」。', `<div class="hint">如果要直接生成生成召喚AI的Prompt，請點「生成召喚AI的Prompt→」。</div>`);
+        break;
+      
+      
+      case 13:
         const text = compileText();
         stage.innerHTML = `${progress()}<section class="card" style="padding:16px">
-          <div class="qtitle">將生成召喚ChatGPT的Prompt，複製到ChatGPT</div>
-          <div class="hint">點「Step.1 一鍵複製ChatGPT的Prompt」，接著按「Step.2 開啟ChatGPT，貼上複製的Prompt」貼上使用。</div>
-          <textarea id="out" class="field" aria-label="生成召喚ChatGPT的Prompt">${escapeHTML(text)}</textarea>
-          <div class="toolbar">
-            <button class="btn" id="copy">Step.1 一鍵複製貼到ChatGPT的Prompt</button>
-            <button class="btn secondary" id="openApp">Step.2 開啟ChatGPT，貼上複製的Prompt</button>
-            <button class="btn ghost" id="restart">重新開始</button>
+          <div class="qtitle center">將生成召喚AI的Prompt，複製到ChatGPT、Gemini或Copilot</div>
+          <div class="hint center">Step1.請點選「一鍵複製貼到 AI 的 Prompt」按鈕，複製上述的 Prompt 內容</div>
+          <textarea id="out" class="field" aria-label="生成召喚AI的Prompt">${escapeHTML(text)}</textarea>
+
+          <div class="bigcopy">
+            <button class="btn xl" id="copy">一鍵複製貼到AI的Prompt</button>
           </div>
+
+          <div class="hint center" style="margin-top:6px">Step2.將複製的Prompt貼到下列任何一個AI網站</div>
+          <div class="appgrid">
+            <div class="appcard" id="openChatGPT" title="開啟 ChatGPT">
+              <div class="appicon">
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <div class="appname">ChatGPT</div>
+            </div>
+            <div class="appcard" id="openGemini" title="開啟 Gemini">
+              <div class="appicon">
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 2a5 5 0 0 1 5 5v4H7V7a5 5 0 0 1 5-5z"/><path d="M7 13h10v4a5 5 0 0 1-10 0v-4z"/></svg>
+              </div>
+              <div class="appname">Gemini</div>
+            </div>
+            <div class="appcard" id="openCopilot" title="開啟 Copilot">
+              <div class="appicon">
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+              </div>
+              <div class="appname">Copilot</div>
+            </div>
+          </div>
+
+          <div class="hint center">如果你要重新產生一個新的 Prompt，請點選「重新開始」的按鈕</div>
+          <div class="restartwrap"><button class="btn ghost" id="restart">重新開始</button></div>
         </section>`;
         stage.querySelector('#copy').onclick = async ()=>{
           const txt = stage.querySelector('#out').value;
@@ -347,7 +413,9 @@
           catch{ fallbackCopy(txt); }
         };
         stage.querySelector('#restart').onclick = ()=> reset();
-        stage.querySelector('#openApp').onclick = openChatGPTApp;
+        stage.querySelector('#openChatGPT').onclick = openChatGPTApp;
+        stage.querySelector('#openGemini').onclick = openGemini;
+        stage.querySelector('#openCopilot').onclick = openCopilot;
         break;
     }
   }
@@ -367,7 +435,7 @@
 
     const tail = [
 '',
-'請你擔任我的「AI執涯教練」，',
+'請你擔任我的「AI職涯教練」，',
 '根據上述心流時光圖及生涯興趣測驗結果的二項資訊，以生涯輔導的專業，考量我目前就讀的專業類別（請務必考量我在第1項＆第二項的回答內容。例如：我是就讀技術型高中的那個科別；或我是就讀普通高中二年級～三年級的那個類別。），以學習歷程檔案描述的方式，完成一份完整的「生涯興趣探索成果學習歷程檔案」。',
 '',
 '請先為這個「生涯興趣探索成果學習歷程檔案」取一個名稱。',
@@ -400,7 +468,7 @@
 'word檔案名稱請取名為 Mycareer。'
     ].join('\n');
 
-    return ['「', L1,'',L2,'',L3,'',L4,'',L5,'',L6,'',L7,'',L8,'',L9,'',L10, '」', tail].join('\n');
+    return [ L1,'',L2,'',L3,'',L4,'',L5,'',L6,'',L7,'',L8,'',L9,'',L10, tail].join('\n');
   }
 
   function toast(msg){
