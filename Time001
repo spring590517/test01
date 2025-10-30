@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>學測／志願 倒數｜鼓勵 × 放鬆 × 趨勢｜加入行事曆</title>
+<title>學測／志願 倒數｜鼓勵 × 放鬆 × 104趨勢（影片優先）｜加入行事曆</title>
 <style>
   :root{
     --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#9ca3af; --accent:#22d3ee; --accent2:#a78bfa;
-    --ok:#34d399; --warn:#fbbf24; --highlight:#ffd166; --link:#93c5fd;
+    --ok:#34d399; --warn:#fbbf24; --highlight:#ffd166; --link:#93c5fd; --chip:#4b5563;
   }
   *{box-sizing:border-box}
   body{margin:0; font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans","PingFang TC","Microsoft JhengHei","Apple Color Emoji",sans-serif; background: radial-gradient(1000px 600px at 20% -10%,#1f2937,transparent), var(--bg); color:var(--text)}
@@ -26,6 +26,7 @@
   .joke{font-size:15px; line-height:1.6}
   .trend-title{font-weight:700; font-size:16px; margin:6px 0}
   .trend-meta{color:var(--muted); font-size:13px; margin-top:4px}
+  .chip{display:inline-block; background:var(--chip); color:#e5e7eb; border-radius:999px; padding:2px 8px; font-size:12px; margin-left:6px}
   .title{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .badge{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); color:var(--muted)}
   .event-name{font-weight:800; font-size:clamp(24px,5vw,32px); color:var(--highlight); letter-spacing:0.5px}
@@ -44,7 +45,7 @@
 </head>
 <body>
   <header>
-    <h1>學測／志願 倒數｜鼓勵 × 放鬆 × 趨勢｜一鍵加入行事曆（Google／Outlook）</h1>
+    <h1>學測／志願 倒數｜鼓勵 × 放鬆 × 104趨勢（影片優先）｜一鍵加入行事曆（Google／Outlook）</h1>
     <div class="tz">你的時區：<span id="tz"></span>（採「整天活動」避免時區誤差）</div>
   </header>
 
@@ -60,10 +61,10 @@
         <div class="joke" id="joke">載入中…</div>
       </div>
       <div class="card">
-        <div class="section-title">時勢速讀（104 高中職乾貨）</div>
+        <div class="section-title">時勢速讀（104 出品）<span id="trend-chip" class="chip" style="display:none">影片優先</span></div>
         <div class="trend-title"><a id="trend-link" target="_blank" rel="noopener">載入中…</a></div>
         <div class="trend-meta" id="trend-meta"></div>
-        <div><a href="https://blog.104.com.tw/category/topic/seniorhigh/" target="_blank" rel="noopener">更多文章</a></div>
+        <div><a href="https://blog.104.com.tw/" target="_blank" rel="noopener">更多 104 內容</a></div>
       </div>
     </section>
 
@@ -77,13 +78,13 @@
 
 <script>
 (function(){
-  // ====== Data ======
+  // ====== Events (single declaration) ======
   const events = [
     { id:'A', name:'學測考試', date:'2025-12-31', description:'學測考試（整天）' },
     { id:'B', name:'繳交志願', date:'2026-01-31', description:'繳交志願（整天）' },
   ];
 
-  // Quotes & Jokes: 以日期為索引，讓每天穩定顯示一則
+  // ====== Quotes & Jokes ======
   const quotes = [
     '把時間放在能改變結果的事上，其餘的，放過自己。',
     '今天多做一題，明天多一分把握。',
@@ -165,34 +166,78 @@
     document.getElementById('joke').textContent  = '😄 ' + selectDaily(jokes);
   }
 
-  // 抓 104 高中職乾貨（WordPress REST API，若失敗則顯示備用連結）
-  async function fetchTrend(){
+  // 影片優先：拉一批文（類別 seniorhigh 或關鍵字），挑出含 YouTube/影片者；若無再用最新一般文
+  async function fetch104Content(){
     const linkEl = document.getElementById('trend-link');
     const metaEl = document.getElementById('trend-meta');
-    try{
-      // 1) 取得分類 ID
-      const catResp = await fetch('https://blog.104.com.tw/wp-json/wp/v2/categories?slug=seniorhigh');
-      if(!catResp.ok) throw new Error('category fetch failed');
-      const cats = await catResp.json();
-      const cat = Array.isArray(cats) && cats[0];
-      if(!cat) throw new Error('no category');
-      const catId = cat.id;
+    const chipEl = document.getElementById('trend-chip');
 
-      // 2) 取最新一篇文章
-      const postResp = await fetch(`https://blog.104.com.tw/wp-json/wp/v2/posts?categories=${catId}&per_page=1&orderby=date&order=desc&_embed=1`);
-      if(!postResp.ok) throw new Error('posts fetch failed');
-      const posts = await postResp.json();
-      const p = posts[0];
-      const title = (p.title && p.title.rendered) ? p.title.rendered.replace(/<[^>]+>/g,'') : '最新文章';
-      const url = p.link || `https://blog.104.com.tw/category/topic/seniorhigh/`;
-      const date = p.date ? new Date(p.date) : null;
-      linkEl.textContent = title;
-      linkEl.href = url;
-      metaEl.textContent = date ? `發佈：${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}` : '';
-    }catch(e){
-      linkEl.textContent = '前往 104 高中職乾貨（最新文章）';
+    try{
+      // 先取分類 id
+      let catId = null;
+      try{
+        const catResp = await fetch('https://blog.104.com.tw/wp-json/wp/v2/categories?slug=seniorhigh');
+        if(catResp.ok){
+          const cats = await catResp.json();
+          if(Array.isArray(cats) && cats[0]) catId = cats[0].id;
+        }
+      }catch(e){/* ignore */}
+
+      // 取候選文章（最多 10 篇）
+      let candidates = [];
+      if(catId){
+        const resp = await fetch(`https://blog.104.com.tw/wp-json/wp/v2/posts?categories=${catId}&per_page=10&orderby=date&order=desc&_embed=1`);
+        if(resp.ok) candidates = await resp.json();
+      }
+      // 若分類空，改關鍵字多抓幾組合併
+      if(!candidates || !candidates.length){
+        const keywords = ['學測','申請入學','志願','高中','高職','技高','學習歷程','備審','術科'];
+        for(const k of keywords){
+          const resp = await fetch(`https://blog.104.com.tw/wp-json/wp/v2/posts?search=${encodeURIComponent(k)}&per_page=5&orderby=date&order=desc&_embed=1`);
+          if(resp.ok){
+            const arr = await resp.json();
+            candidates = candidates.concat(arr);
+          }
+        }
+      }
+
+      // 去重（用 id）
+      const map = new Map();
+      candidates.forEach(p=>map.set(p.id, p));
+      candidates = Array.from(map.values());
+
+      // 打分：是否含影片（YouTube/youtu.be/<video>）+ 發布時間
+      function hasVideo(p){
+        const html = (p.content && p.content.rendered) ? p.content.rendered : '';
+        return /youtube\.com|youtu\.be|<video/i.test(html);
+      }
+      candidates.sort((a,b)=>{
+        const av = hasVideo(a) ? 1 : 0;
+        const bv = hasVideo(b) ? 1 : 0;
+        if(bv !== av) return bv - av; // 影片優先
+        return new Date(b.date) - new Date(a.date); // 新到舊
+      });
+
+      const post = candidates[0];
+      if(post){
+        const title = (post.title && post.title.rendered) ? post.title.rendered.replace(/<[^>]+>/g,'') : '104 最新內容';
+        const url = post.link || 'https://blog.104.com.tw/';
+        const date = post.date ? new Date(post.date) : null;
+        linkEl.textContent = title;
+        linkEl.href = url;
+        metaEl.textContent = (date ? `發佈：${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}` : '') + (hasVideo(post) ? '｜類型：影片/影音' : '');
+        if(hasVideo(post)) chipEl.style.display = 'inline-block';
+        return;
+      }
+
+      // 仍沒有
+      linkEl.textContent = '前往 104：高中職相關最新內容';
       linkEl.href = 'https://blog.104.com.tw/category/topic/seniorhigh/';
-      metaEl.textContent = '（無法直接取得文章標題，點擊查看更多）';
+      metaEl.textContent = '（未能自動取得文章標題，請點擊查看）';
+    }catch(err){
+      linkEl.textContent = '前往 104：高中職相關最新內容';
+      linkEl.href = 'https://blog.104.com.tw/category/topic/seniorhigh/';
+      metaEl.textContent = '（無法取得資料，請點擊查看）';
     }
   }
 
@@ -244,7 +289,7 @@
 
   // ====== Boot ======
   renderTopBoard();
-  fetchTrend();
+  fetch104Content();
   tick();
   setInterval(tick, 1000);
   document.getElementById('tz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || '（偵測不到）';
