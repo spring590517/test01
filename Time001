@@ -3,42 +3,73 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>學測／志願 倒數｜加入行事曆</title>
+<title>學測／志願 倒數｜鼓勵 × 放鬆 × 趨勢｜加入行事曆</title>
 <style>
   :root{
     --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#9ca3af; --accent:#22d3ee; --accent2:#a78bfa;
-    --ok:#34d399; --warn:#fbbf24; --highlight:#ffd166;
+    --ok:#34d399; --warn:#fbbf24; --highlight:#ffd166; --link:#93c5fd;
   }
   *{box-sizing:border-box}
   body{margin:0; font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans","PingFang TC","Microsoft JhengHei","Apple Color Emoji",sans-serif; background: radial-gradient(1000px 600px at 20% -10%,#1f2937,transparent), var(--bg); color:var(--text)}
-  header{padding:28px 20px 12px; text-align:center}
+  a{color:var(--link); text-decoration:none}
+  a:hover{text-decoration:underline}
+  header{padding:28px 20px 16px; text-align:center}
   h1{margin:0 0 8px; font-size:clamp(22px,3vw,30px)}
   .tz{color:var(--muted); font-size:14px}
-  .wrap{max-width:980px; margin:18px auto; padding:0 16px 40px; display:grid; gap:18px; grid-template-columns: repeat(auto-fit,minmax(300px,1fr));}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:18px 16px 16px; box-shadow:0 10px 30px rgba(0,0,0,0.35)}
+  .container{max-width:1100px; margin:0 auto; padding:0 16px 36px}
+  .grid{display:grid; gap:16px}
+  .grid-3{grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); margin:14px 0 24px}
+  .grid-2{grid-template-columns: repeat(auto-fit,minmax(320px,1fr));}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.35)}
+  .section-title{font-size:18px; font-weight:800; letter-spacing:.3px; margin:6px 0 8px}
+  .quote{font-size:16px; line-height:1.6}
+  .joke{font-size:15px; line-height:1.6}
+  .trend-title{font-weight:700; font-size:16px; margin:6px 0}
+  .trend-meta{color:var(--muted); font-size:13px; margin-top:4px}
   .title{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .badge{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); color:var(--muted)}
   .event-name{font-weight:800; font-size:clamp(24px,5vw,32px); color:var(--highlight); letter-spacing:0.5px}
   .big{font-weight:700; font-size:clamp(28px,5vw,40px); letter-spacing:0.5px; margin:8px 0}
   .detail{color:var(--muted); font-size:14px; margin-top:2px}
   .row{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
-  .btn{flex:1 1 180px; text-align:center; border:1px solid rgba(255,255,255,0.14); padding:12px 14px; border-radius:10px; cursor:pointer; user-select:none; text-decoration:none; color:var(--text); transition:transform .05s ease; font-weight:600}
+  .btn{flex:1 1 200px; text-align:center; border:1px solid rgba(255,255,255,0.14); padding:12px 14px; border-radius:10px; cursor:pointer; user-select:none; text-decoration:none; color:var(--text); transition:transform .05s ease; font-weight:600}
   .btn:hover{transform:translateY(-1px)}
   .btn-primary{border-color:transparent; background:linear-gradient(90deg,var(--accent),var(--accent2))}
   .btn-ghost{background:rgba(255,255,255,0.03)}
   .meta{display:flex; align-items:center; gap:10px; margin-top:10px; color:var(--muted); font-size:13px}
   .dot{width:8px; height:8px; border-radius:50%}
   .ok{background:var(--ok)} .warn{background:var(--warn)}
-  footer{max-width:980px; margin:0 auto; padding:8px 16px 28px; color:var(--muted); font-size:13px}
+  footer{max-width:1100px; margin:0 auto; padding:8px 16px 28px; color:var(--muted); font-size:13px}
 </style>
 </head>
 <body>
   <header>
-    <h1>學測／志願 倒數｜一鍵加入行事曆（Google／Outlook）</h1>
+    <h1>學測／志願 倒數｜鼓勵 × 放鬆 × 趨勢｜一鍵加入行事曆（Google／Outlook）</h1>
     <div class="tz">你的時區：<span id="tz"></span>（採「整天活動」避免時區誤差）</div>
   </header>
 
-  <main class="wrap" id="cards"></main>
+  <div class="container">
+    <!-- Top board: Quote / Joke / Trend -->
+    <section class="grid grid-3" id="top-board">
+      <div class="card">
+        <div class="section-title">今天的格言</div>
+        <div class="quote" id="quote">載入中…</div>
+      </div>
+      <div class="card">
+        <div class="section-title">放鬆一下</div>
+        <div class="joke" id="joke">載入中…</div>
+      </div>
+      <div class="card">
+        <div class="section-title">時勢速讀（104 高中職乾貨）</div>
+        <div class="trend-title"><a id="trend-link" target="_blank" rel="noopener">載入中…</a></div>
+        <div class="trend-meta" id="trend-meta"></div>
+        <div><a href="https://blog.104.com.tw/category/topic/seniorhigh/" target="_blank" rel="noopener">更多文章</a></div>
+      </div>
+    </section>
+
+    <!-- Countdown + calendar -->
+    <section class="grid grid-2" id="cards"></section>
+  </div>
 
   <footer>
     提示：Google 會開啟新增頁面請按「儲存」；Outlook（web）會開啟編輯頁面，確認後儲存即可。
@@ -46,12 +77,33 @@
 
 <script>
 (function(){
-  // 活動設定（整天活動）
+  // ====== Data ======
   const events = [
     { id:'A', name:'學測考試', date:'2025-12-31', description:'學測考試（整天）' },
     { id:'B', name:'繳交志願', date:'2026-01-31', description:'繳交志願（整天）' },
   ];
 
+  // Quotes & Jokes: 以日期為索引，讓每天穩定顯示一則
+  const quotes = [
+    '把時間放在能改變結果的事上，其餘的，放過自己。',
+    '今天多做一題，明天多一分把握。',
+    '慢也沒關係，關鍵是一直向前。',
+    '穩住情緒，比題目更重要。',
+    '你不是一個人在走，所有努力都在堆積。',
+    '不要和別人的進度比較，只和昨天的自己比較。',
+    '會的題要零失誤，不會的題要敢放手。',
+  ];
+  const jokes = [
+    '同學問：讀書最怕什麼？我說：怕「選擇題」—因為它讓我懷疑人生的每個選擇。',
+    '考前跟可樂說：幫我加油。可樂：已經加了，還要幾分糖？',
+    '我最擅長的科目？計時。因為每次考試都在看時間。',
+    '老師說要「融會貫通」，我先從貫通被窩開始。',
+    '數學題目：請證明你會寫。—我：我證明不了，但我會寫名字。',
+    '考試就像跑馬拉松，差別是馬拉松能邊跑邊喝水，考試只能吞口水。',
+    '背單字像交朋友：每天多認識幾個，久了就熟了。',
+  ];
+
+  // ====== Utils ======
   const toLocalDate00 = (ymd) => {
     const [y,m,d] = ymd.split('-').map(Number);
     return new Date(y, m-1, d, 0, 0, 0, 0);
@@ -89,7 +141,7 @@
     const end = addDaysLocal(start, 1);
     const base = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
     const text = encodeURIComponent(evt.name);
-    const dates = `${yyyymmdd(start)}/${yyyymmdd(end)}`; // all-day VALUE=DATE
+    const dates = `${yyyymmdd(start)}/${yyyymmdd(end)}`;
     const details = encodeURIComponent(evt.description || '');
     return `${base}&text=${text}&dates=${dates}&details=${details}`;
   }
@@ -102,6 +154,49 @@
     return `${base}?subject=${subject}&body=${body}&startdt=${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}-${String(start.getDate()).padStart(2,'0')}&enddt=${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,'0')}-${String(end.getDate()).padStart(2,'0')}&allday=true`;
   }
 
+  // ====== Render Top Board ======
+  function selectDaily(list){
+    const today = new Date();
+    const seed = today.getFullYear()*10000 + (today.getMonth()+1)*100 + today.getDate();
+    return list[seed % list.length];
+  }
+  function renderTopBoard(){
+    document.getElementById('quote').textContent = '💡 ' + selectDaily(quotes);
+    document.getElementById('joke').textContent  = '😄 ' + selectDaily(jokes);
+  }
+
+  // 抓 104 高中職乾貨（WordPress REST API，若失敗則顯示備用連結）
+  async function fetchTrend(){
+    const linkEl = document.getElementById('trend-link');
+    const metaEl = document.getElementById('trend-meta');
+    try{
+      // 1) 取得分類 ID
+      const catResp = await fetch('https://blog.104.com.tw/wp-json/wp/v2/categories?slug=seniorhigh');
+      if(!catResp.ok) throw new Error('category fetch failed');
+      const cats = await catResp.json();
+      const cat = Array.isArray(cats) && cats[0];
+      if(!cat) throw new Error('no category');
+      const catId = cat.id;
+
+      // 2) 取最新一篇文章
+      const postResp = await fetch(`https://blog.104.com.tw/wp-json/wp/v2/posts?categories=${catId}&per_page=1&orderby=date&order=desc&_embed=1`);
+      if(!postResp.ok) throw new Error('posts fetch failed');
+      const posts = await postResp.json();
+      const p = posts[0];
+      const title = (p.title && p.title.rendered) ? p.title.rendered.replace(/<[^>]+>/g,'') : '最新文章';
+      const url = p.link || `https://blog.104.com.tw/category/topic/seniorhigh/`;
+      const date = p.date ? new Date(p.date) : null;
+      linkEl.textContent = title;
+      linkEl.href = url;
+      metaEl.textContent = date ? `發佈：${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}` : '';
+    }catch(e){
+      linkEl.textContent = '前往 104 高中職乾貨（最新文章）';
+      linkEl.href = 'https://blog.104.com.tw/category/topic/seniorhigh/';
+      metaEl.textContent = '（無法直接取得文章標題，點擊查看更多）';
+    }
+  }
+
+  // ====== Render Events ======
   const cardsEl = document.getElementById('cards');
   events.forEach(evt=>{
     const start = toLocalDate00(evt.date);
@@ -146,9 +241,12 @@
       dot.className = 'dot ' + (left <= 7 ? 'warn' : 'ok');
     });
   }
+
+  // ====== Boot ======
+  renderTopBoard();
+  fetchTrend();
   tick();
   setInterval(tick, 1000);
-
   document.getElementById('tz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || '（偵測不到）';
 })();
 </script>
