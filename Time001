@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>活動倒數 & 一鍵加入行事曆</title>
+<title>學測／志願 倒數｜加入行事曆</title>
 <style>
   :root{
     --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#9ca3af; --accent:#22d3ee; --accent2:#a78bfa;
-    --ok:#34d399; --warn:#fbbf24;
+    --ok:#34d399; --warn:#fbbf24; --highlight:#ffd166;
   }
   *{box-sizing:border-box}
   body{margin:0; font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans","PingFang TC","Microsoft JhengHei","Apple Color Emoji",sans-serif; background: radial-gradient(1000px 600px at 20% -10%,#1f2937,transparent), var(--bg); color:var(--text)}
@@ -18,10 +18,11 @@
   .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:18px 16px 16px; box-shadow:0 10px 30px rgba(0,0,0,0.35)}
   .title{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .badge{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12); color:var(--muted)}
+  .event-name{font-weight:800; font-size:clamp(24px,5vw,32px); color:var(--highlight); letter-spacing:0.5px}
   .big{font-weight:700; font-size:clamp(28px,5vw,40px); letter-spacing:0.5px; margin:8px 0}
   .detail{color:var(--muted); font-size:14px; margin-top:2px}
   .row{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
-  .btn{flex:1 1 140px; text-align:center; border:1px solid rgba(255,255,255,0.14); padding:10px 12px; border-radius:10px; cursor:pointer; user-select:none; text-decoration:none; color:var(--text); transition:transform .05s ease}
+  .btn{flex:1 1 180px; text-align:center; border:1px solid rgba(255,255,255,0.14); padding:12px 14px; border-radius:10px; cursor:pointer; user-select:none; text-decoration:none; color:var(--text); transition:transform .05s ease; font-weight:600}
   .btn:hover{transform:translateY(-1px)}
   .btn-primary{border-color:transparent; background:linear-gradient(90deg,var(--accent),var(--accent2))}
   .btn-ghost{background:rgba(255,255,255,0.03)}
@@ -29,51 +30,43 @@
   .dot{width:8px; height:8px; border-radius:50%}
   .ok{background:var(--ok)} .warn{background:var(--warn)}
   footer{max-width:980px; margin:0 auto; padding:8px 16px 28px; color:var(--muted); font-size:13px}
-  code{color:#c7d2fe; background:#0b1020; padding:2px 6px; border-radius:6px}
 </style>
 </head>
 <body>
   <header>
-    <h1>活動倒數｜一鍵加入行事曆</h1>
+    <h1>學測／志願 倒數｜一鍵加入行事曆（Google／Outlook）</h1>
     <div class="tz">你的時區：<span id="tz"></span>（採「整天活動」避免時區誤差）</div>
   </header>
 
   <main class="wrap" id="cards"></main>
 
   <footer>
-    小提醒：Google 採用「開啟連結後按儲存」的方式；Outlook/Apple 建議下載 <code>.ics</code> 檔案後開啟加入。
+    提示：Google 會開啟新增頁面請按「儲存」；Outlook（web）會開啟編輯頁面，確認後儲存即可。
   </footer>
 
 <script>
 (function(){
-  // === 你可以在這裡調整活動設定 ===
+  // 活動設定（整天活動）
   const events = [
-    { id:'A', name:'活動A', date:'2025-12-31', description:'活動A（整天）' },
-    { id:'B', name:'活動B', date:'2026-01-31', description:'活動B（整天）' },
+    { id:'A', name:'學測考試', date:'2025-12-31', description:'學測考試（整天）' },
+    { id:'B', name:'繳交志願', date:'2026-01-31', description:'繳交志願（整天）' },
   ];
 
-  // 工具：把 YYYY-MM-DD 轉為本地 Date（當天 00:00）
   const toLocalDate00 = (ymd) => {
     const [y,m,d] = ymd.split('-').map(Number);
-    return new Date(y, m-1, d, 0, 0, 0, 0); // local time
+    return new Date(y, m-1, d, 0, 0, 0, 0);
   };
-
-  // 工具：格式化為 Google/ICS 用的 YYYYMMDD
   const yyyymmdd = (dateObj) => {
     const y = dateObj.getFullYear();
     const m = String(dateObj.getMonth()+1).padStart(2,'0');
     const d = String(dateObj.getDate()).padStart(2,'0');
     return `${y}${m}${d}`;
   };
-
-  // 工具：加天數（本地）
   const addDaysLocal = (dateObj, days) => {
     const d = new Date(dateObj);
     d.setDate(d.getDate() + days);
     return d;
   };
-
-  // 倒數字串（到整天活動開始）
   function diffPartsTo(target){
     const now = new Date();
     let diff = target - now;
@@ -85,84 +78,31 @@
     const secs = sec % 60;
     return {days, hours, mins, secs};
   }
-
-  // 只算「還有幾天」（以今日 00:00 為基準，向上取整避免半天誤差）
   function daysLeft(target){
     const today00 = new Date(); today00.setHours(0,0,0,0);
     const ms = target - today00;
     const d = Math.ceil(ms / 86400000);
     return Math.max(d, 0);
   }
-
-  // 產出 Google Calendar 連結（整天活動）
   function googleUrl(evt){
     const start = toLocalDate00(evt.date);
     const end = addDaysLocal(start, 1);
     const base = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
     const text = encodeURIComponent(evt.name);
-    const dates = `${yyyymmdd(start)}/${yyyymmdd(end)}`; // all-day uses VALUE=DATE
+    const dates = `${yyyymmdd(start)}/${yyyymmdd(end)}`; // all-day VALUE=DATE
     const details = encodeURIComponent(evt.description || '');
     return `${base}&text=${text}&dates=${dates}&details=${details}`;
   }
-
-  // 產出 Outlook Web 連結（若使用個人/學校帳號，會打開行事曆編輯）
   function outlookWebUrl(evt){
     const start = toLocalDate00(evt.date);
     const end = addDaysLocal(start, 1);
     const base = 'https://outlook.live.com/calendar/0/deeplink/compose';
     const subject = encodeURIComponent(evt.name);
     const body = encodeURIComponent(evt.description || '');
-    // Outlook web 支援 ISO（YYYY-MM-DD），搭配 allday=true
     return `${base}?subject=${subject}&body=${body}&startdt=${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}-${String(start.getDate()).padStart(2,'0')}&enddt=${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,'0')}-${String(end.getDate()).padStart(2,'0')}&allday=true`;
   }
 
-  // 產出 ICS 內容（Outlook/Apple/Google 皆可匯入；這裡用整天活動）
-  function buildICS(evt){
-    const uid = `${evt.id}-${Date.now()}@spring-countdown`;
-    const nowUtc = new Date();
-    const dtstamp = nowUtc.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
-
-    const start = toLocalDate00(evt.date);
-    const end = addDaysLocal(start, 1);
-    // All-day: 使用 VALUE=DATE（不帶時區）
-    const dtStart = yyyymmdd(start);
-    const dtEnd = yyyymmdd(end);
-
-    const lines = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//Spring Countdown//EN',
-      'CALSCALE:GREGORIAN',
-      'METHOD:PUBLISH',
-      'BEGIN:VEVENT',
-      `UID:${uid}`,
-      `DTSTAMP:${dtstamp}`,
-      `SUMMARY:${evt.name}`,
-      `DTSTART;VALUE=DATE:${dtStart}`,
-      `DTEND;VALUE=DATE:${dtEnd}`,
-      `DESCRIPTION:${(evt.description||'').replace(/\r?\n/g,'\\n')}`,
-      'END:VEVENT',
-      'END:VCALENDAR'
-    ];
-    return lines.join('\r\n');
-  }
-
-  function downloadICS(evt){
-    const ics = buildICS(evt);
-    const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${evt.name}-${evt.date}.ics`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  // Render
   const cardsEl = document.getElementById('cards');
-
   events.forEach(evt=>{
     const start = toLocalDate00(evt.date);
     const card = document.createElement('section');
@@ -170,31 +110,24 @@
     card.innerHTML = `
       <div class="title">
         <div>
-          <div style="font-weight:700;font-size:18px">${evt.name}</div>
+          <div class="event-name">${evt.name}</div>
           <div class="detail">日期：${evt.date}（整天）</div>
         </div>
         <span class="badge">ID ${evt.id}</span>
       </div>
       <div class="big" id="big-${evt.id}">— 天 — 時 — 分 — 秒</div>
       <div class="detail" id="days-${evt.id}">還有 — 天</div>
-
       <div class="row">
         <a class="btn btn-primary" href="${googleUrl(evt)}" target="_blank" rel="noopener">加到 Google 行事曆</a>
-        <a class="btn btn-ghost" href="${outlookWebUrl(evt)}" target="_blank" rel="noopener">加到 Outlook（連結）</a>
-        <button class="btn btn-ghost" id="ics-${evt.id}">下載 .ics（Outlook/Apple）</button>
+        <a class="btn btn-ghost" href="${outlookWebUrl(evt)}" target="_blank" rel="noopener">加到 Outlook 行事曆</a>
       </div>
-
       <div class="meta">
         <span class="dot ${daysLeft(start) <= 7 ? 'warn':'ok'}"></span>
         <span id="meta-${evt.id}">狀態偵測中…</span>
-      </div>
-    `;
+      </div>`;
     cardsEl.appendChild(card);
-    // 綁定 ICS 下載
-    card.querySelector(`#ics-${evt.id}`).addEventListener('click', ()=>downloadICS(evt));
   });
 
-  // 倒數更新
   function tick(){
     events.forEach(evt=>{
       const start = toLocalDate00(evt.date);
@@ -202,16 +135,13 @@
       const big = document.getElementById(`big-${evt.id}`);
       const daysEl = document.getElementById(`days-${evt.id}`);
       const metaEl = document.getElementById(`meta-${evt.id}`);
-
       big.textContent = `${String(parts.days)} 天 ${String(parts.hours).padStart(2,'0')} 時 ${String(parts.mins).padStart(2,'0')} 分 ${String(parts.secs).padStart(2,'0')} 秒`;
       daysEl.textContent = `還有 ${daysLeft(start)} 天`;
-
       const left = daysLeft(start);
       metaEl.textContent = left === 0 ? '今天就是活動日！' :
                            left <= 7 ? '進入最後一週，別忘了準備。' :
                            left <= 30 ? '一個月內，安排好行程。' :
                            '時間還充裕，先記到行事曆。';
-      // 更新警示點顏色
       const dot = metaEl.parentElement.querySelector('.dot');
       dot.className = 'dot ' + (left <= 7 ? 'warn' : 'ok');
     });
@@ -219,7 +149,6 @@
   tick();
   setInterval(tick, 1000);
 
-  // 顯示時區
   document.getElementById('tz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || '（偵測不到）';
 })();
 </script>
