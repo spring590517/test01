@@ -742,7 +742,7 @@ H.請針對我目前職涯探索的現況，給我三個具體的職涯方向建
     const L1 = `1.我的最高學歷是：${levelTxt}${findById(eduLevelOpts,S.eduLevel)}`;
     const L2 = `2.我目前的年齡是：${S.age || '（未填）'} 歲`;
     const L3 = `3.我目前累積的工作年資大約是：${S.expYears || '（未填）'} 年`;
-    const L4 = `4.我對就讀專業領域的喜歡程度：${S.eduLike?('('+S.eduLike+')'):''}${S.eduLike?likeMap[S.eduLike]:'（未選擇）'}`;
+    const L4 = `4.我對就讀的專業領域：${S.eduFieldNone?'無。':(S.eduField||'')}`;
     const L5 = `5.我就讀專業領域的喜歡程度：${S.eduLike?('('+S.eduLike+')'):''}${S.eduLike?likeMap[S.eduLike]:'（未選擇）'}`;
     const L6 = `6.我擅長的科目、做過的專題、論文或參與過的競賽：${S.skillNone?'無。':(S.skillPaper||'')}`;
     const L7 = `7.我最近或目前參與的社團是：${S.groupNowNone?'無。':(S.groupNow||'')}`;
