@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>安靜離職自我檢核表 QE001</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      line-height: 1.6;
+      background-color: #f7f7fb;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      margin-top: 0;
+    }
+    .instruction {
+      background: #f0f4ff;
+      border-left: 4px solid #4f46e5;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    /* --- 作答框放大的重點調整 --- */
+    .question {
+      margin-bottom: 18px;
+      padding: 14px 10px;
+      background: #fafafa;
+      border-radius: 10px;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.15s ease;
+    }
+    label:hover {
+      background: #eef2ff;
+      border-color: #4f46e5;
+    }
+    input[type="radio"] {
+      width: 22px;
+      height: 22px;
+      accent-color: #4f46e5; /* 放大 + 粉紫色 */
+      cursor: pointer;
+    }
+    /* --- 按鈕 --- */
+    button {
+      margin-top: 12px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #4f46e5;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    button:hover {
+      filter: brightness(1.07);
+    }
+    #result {
+      margin-top: 20px;
+      padding: 14px;
+      background: #eef2ff;
+      border-radius: 10px;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      label {
+        font-size: 1.15rem;
+        padding: 12px;
+      }
+      input[type="radio"] {
+        width: 26px;
+        height: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>安靜離職自我檢核表</h1>
+
+    <div class="instruction">
+      <p><strong>指導語：</strong>請依照你「最近一個月」的實際狀況作答，每題選擇一個最符合你的狀況。</p>
+      <ul>
+        <li>符合：2 分</li>
+        <li>不確定：1 分</li>
+        <li>不符合：0 分</li>
+      </ul>
+    </div>
+
+    <div id="questions"></div>
+    <button onclick="calculateScore()">看結果</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      "1. 我只想把工作做到「不要被罵」，沒有想再多做一點。",
+      "2. 當被要求協助額外工作時，我的第一反應常是：『這不在我的工作範圍內。』",
+      "3. 我已經很少主動提出改善建議或新想法。",
+      "4. 工作若表現普通、升遷變慢，我也無所謂。",
+      "5. 我把『不要影響下班生活』放在比績效更重要的位置。",
+      "6. 我覺得公司或主管不值得我再額外投入心力。",
+      "7. 遇到問題時，我傾向『能拖就拖』而不是主動解決。",
+      "8. 想到未來繼續做這份工作，我感覺不到期待。",
+      "9. 我很少再與同事討論任何團隊願景或理想。",
+      "10. 一想到工作，我常感到煩躁或抗拒。"
+    ];
+
+    const options = [
+      { label: "符合", value: 2 },
+      { label: "不確定", value: 1 },
+      { label: "不符合", value: 0 }
+    ];
+
+    function renderQuestions() {
+      const container = document.getElementById("questions");
+      questions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.className = "question";
+
+        const title = document.createElement("div");
+        title.textContent = q;
+        div.appendChild(title);
+
+        const optDiv = document.createElement("div");
+        optDiv.className = "options";
+
+        options.forEach(opt => {
+          const id = `q${i}_${opt.value}`;
+          const label = document.createElement("label");
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `q${i}`;
+          input.value = opt.value;
+          input.id = id;
+
+          label.htmlFor = id;
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(opt.label));
+
+          optDiv.appendChild(label);
+        });
+
+        div.appendChild(optDiv);
+        container.appendChild(div);
+      });
+    }
+
+    function calculateScore() {
+      let total = 0;
+
+      for (let i = 0; i < questions.length; i++) {
+        const checked = document.querySelector(`input[name="q${i}"]:checked`);
+        if (!checked) {
+          alert("還有題目未作答喔！");
+          return;
+        }
+        total += parseInt(checked.value);
+      }
+
+      let level = "", explanation = "", suggestion = "";
+
+      if (total <= 6) {
+        level = "安靜離職傾向：低";
+        explanation = "你目前與工作的連結感仍在，尚未出現明顯抽離狀態。";
+        suggestion = "持續維持工作與生活平衡，並找到讓你更有意義感的部分。";
+      } else if (total <= 13) {
+        level = "安靜離職傾向：中等";
+        explanation = "你已有些抽離跡象，投入感下降，需關注自己的壓力與疲憊來源。";
+        suggestion = "試著找出讓你消耗最大的因素，評估是否能調整或與主管討論。";
+      } else {
+        level = "安靜離職傾向：高";
+        explanation = "你很可能已處在『人在、心不在』的狀態。";
+        suggestion = "建議開始盤點工作痛點，並思考是要調整現況，或啟動系統性的轉職規劃。";
+      }
+
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").innerHTML = `
+        <h2>結果</h2>
+        <p><strong>總分：${total} / 20</strong></p>
+        <p><strong>${level}</strong></p>
+        <p>${explanation}</p>
+        <p><strong>建議：</strong>${suggestion}</p>
+      `;
+    }
+
+    document.addEventListener("DOMContentLoaded", renderQuestions);
+  </script>
+</body>
+</html>
