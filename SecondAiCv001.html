@@ -112,7 +112,15 @@
   }
 
 html { font-size: calc(16px * var(--zoom)); }
+
+.tagwrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tag{display:inline-block;padding:6px 10px;border-radius:999px;background:#f1f5f9;font-size:13px}
+.muted{color:#64748b}
+.warn{color:#b45309}
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 <body>
 <div aria-label="字級調整" class="toolbar-top">
@@ -131,19 +139,96 @@ html { font-size: calc(16px * var(--zoom)); }
 <button aria-label="啟動引導" class="btn block" id="startBtn">▶︎ 開始填寫</button>
 <button aria-label="載入範例" class="btn secondary block" id="sampleBtn">✨ 載入範例，體驗看看</button>
 </div>
-<p class="hint">提醒：履歷/自傳/求職信可直接貼文字；若上傳檔案，建議使用 .txt 或 .md。</p>
+<p class="hint">提醒：履歷/自傳/求職信可直接貼文字；履歷也支援上傳 PDF（會自動轉文字）。若上傳純文字檔，建議使用 .txt 或 .md。</p>
 </section>
 <div class="safe-bottom" id="stage" style="margin-top:14px"></div>
 </main>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
 try{
+  // ---- PDF.js 設定（讀取 PDF 履歷用）----
+  if (window.pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+
+  async function extractPdfText(file){
+    // 將 PDF 轉成文字（前端解析，不上傳）
+    const buf = await file.arrayBuffer();
+    if (!window.pdfjsLib) throw new Error("PDF.js 尚未載入（請確認網路可連到 cdnjs）。");
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let fullText = "";
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const strings = content.items.map(it => it.str);
+      fullText += strings.join(" ") + "\n\n";
+    }
+    return fullText.trim();
+  }
+
+  function isPdfFile(file){
+    const name = (file && file.name) ? file.name.toLowerCase() : "";
+    return (file && file.type === "application/pdf") || name.endsWith(".pdf");
+  }
+
+  function normalizeJobInput(s){
+    return (s||'').toString().trim();
+  }
+
+  function mapJobToCats(input){
+    // 以關鍵字做「近似」對應（可再擴充成更完整的 104 分類表）
+    const s = normalizeJobInput(input).toLowerCase();
+    const rules = [
+      {keys:['人資','人事','hr','human resource'], cat:'人力資源／人事'},
+      {keys:['教育訓練','訓練','人才發展','ld','l&d','learning'], cat:'教育訓練／人才發展'},
+      {keys:['招募','recruit','talent acquisition'], cat:'招募／任用'},
+      {keys:['行銷企劃','行銷','品牌','marketing','marcom'], cat:'行銷企劃／品牌'},
+      {keys:['產品經理','產品企劃','pm','product'], cat:'產品企劃／產品管理'},
+      {keys:['專案','pmo','project'], cat:'專案管理／PMO'},
+      {keys:['業務','銷售','sales','bd'], cat:'業務／銷售'},
+      {keys:['客服','門市','櫃檯','customer service'], cat:'客服／門市服務'},
+      {keys:['數據','資料分析','data','bi','分析師','data analyst'], cat:'數據分析／商業分析'},
+      {keys:['軟體','工程師','前端','後端','full stack','backend','frontend'], cat:'軟體／系統工程'},
+      {keys:['設計','ui','ux','視覺','graphic'], cat:'設計／視覺'},
+      {keys:['財會','會計','財務','accounting','finance'], cat:'財務／會計'},
+      {keys:['法務','legal','合規','compliance'], cat:'法務／法遵'},
+      {keys:['研發','研究','r&d','rd'], cat:'研發／研究'},
+      {keys:['行政','總務','文書','秘書'], cat:'行政／總務'}
+    ];
+
+    const hits = new Set();
+    for(const r of rules){
+      for(const k of r.keys){
+        if(s.includes(k.toLowerCase())) { hits.add(r.cat); break; }
+      }
+    }
+    return Array.from(hits);
+  }
+
+  function renderTargetCats(stage){
+    const out = stage.querySelector('#targetCats');
+    if(!out) return;
+    const cats = S.targetCats || [];
+    if(!S.targetJob || !S.targetJob.trim()){
+      out.innerHTML = '<span class="muted">（輸入職務後，這裡會自動顯示對應的 104 職務類別）</span>';
+      return;
+    }
+    if(!cats.length){
+      out.innerHTML = '<span class="warn">目前未能判讀類別（可換個更具體的職務名稱試試，例如：人資招募、教育訓練、行銷企劃）。</span>';
+      return;
+    }
+    out.innerHTML = '<div class="tagwrap">' + cats.map(c=>'<span class="tag">'+escape(c)+'</span>').join('') + '</div>';
+  }
+
+
   const stage = document.getElementById('stage');
   const landing = document.getElementById('landing');
 
   const S = {
-    step:0, total:10,
-    cvText:'', cvFileName:'', coverText:'', coverFileName:'', bioText:'', bioFileName:'',
+    step:0, total:7,
+    cvText:'', cvFileName:'',
+    targetJob:'', targetCats:[],
     salaryMonth:'', salaryYear:'',
     valuesSel:[], interestsSel:[], miSel:[]
   };
@@ -236,7 +321,7 @@ TQC Office 認證（Word、Excel、PowerPoint）`,
   }
   function nav(){
     // 不在彙整頁顯示導覽鍵
-    if (S.step === 8) return '';
+    if (S.step === 7) return '';
     if (S.step < 1 || S.step >= S.total) return '';
     return '<div class="toolbar" role="toolbar" aria-label="導覽按鈕">'
       +(S.step>1?'<button class="btn ghost" id="prev" aria-label="上一題">← 上一題</button>':'')
@@ -334,55 +419,55 @@ TQC Office 認證（Word、Excel、PowerPoint）`,
           '可擇一使用。若上傳檔案，請用純文字檔.txt。',
           `<div class="grid">
             <div class="row">
-              <input class="field" type="file" id="cvFile" accept=".txt,.md,.csv" aria-label="履歷檔案">
+              <input class="field" type="file" id="cvFile" accept=".txt,.md,.csv,.pdf,application/pdf" aria-label="履歷檔案">
               <button class="btn ghost" id="clearCv">清空</button>
             </div>
-            <textarea class="field" id="cvText" placeholder="請貼上履歷文字">${escape(S.cvText||'')}</textarea>
+            <textarea class="field" id="cvText" placeholder="請貼上履歷文字（或上傳 PDF 自動轉文字）">${escape(S.cvText||'')}</textarea>
+            <div class="hint" id="cvStatus" aria-live="polite"></div>
           </div>`);
-        stage.querySelector('#cvFile').onchange=e=>{
+        stage.querySelector('#cvFile').onchange=async e=>{
           const f=e.target.files[0]; if(!f) return;
-          const r=new FileReader(); r.onload=()=>{ S.cvText=r.result; render(); }; r.readAsText(f);
+          const statusEl = stage.querySelector('#cvStatus');
+          if(statusEl) statusEl.textContent = '';
+          try{
+            if(isPdfFile(f)){
+              if(statusEl) statusEl.textContent = 'PDF 讀取中，請稍候…';
+              S.cvText = await extractPdfText(f);
+              if(statusEl) statusEl.textContent = 'PDF 讀取完成，已轉為文字。';
+              render();
+            }else{
+              const r=new FileReader(); r.onload=()=>{ S.cvText=r.result; render(); }; r.readAsText(f);
+            }
+          }catch(err){
+            console.error(err);
+            if(statusEl) statusEl.textContent = 'PDF 讀取失敗：' + (err?.message || err);
+          }
         };
         stage.querySelector('#cvText').oninput=e=>S.cvText=e.target.value;
         stage.querySelector('#clearCv').onclick=()=>{S.cvText=''; render();};
         break;
 
       case 2:
-        qWrap('二、上傳或貼上你的【自傳】','',
+        qWrap('二、請在文字框輸入你想要從事的職務名稱。例如：人資、教育訓練、行銷企劃....',
+          '可輸入一個或多個職務名稱（用逗號、頓號或換行分隔都可以）。系統會自動判讀並顯示對應的 104 職務類別（近似比對）。',
           `<div class="grid">
-            <div class="row">
-              <input class="field" type="file" id="bioFile" accept=".txt,.md,.csv" aria-label="自傳檔案">
-              <button class="btn ghost" id="clearBio">清空</button>
-            </div>
-            <textarea class="field" id="bioText" placeholder="請貼上自傳文字">${escape(S.bioText||'')}</textarea>
+            <textarea class="field" id="targetJob" placeholder="例如：人資、教育訓練、行銷企劃">${escape(S.targetJob||'')}</textarea>
+            <div class="hint">對應 104 職務類別（自動判讀）：</div>
+            <div class="hint" id="targetCats"></div>
           </div>`);
-        stage.querySelector('#bioFile').onchange=e=>{
-          const f=e.target.files[0]; if(!f) return;
-          const r=new FileReader(); r.onload=()=>{ S.bioText=r.result; render(); }; r.readAsText(f);
+        stage.querySelector('#targetJob').oninput=e=>{
+          S.targetJob = e.target.value;
+          S.targetCats = mapJobToCats(S.targetJob);
+          renderTargetCats(stage);
         };
-        stage.querySelector('#bioText').oninput=e=>S.bioText=e.target.value;
-        stage.querySelector('#clearBio').onclick=()=>{S.bioText=''; render();};
+        // 初次渲染
+        S.targetCats = mapJobToCats(S.targetJob);
+        renderTargetCats(stage);
         break;
+
 
       case 3:
-        qWrap('三、上傳或貼上你的【求職信】','',
-          `<div class="grid">
-            <div class="row">
-              <input class="field" type="file" id="coverFile" accept=".txt,.md,.csv" aria-label="求職信檔案">
-              <button class="btn ghost" id="clearCover">清空</button>
-            </div>
-            <textarea class="field" id="coverText" placeholder="請貼上求職信文字">${escape(S.coverText||'')}</textarea>
-          </div>`);
-        stage.querySelector('#coverFile').onchange=e=>{
-          const f=e.target.files[0]; if(!f) return;
-          const r=new FileReader(); r.onload=()=>{ S.coverText=r.result; render(); }; r.readAsText(f);
-        };
-        stage.querySelector('#coverText').oninput=e=>S.coverText=e.target.value;
-        stage.querySelector('#clearCover').onclick=()=>{S.coverText=''; render();};
-        break;
-
-      case 4:
-        qWrap('四、期望的月薪及年薪總額',
+        qWrap('三、期望的月薪及年薪總額',
           '請直接填入數字（萬元）。',
           `<div class="grid cols-2">
             <div class="row" style="flex-direction:column;align-items:stretch;">
@@ -409,30 +494,30 @@ TQC Office 認證（Word、Excel、PowerPoint）`,
         stage.querySelector('#salaryYear').oninput=e=>S.salaryYear=e.target.value;
         break;
 
-      case 5:
-        qWrap('五、比較在乎的三個職業價值觀（依序）',
+      case 4:
+        qWrap('四、比較在乎的三個職業價值觀（依序）',
           '請依序點選三個。若不清楚，可先做 5 分鐘檢測：<a href="https://guide.104.com.tw/value" target="_blank" rel="noopener">104 職業價值觀測驗</a>',
           selView(valuesOpts,S.valuesSel)+
           chips(valuesOpts,S.valuesSel,3)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
         bindChips(S.valuesSel,3);
         break;
 
-      case 6:
-        qWrap('六、比較來勁的二個生涯興趣（依序）',
+      case 5:
+        qWrap('五、比較來勁的二個生涯興趣（依序）',
           '請依序點選二個。若不清楚，可先做 5 分鐘檢測：<a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">104 生涯興趣測驗</a>',
           selView(interestOpts,S.interestsSel)+
           chips(interestOpts,S.interestsSel,2)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
         bindChips(S.interestsSel,2);
         break;
 
-      case 7:
-        qWrap('七、比較擅長的三個多元智能（依序）','請依序點選三個。',
+      case 6:
+        qWrap('六、比較擅長的三個多元智能（依序）','請依序點選三個。',
           selView(miOpts,S.miSel)+
           chips(miOpts,S.miSel,3)+`<div class="hint">已選 ${S.miSel.length} / 3</div>`);
         bindChips(S.miSel,3);
         break;
 
-      case 8:
+      case 7:
         const text = compiledText();
         stage.innerHTML = progress()+`<section class="card" style="padding:16px">
           <div class="qtitle">彙整完成</div>
@@ -495,7 +580,7 @@ TQC Office 認證（Word、Excel、PowerPoint）`,
         };
         break;
 
-      case 9:
+      case 8:
         // not used
         break;
     }
@@ -516,15 +601,15 @@ TQC Office 認證（Word、Excel、PowerPoint）`,
 '',
 (S.cvText||'（未提供）'),
 '',
-'二、自傳',
+'二、想從事的職務',
 '',
-(S.bioText||'（未提供）'),
+(S.targetJob||'（未提供）'),
 '',
-'三、求職信',
+'二-1、對應 104 職務類別（自動判讀）',
 '',
-(S.coverText||'（未提供）'),
+((S.targetCats&&S.targetCats.length)?S.targetCats.join('\n'):'（未判讀）'),
 '',
-`四、期望的月薪及年薪總額：月薪是${S.salaryMonth?S.salaryMonth:'（未填）'}萬元。年薪總和是${S.salaryYear?S.salaryYear:'（未填）'}萬元。`,
+`三、期望的月薪及年薪總額：月薪是${S.salaryMonth?S.salaryMonth:'（未填）'}萬元。年薪總和是${S.salaryYear?S.salaryYear:'（未填）'}萬元。`,
 '',
 '五、比較在乎的三個職業價值觀依序是：',
 linesFromSelected(valuesOpts, S.valuesSel),
@@ -547,7 +632,7 @@ linesFromSelected(miOpts, S.miSel),
 '一、履歷',
 '二、自傳',
 '三、求職信',
-'四、期望的月薪及年薪總額',
+'三、期望的月薪及年薪總額',
 '五、比較在乎的三個職業價值觀',
 '六、比較來勁的二個生涯興趣',
 '七、比較擅長的三個多元智能',
