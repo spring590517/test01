@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 104 抽獎程式</title>
+    <style>
+        /* 全局設定 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        /* 容器設定 */
+        .container {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* 標題區域 */
+        header h1 {
+            margin: 0;
+            color: #ff7800; /* 104 橘色系 */
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        header h2 {
+            margin: 10px 0 30px 0;
+            font-size: 1.2rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* 輸入區域 */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            background-color: #fff;
+        }
+
+        .input-group input:focus {
+            border-color: #ff7800;
+            outline: none;
+        }
+
+        /* 鎖定輸入框時的樣式 */
+        .input-group input:disabled {
+            background-color: #eee;
+            color: #999;
+            border-color: #eee;
+        }
+
+        /* 按鈕設定 */
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff9f43, #ff7800);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.5rem; /* 字體加大 */
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(255, 120, 0, 0.3);
+            transition: transform 0.1s, box-shadow 0.1s, background 0.3s;
+            margin-top: 10px;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(255, 120, 0, 0.3);
+        }
+
+        button.finished {
+            background: #7f8c8d; /* 灰色背景表示結束 */
+            box-shadow: none;
+            font-size: 1.2rem;
+        }
+
+        /* 結果顯示區域 */
+        #result-area {
+            margin-top: 30px;
+            min-height: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px; /* 球之間的距離加大 */
+        }
+
+        /* 號碼球樣式 */
+        .ball {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px; /* 球變大一點 */
+            height: 60px;
+            background-color: #fff;
+            color: #d35400;
+            border-radius: 50%;
+            font-weight: 900;
+            font-size: 1.5rem;
+            border: 4px solid #ff7800;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 最新出現的球會有一個閃光特效 */
+        .ball.new {
+            background-color: #ffedd5;
+            border-color: #e67e22;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* 頁尾 */
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>AI 104</h1>
+            <h2>敢出發，就有路！</h2>
+        </header>
+
+        <main>
+            <div class="input-group">
+                <label for="maxNum">抽獎範圍 (1 ~ ?)</label>
+                <input type="number" id="maxNum" value="100" min="1" max="10000" placeholder="例如：100">
+            </div>
+
+            <div class="input-group">
+                <label for="drawCount">總共抽出幾位</label>
+                <input type="number" id="drawCount" value="1" min="1" placeholder="例如：1">
+            </div>
+
+            <button id="actionBtn" onclick="handleDraw()">Good Luck</button>
+
+            <div id="result-area">
+                </div>
+        </main>
+    </div>
+
+    <footer>
+        Keep Going！104
+    </footer>
+
+    <script>
+        // 用來儲存當前狀態的變數
+        let drawnNumbers = new Set(); // 已經抽出的號碼
+        let isSessionActive = false;  // 是否正在進行一輪抽獎
+
+        function handleDraw() {
+            const maxNumInput = document.getElementById('maxNum');
+            const drawCountInput = document.getElementById('drawCount');
+            const actionBtn = document.getElementById('actionBtn');
+            const resultArea = document.getElementById('result-area');
+
+            // 1. 如果抽獎結束了，使用者點擊按鈕則是為了「重置」
+            if (actionBtn.classList.contains('finished')) {
+                resetGame();
+                return;
+            }
+
+            // 讀取數值
+            let maxNum = parseInt(maxNumInput.value);
+            let targetCount = parseInt(drawCountInput.value);
+
+            // 2. 防呆檢查
+            if (!maxNum || maxNum < 1) { alert("請輸入有效的範圍！"); return; }
+            if (!targetCount || targetCount < 1) { alert("請輸入抽出數量！"); return; }
+            if (targetCount > maxNum) { alert("抽出數量不能大於總人數！"); return; }
+            if (maxNum > 10000) maxNum = 10000;
+
+            // 3. 如果是新的一輪開始 (鎖定輸入框)
+            if (!isSessionActive) {
+                isSessionActive = true;
+                maxNumInput.disabled = true;
+                drawCountInput.disabled = true;
+                resultArea.innerHTML = ''; // 清空畫面
+                drawnNumbers.clear();
+            }
+
+            // 4. 執行抽獎邏輯 (一次抽一顆)
+            if (drawnNumbers.size < targetCount) {
+                let randomNum;
+                // 確保不重複
+                do {
+                    randomNum = Math.floor(Math.random() * maxNum) + 1;
+                } while (drawnNumbers.has(randomNum));
+
+                drawnNumbers.add(randomNum);
+                
+                // 顯示號碼球
+                createBall(randomNum);
+
+                // 5. 判斷是否抽完了
+                if (drawnNumbers.size >= targetCount) {
+                    // 全部抽完，改變按鈕狀態
+                    actionBtn.innerText = "抽獎完成 (點擊重置)";
+                    actionBtn.classList.add('finished');
+                }
+            }
+        }
+
+        // 產生球的函式
+        function createBall(number) {
+            const resultArea = document.getElementById('result-area');
+            
+            // 移除舊球的 "new" 標籤 (選擇性，保留這個樣式也不錯)
+            const oldBalls = document.querySelectorAll('.ball');
+            oldBalls.forEach(b => b.classList.remove('new'));
+
+            const ball = document.createElement('div');
+            ball.className = 'ball new'; // 加上 new 類別會有不同顏色標示
+            ball.textContent = number;
+            
+            resultArea.appendChild(ball);
+            
+            // 自動捲動到底部 (避免手機畫面被鍵盤擋住看不到新球)
+            ball.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // 重置遊戲函式
+        function resetGame() {
+            const maxNumInput = document.getElementById('maxNum');
+            const drawCountInput = document.getElementById('drawCount');
+            const actionBtn = document.getElementById('actionBtn');
+            const resultArea = document.getElementById('result-area');
+
+            // 解鎖輸入框
+            maxNumInput.disabled = false;
+            drawCountInput.disabled = false;
+            
+            // 重置變數
+            drawnNumbers.clear();
+            isSessionActive = false;
+            resultArea.innerHTML = ''; // 清空球
+
+            // 重置按鈕
+            actionBtn.innerText = "Good Luck";
+            actionBtn.classList.remove('finished');
+        }
+    </script>
+</body>
+</html>
