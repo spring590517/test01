@@ -1,472 +1,604 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI 104 抽獎程式</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>104 AI+ 抽獎分組程式</title>
+    <style>
+        /* === 全局變數與設定 === */
+        :root {
+            /* 104 品牌色調 */
+            --brand-orange-start: #ff8800;
+            --brand-orange-end: #ff5e00;
+            --brand-purple: #a855f7;
+            --bg-gradient-start: #fff3e0;
+            --bg-gradient-end: #ffffff;
+            --text-dark: #2d3436;
+        }
 
-<style>
-/* ========= 基本設定（Mobile First） ========= */
-:root{
-  --orange:#ff7800;
-  --orange-dark:#d35400;
-  --bg1:#fff6ee;
-  --bg2:#f4f4f4;
-  --text:#333;
-  --muted:#666;
-  --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 60%);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            padding: 20px 10px;
+            box-sizing: border-box;
+        }
 
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  background:linear-gradient(180deg,var(--bg1),var(--bg2));
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  color:var(--text);
-}
+        /* === 主容器 === */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            max-width: 500px;
+            padding: 45px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(255, 136, 0, 0.15);
+            text-align: center;
+            box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+        }
 
-/* ========= 主容器 ========= */
-.container{
-  width:94%;
-  max-width:420px;
-  background:#fff;
-  border-radius:24px;
-  padding:28px 20px 32px;
-  margin-top:20px;
-  box-shadow:var(--card-shadow);
-  text-align:center;
-}
+        /* === 標題區域 === */
+        header {
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-/* ========= 標題 ========= */
-header h1{
-  margin:0;
-  font-size:3rem;
-  font-weight:900;
-  letter-spacing:4px;
-  color:var(--orange);
-}
+        /* Logo 設定 */
+        header h1 {
+            margin: 0;
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            /* 文字漸層 */
+            background: linear-gradient(120deg, var(--brand-orange-start) 0%, #ff4757 50%, var(--brand-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0px 2px 0px rgba(0,0,0,0.1));
+            line-height: 1.2;
+            
+            /* 設定相對定位，作為星星的定位基準 */
+            position: relative;
+            display: inline-block; 
+        }
 
-header h2{
-  margin-top:10px;
-  font-size:1.4rem;
-  font-weight:800;
-  letter-spacing:3px;
-  color:var(--orange-dark);
-  text-shadow:0 2px 4px rgba(255,120,0,0.25);
-}
+        /* 三顆星星的群組設定 (右上方) */
+        header h1 .stars-group {
+            position: absolute;
+            right: -60px;  /* 往右移出文字範圍 */
+            top: -20px;    /* 往上浮動 */
+            left: auto;
+            
+            font-size: 1.8rem;
+            display: flex;
+            gap: -5px;
+            
+            -webkit-text-fill-color: initial; 
+            filter: none;
+            color: #ffcc00; 
+            
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        .stars-group span:nth-child(1) { font-size: 0.8em; animation-delay: 0s; }
+        .stars-group span:nth-child(2) { font-size: 1.2em; animation-delay: 0.2s; position: relative; top: -5px;}
+        .stars-group span:nth-child(3) { font-size: 0.6em; animation-delay: 0.4s; }
 
-/* ========= 卡片式輸入區 ========= */
-.field-card{
-  margin-top:18px;
-  background:linear-gradient(180deg,#ffffff,#fffaf5);
-  border:1px solid rgba(255,120,0,0.16);
-  border-radius:18px;
-  padding:16px 14px 18px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
-  text-align:center; /* ✅ 標籤置中 */
-}
+        /* 副標題：敢出發，就有路 */
+        header h2 {
+            margin: 15px 0 0 0;
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            font-weight: 900;
+            font-style: italic;
+            letter-spacing: 1.5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 極速飾條 */
+        header h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 7px;
+            background: linear-gradient(90deg, var(--brand-orange-end), var(--brand-orange-start));
+            margin: 12px auto 0;
+            border-radius: 4px;
+            transform: skewX(-20deg);
+            box-shadow: 2px 2px 5px rgba(255, 94, 0, 0.3);
+        }
 
-.field-card label{
-  display:block;
-  font-size:0.98rem;
-  font-weight:800;
-  color:#444;
-  letter-spacing:1px;
-  margin-bottom:12px;
-  position:relative;
-}
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+        }
 
-/* ✅ 標籤下的細橘線 */
-.field-card label::after{
-  content:"";
-  display:block;
-  width:54px;
-  height:3px;
-  border-radius:999px;
-  background:var(--orange);
-  margin:10px auto 0;
-  box-shadow:0 4px 10px rgba(255,120,0,0.25);
-}
+        /* === 頁籤切換 (Tabs) === */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
 
-/* ========= Stepper ========= */
-.stepper{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-}
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #fff0e0;
+            background: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
 
-.step-btn{
-  width:46px;
-  height:46px;
-  border-radius:999px;
-  border:2px solid rgba(255,120,0,0.55);
-  background:#fff;
-  color:var(--orange-dark);
-  font-size:1.6rem;
-  font-weight:900;
-  line-height:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  box-shadow:0 6px 14px rgba(0,0,0,0.06);
-  transition:transform .08s, box-shadow .08s, background .2s, border-color .2s;
-  -webkit-tap-highlight-color:transparent;
-}
+        .tab-btn.active {
+            background: #fff5e6;
+            color: #ff6b00;
+            border-color: #ff6b00;
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.15);
+        }
 
-.step-btn:active{
-  transform:scale(0.96);
-  box-shadow:0 4px 10px rgba(0,0,0,0.06);
-}
+        /* === 功能區塊顯示控制 === */
+        .feature-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .feature-section.active {
+            display: block;
+        }
 
-.step-btn:hover{
-  border-color:rgba(255,120,0,0.9);
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.step-btn:disabled{
-  opacity:0.45;
-  cursor:not-allowed;
-  box-shadow:none;
-}
+        /* === 輸入區域 === */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+            background: #fff;
+        }
 
-.step-input{
-  width:140px;
-  max-width:52vw;
-  padding:14px 12px;
-  font-size:1.25rem;
-  font-weight:900;
-  border-radius:14px;
-  border:2px solid #e6e6e6;
-  transition:border-color .3s, box-shadow .3s;
-  text-align:center;
-  box-sizing:border-box;
-  background:#fff;
-}
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #444;
+            padding-left: 5px;
+        }
 
-.step-input:focus{
-  outline:none;
-  border-color:var(--orange);
-  box-shadow:0 0 0 4px rgba(255,120,0,0.12);
-}
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2rem;
+            border: 2px solid #f0f0f0;
+            border-radius: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+            font-family: monospace;
+            color: #333;
+        }
 
-.step-input:disabled{
-  background:#f2f2f2;
-  color:#999;
-  border-color:#eee;
-  box-shadow:none;
-}
+        .input-group input:focus {
+            border-color: #ff6b00;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+        }
+        
+        .input-note {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-top: 6px;
+            display: block;
+            padding-left: 5px;
+        }
 
-/* 移除 number input 的上下箭頭（不同瀏覽器） */
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button{
-  -webkit-appearance:none;
-  margin:0;
-}
-input[type=number]{
-  -moz-appearance:textfield;
-}
+        /* === 按鈕設定 === */
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, var(--brand-orange-start), var(--brand-orange-end));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 94, 0, 0.3);
+            transition: transform 0.1s, box-shadow 0.2s, background 0.3s;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Arial Black', sans-serif; 
+        }
 
-/* ========= 按鈕 ========= */
-button#actionBtn{
-  width:100%;
-  margin-top:22px;
-  padding:18px;
-  font-size:1.6rem;
-  font-weight:900;
-  border-radius:60px;
-  border:none;
-  color:#fff;
-  background:linear-gradient(135deg,#ff9f43,var(--orange));
-  box-shadow:0 8px 16px rgba(255,120,0,.35);
-  cursor:pointer;
-  transition:transform .1s;
-  -webkit-tap-highlight-color:transparent;
-}
+        button:hover {
+            box-shadow: 0 10px 25px rgba(255, 94, 0, 0.4);
+            transform: translateY(-2px);
+        }
 
-button#actionBtn:active{ transform:scale(0.97); }
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 10px rgba(255, 94, 0, 0.2);
+        }
 
-button#actionBtn.finished{
-  background:#7f8c8d;
-  font-size:1.2rem;
-  box-shadow:none;
-}
+        button.finished {
+            background: #bdc3c7;
+            box-shadow: none;
+            font-size: 1.2rem;
+        }
 
-/* ========= 結果 ========= */
-#result-area{
-  margin-top:26px;
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:14px;
-  min-height:64px;
-}
+        /* === 抽獎結果 (Lottery) === */
+        #result-area-lottery {
+            margin-top: 35px;
+            min-height: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
 
-.ball{
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  background:#fff;
-  border:4px solid var(--orange);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1.6rem;
-  font-weight:900;
-  color:var(--orange-dark);
-  box-shadow:0 6px 14px rgba(0,0,0,0.08);
-  animation:pop .45s ease-out;
-}
+        .ball {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 65px;
+            height: 65px;
+            background-color: #fff;
+            color: #ff6b00;
+            border-radius: 50%;
+            font-weight: 900;
+            font-size: 1.6rem;
+            border: 3px solid #ff6b00;
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.15);
+            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .ball.new {
+            background-color: #ff6b00;
+            color: #fff;
+            transform: scale(1.1);
+        }
 
-.ball.new{
-  background:#ffedd5;
-  border-color:#e67e22;
-}
+        /* === 分組結果 (Grouping) === */
+        #result-area-group {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            text-align: left;
+        }
 
-@keyframes pop{
-  0%{ transform:scale(0); opacity:0; }
-  70%{ transform:scale(1.15); }
-  100%{ transform:scale(1); opacity:1; }
-}
+        .group-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            animation: fadeIn 0.5s ease;
+            position: relative;
+        }
+        
+        .group-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: var(--brand-orange-end);
+        }
 
-/* ========= Footer ========= */
-footer{
-  margin-top:auto;
-  padding:32px 0;
-  font-size:1.25rem;
-  font-weight:900;
-  letter-spacing:2px;
-  color:#666;
-}
+        .group-header {
+            background: #fff8f0;
+            color: #d35400;
+            padding: 12px 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ffe0c2;
+        }
+        
+        .group-header span.count {
+            background: #fff;
+            color: #ff6b00;
+            border: 1px solid #ff6b00;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
 
-/* ========= 平板以上 ========= */
-@media (min-width:768px){
-  .container{ max-width:540px; padding:34px 28px 38px; }
-  header h1{ font-size:3.6rem; }
-  header h2{ font-size:1.6rem; }
-  .field-card{ padding:18px 18px 20px; }
-  .step-input{ width:180px; }
-  #actionBtn{ font-size:1.7rem; }
-  .ball{ width:70px; height:70px; font-size:1.7rem; }
-  footer{ font-size:1.35rem; }
-}
+        .group-body {
+            padding: 15px 20px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+            word-break: break-all;
+        }
 
-/* ========= 小螢幕微調 ========= */
-@media (max-width:360px){
-  header h1{ font-size:2.7rem; }
-  header h2{ font-size:1.25rem; }
-  .step-btn{ width:42px; height:42px; font-size:1.5rem; }
-  .step-input{ width:130px; }
-  #actionBtn{ font-size:1.45rem; padding:16px; }
-}
-</style>
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* === 頁尾 === */
+        footer {
+            margin-top: auto;
+            padding: 25px;
+            color: #95a5a6; 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        footer span {
+            color: #ff6b00;
+        }
+
+        /* === RWD 手機版特別調整 === */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                border-radius: 24px;
+            }
+
+            header h1 {
+                font-size: 2.5rem; 
+            }
+            
+            /* 手機版星星微調 */
+            header h1 .stars-group {
+                right: -40px;
+                top: -15px;
+                font-size: 1.5rem;
+            }
+
+            header h2 {
+                font-size: 1.4rem;
+            }
+
+            button {
+                font-size: 1.3rem;
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <header>
-      <h1>AI 104</h1>
-      <h2>敢出發，就有路！</h2>
-    </header>
 
-    <main>
-      <!-- ✅ 卡片式：設定抽獎範圍 -->
-      <section class="field-card">
-        <label for="maxNum">設定抽獎範圍</label>
-        <div class="stepper">
-          <button class="step-btn" type="button" data-target="maxNum" data-delta="-1" aria-label="減少範圍">−</button>
-          <input class="step-input" type="number" id="maxNum" value="100" min="1" max="10000" placeholder="例如：100" inputmode="numeric" />
-          <button class="step-btn" type="button" data-target="maxNum" data-delta="1" aria-label="增加範圍">＋</button>
+    <div class="container">
+        <header>
+            <h1>
+                104 AI+
+                <div class="stars-group">
+                    <span>✨</span><span>✨</span><span>✨</span>
+                </div>
+            </h1>
+            
+            <h2>敢出發，就有路</h2>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('lottery')">抽獎 (Lottery)</button>
+            <button class="tab-btn" onclick="switchTab('grouping')">分組 (Grouping)</button>
         </div>
-      </section>
 
-      <!-- ✅ 卡片式：確定抽出數量 -->
-      <section class="field-card">
-        <label for="drawCount">確定抽出數量</label>
-        <div class="stepper">
-          <button class="step-btn" type="button" data-target="drawCount" data-delta="-1" aria-label="減少數量">−</button>
-          <input class="step-input" type="number" id="drawCount" value="1" min="1" placeholder="例如：1" inputmode="numeric" />
-          <button class="step-btn" type="button" data-target="drawCount" data-delta="1" aria-label="增加數量">＋</button>
-        </div>
-      </section>
+        <main>
+            <div id="lottery-section" class="feature-section active">
+                <div class="input-group">
+                    <label for="maxNum">設定抽獎範圍 (總人數)</label>
+                    <input type="number" id="maxNum" value="100" min="1" max="10000" inputmode="numeric" placeholder="例如：100">
+                </div>
 
-      <button id="actionBtn" onclick="handleDraw()">Good Luck</button>
+                <div class="input-group">
+                    <label for="drawCount">確定抽出數量</label>
+                    <input type="number" id="drawCount" value="1" min="1" inputmode="numeric" placeholder="例如：1">
+                </div>
 
-      <div id="result-area"></div>
-    </main>
-  </div>
+                <button id="lotteryBtn" onclick="handleDraw()">Good Luck</button>
 
-  <footer>Keep Going！104</footer>
+                <div id="result-area-lottery">
+                    </div>
+            </div>
 
-<script>
-  // 狀態變數
-  let drawnNumbers = new Set();
-  let isSessionActive = false;
+            <div id="grouping-section" class="feature-section">
+                <div class="input-group">
+                    <label for="groupTotalMember">輸入可分組數字 (總人數)</label>
+                    <input type="number" id="groupTotalMember" value="50" min="1" max="10000" inputmode="numeric" placeholder="例如：50 (代表編號1-50)">
+                    <span class="input-note">將對編號 1 到 N 的人員進行隨機分組</span>
+                </div>
 
-  // 取得數字（含防呆）
-  function readInt(el, fallback){
-    const v = parseInt(el.value, 10);
-    return Number.isFinite(v) ? v : fallback;
-  }
+                <div class="input-group">
+                    <label for="groupCount">分成幾組</label>
+                    <input type="number" id="groupCount" value="5" min="2" max="20" inputmode="numeric" placeholder="最多20組">
+                </div>
 
-  // 依 maxNum 動態限制 drawCount 的最大值
-  function syncDrawCountMax(){
-    const maxNumEl = document.getElementById('maxNum');
-    const drawEl = document.getElementById('drawCount');
+                <button id="groupingBtn" onclick="handleGrouping()">Together</button>
 
-    let maxNum = readInt(maxNumEl, 100);
-    if (maxNum > 10000) maxNum = 10000;
-    if (maxNum < 1) maxNum = 1;
+                <div id="result-area-group">
+                    </div>
+            </div>
+        </main>
+    </div>
 
-    drawEl.max = String(maxNum);
+    <footer>
+        Keep Going！<span>104</span>
+    </footer>
 
-    // 若 drawCount 超過 maxNum，自動收斂
-    let draw = readInt(drawEl, 1);
-    if (draw > maxNum) drawEl.value = String(maxNum);
-    if (draw < 1) drawEl.value = "1";
-  }
+    <script>
+        // === 頁籤切換邏輯 ===
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
 
-  // Stepper：加減
-  function stepValue(targetId, delta){
-    const el = document.getElementById(targetId);
-    if (el.disabled) return;
+            document.querySelectorAll('.feature-section').forEach(sec => sec.classList.remove('active'));
+            if(tabName === 'lottery') {
+                document.getElementById('lottery-section').classList.add('active');
+            } else {
+                document.getElementById('grouping-section').classList.add('active');
+            }
+        }
 
-    let v = readInt(el, 0);
-    let min = el.min ? parseInt(el.min, 10) : -Infinity;
-    let max;
+        // ============================
+        // === 抽獎功能邏輯 (Lottery) ===
+        // ============================
+        let drawnNumbers = new Set();
+        let isLotteryActive = false;
 
-    if (targetId === "drawCount") {
-      // drawCount 最大值跟 maxNum 綁定
-      const maxNumEl = document.getElementById('maxNum');
-      max = readInt(maxNumEl, 100);
-      if (max > 10000) max = 10000;
-      if (max < 1) max = 1;
-    } else {
-      max = el.max ? parseInt(el.max, 10) : Infinity;
-    }
+        function handleDraw() {
+            const maxNumInput = document.getElementById('maxNum');
+            const drawCountInput = document.getElementById('drawCount');
+            const actionBtn = document.getElementById('lotteryBtn');
+            const resultArea = document.getElementById('result-area-lottery');
 
-    v = v + delta;
-    if (v < min) v = min;
-    if (v > max) v = max;
+            if (actionBtn.classList.contains('finished')) {
+                resetLottery();
+                return;
+            }
 
-    el.value = String(v);
+            let maxNum = parseInt(maxNumInput.value);
+            let targetCount = parseInt(drawCountInput.value);
 
-    if (targetId === "maxNum") syncDrawCountMax();
-  }
+            if (!maxNum || maxNum < 1) { alert("請輸入有效的範圍！"); return; }
+            if (!targetCount || targetCount < 1) { alert("請輸入抽出數量！"); return; }
+            if (targetCount > maxNum) { alert("抽出數量不能大於總人數！"); return; }
+            if (maxNum > 10000) maxNum = 10000;
 
-  // 綁定 stepper 按鈕
-  function bindStepper(){
-    document.querySelectorAll('.step-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-target');
-        const delta = parseInt(btn.getAttribute('data-delta'), 10) || 0;
-        stepValue(targetId, delta);
-      });
-    });
+            if (!isLotteryActive) {
+                isLotteryActive = true;
+                maxNumInput.disabled = true;
+                drawCountInput.disabled = true;
+                resultArea.innerHTML = ''; 
+                drawnNumbers.clear();
+            }
 
-    // 手動輸入也要同步限制
-    document.getElementById('maxNum').addEventListener('input', syncDrawCountMax);
-    document.getElementById('drawCount').addEventListener('input', syncDrawCountMax);
-  }
+            if (drawnNumbers.size < targetCount) {
+                let randomNum;
+                do {
+                    randomNum = Math.floor(Math.random() * maxNum) + 1;
+                } while (drawnNumbers.has(randomNum));
 
-  // 啟用/停用 stepper
-  function setStepperDisabled(disabled){
-    document.querySelectorAll('.step-btn').forEach(b => b.disabled = disabled);
-  }
+                drawnNumbers.add(randomNum);
+                createBall(randomNum);
 
-  // 抽獎主流程
-  function handleDraw() {
-    const maxNumInput = document.getElementById('maxNum');
-    const drawCountInput = document.getElementById('drawCount');
-    const actionBtn = document.getElementById('actionBtn');
-    const resultArea = document.getElementById('result-area');
+                if (drawnNumbers.size >= targetCount) {
+                    actionBtn.innerText = "抽獎完成 (點擊重置)";
+                    actionBtn.classList.add('finished');
+                }
+            }
+        }
 
-    // 若已完成，點擊即重置
-    if (actionBtn.classList.contains('finished')) {
-      resetGame();
-      return;
-    }
+        function createBall(number) {
+            const resultArea = document.getElementById('result-area-lottery');
+            const oldBalls = document.querySelectorAll('.ball');
+            oldBalls.forEach(b => b.classList.remove('new'));
 
-    // 先同步 max 限制
-    syncDrawCountMax();
+            const ball = document.createElement('div');
+            ball.className = 'ball new'; 
+            ball.textContent = number;
+            
+            resultArea.appendChild(ball);
+            ball.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
 
-    let maxNum = readInt(maxNumInput, 100);
-    let targetCount = readInt(drawCountInput, 1);
+        function resetLottery() {
+            const maxNumInput = document.getElementById('maxNum');
+            const drawCountInput = document.getElementById('drawCount');
+            const actionBtn = document.getElementById('lotteryBtn');
+            const resultArea = document.getElementById('result-area-lottery');
 
-    // 防呆
-    if (!maxNum || maxNum < 1) { alert("請輸入有效的範圍！"); return; }
-    if (!targetCount || targetCount < 1) { alert("請輸入抽出數量！"); return; }
-    if (targetCount > maxNum) { alert("抽出數量不能大於總人數！"); return; }
-    if (maxNum > 10000) maxNum = 10000;
+            maxNumInput.disabled = false;
+            drawCountInput.disabled = false;
+            
+            drawnNumbers.clear();
+            isLotteryActive = false;
+            resultArea.innerHTML = ''; 
 
-    // 新一輪開始：鎖定輸入與 stepper
-    if (!isSessionActive) {
-      isSessionActive = true;
-      maxNumInput.disabled = true;
-      drawCountInput.disabled = true;
-      setStepperDisabled(true);
-      resultArea.innerHTML = '';
-      drawnNumbers.clear();
-    }
+            actionBtn.innerText = "Good Luck";
+            actionBtn.classList.remove('finished');
+        }
 
-    // 一次抽一顆，確保不重複
-    if (drawnNumbers.size < targetCount) {
-      let randomNum;
-      do {
-        randomNum = Math.floor(Math.random() * maxNum) + 1;
-      } while (drawnNumbers.has(randomNum));
+        // ============================
+        // === 分組功能邏輯 (Grouping) ===
+        // ============================
+        function handleGrouping() {
+            const totalInput = document.getElementById('groupTotalMember');
+            const countInput = document.getElementById('groupCount');
+            const resultArea = document.getElementById('result-area-group');
+            
+            let totalMembers = parseInt(totalInput.value);
+            let numGroups = parseInt(countInput.value);
 
-      drawnNumbers.add(randomNum);
-      createBall(randomNum);
+            if (!totalMembers || totalMembers < 1) { alert("請輸入總人數！"); return; }
+            if (!numGroups || numGroups < 2) { alert("請輸入至少 2 組！"); return; }
+            if (numGroups > 20) { alert("最多只能分 20 組！"); return; }
+            if (numGroups > totalMembers) { alert("組數不能大於總人數！"); return; }
 
-      // 抽完切換按鈕狀態
-      if (drawnNumbers.size >= targetCount) {
-        actionBtn.innerText = "抽獎完成（點擊重置）";
-        actionBtn.classList.add('finished');
-      }
-    }
-  }
+            let members = [];
+            for (let i = 1; i <= totalMembers; i++) {
+                members.push(i);
+            }
 
-  // 產生球
-  function createBall(number) {
-    const resultArea = document.getElementById('result-area');
-    document.querySelectorAll('.ball').forEach(b => b.classList.remove('new'));
+            for (let i = members.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [members[i], members[j]] = [members[j], members[i]];
+            }
 
-    const ball = document.createElement('div');
-    ball.className = 'ball new';
-    ball.textContent = number;
-    resultArea.appendChild(ball);
+            let groups = Array.from({ length: numGroups }, () => []);
+            members.forEach((memberId, index) => {
+                groups[index % numGroups].push(memberId);
+            });
 
-    ball.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
+            groups.forEach(group => group.sort((a, b) => a - b));
 
-  // 重置
-  function resetGame() {
-    const maxNumInput = document.getElementById('maxNum');
-    const drawCountInput = document.getElementById('drawCount');
-    const actionBtn = document.getElementById('actionBtn');
-    const resultArea = document.getElementById('result-area');
-
-    maxNumInput.disabled = false;
-    drawCountInput.disabled = false;
-    setStepperDisabled(false);
-
-    drawnNumbers.clear();
-    isSessionActive = false;
-    resultArea.innerHTML = '';
-
-    actionBtn.innerText = "Good Luck";
-    actionBtn.classList.remove('finished');
-
-    syncDrawCountMax();
-  }
-
-  // 初始化
-  bindStepper();
-  syncDrawCountMax();
-</script>
+            resultArea.innerHTML = '';
+            
+            groups.forEach((groupData, index) => {
+                const groupName = String.fromCharCode(65 + index);
+                
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                card.innerHTML = `
+                    <div class="group-header">
+                        組別 ${groupName}
+                        <span class="count">${groupData.length}人</span>
+                    </div>
+                    <div class="group-body">
+                        ${groupData.join(', ')}
+                    </div>
+                `;
+                resultArea.appendChild(card);
+            });
+            
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
 </body>
 </html>
