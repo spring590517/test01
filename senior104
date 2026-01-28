@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#ff6600" />
+<title>中高齡錄取機率自評｜104</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC",sans-serif;line-height:1.5;background:#f6f7fb;color:#1f2328;-webkit-font-smoothing:antialiased}
+  button,input,textarea{font:inherit}
+  :root{
+    --brand:#ff6600;--brand-600:#e65a00;--ink:#1f2328;--muted:#5b616e;--ring:#e6e8ef;--card:#fff;--bg:#f6f7fb;
+    --radius:14px;--shadow:0 6px 18px rgba(23,26,31,.06);
+    --fs-12:clamp(12px, 0.75rem, 0.75rem);
+    --fs-14:clamp(13px, 0.9vw + 10px, 14px);
+    --fs-16:clamp(15px, 1.2vw + 10px, 16px);
+    --fs-18:clamp(16px, 1.4vw + 10px, 18px);
+    --fs-22:clamp(18px, 1.2rem + 0.8vw, 22px);
+    --fs-28:clamp(22px, 1.2rem + 1.6vw, 28px);
+    --zoom:1;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--ink:#e7e9ee;--muted:#aeb4c0;--ring:#2c3340;--card:#0e1116;--bg:#0a0d12}
+    body{background:var(--bg);color:var(--ink)}
+  }
+  :root{ --fs-12: calc(12px * var(--zoom)); --fs-14: calc(14px * var(--zoom)); --fs-16: calc(16px * var(--zoom)); --fs-18: calc(18px * var(--zoom)); --fs-22: calc(22px * var(--zoom)); --fs-28: calc(28px * var(--zoom)); }
+  header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(160%) blur(8px);
+    background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+    border-bottom:1px solid var(--ring)}
+  @media (prefers-color-scheme: dark){
+    header{background:linear-gradient(180deg, rgba(14,17,22,.85), rgba(14,17,22,.55))}
+  }
+  .header-inner{max-width:min(1000px, 92vw);margin:0 auto;padding:18px 8px 10px}
+  .title{font-weight:900;font-size:var(--fs-28);letter-spacing:.01em}
+  .sub{color:var(--muted);font-size:var(--fs-14);margin-top:4px}
+  .wrap{max-width:min(1000px, 92vw);margin:16px auto 44px;padding:0 4px}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .landing{padding:16px;display:grid;gap:12px}
+  .muted{color:var(--muted);font-size:var(--fs-14)}
+  .hint{color:var(--muted);font-size:var(--fs-12)}
+  .qtitle{font-size:var(--fs-22);font-weight:900;margin:4px 0}
+  .btn{appearance:none;border:1px solid transparent;background:var(--brand);color:#fff;border-radius:10px;padding:.85em 1.15em;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:.5em;box-shadow:0 1px 0 rgba(0,0,0,.05);transition:transform .06s ease, background .2s ease, box-shadow .2s ease}
+  .btn:hover{background:var(--brand-600)}
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:#444e60}
+  .btn.ghost{background:transparent;color:inherit;border-color:var(--ring)}
+  .btn.block{width:100%;justify-content:center}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;margin-top:14px}
+  .grid{display:grid;gap:10px}
+  .progress{position:sticky;top:62px;height:10px;background:#e9ebf3;border-radius:999px;overflow:hidden;margin:0 0 14px}
+  .bar{height:100%;background:var(--brand);width:0;transition:width .25s ease}
+  .safe-bottom{padding-bottom:calc(env(safe-area-inset-bottom, 0) + 6px)}
+  .toolbar-top{position:fixed;right:10px;top:10px;z-index:50;display:flex;gap:6px}
+  .btn.icon{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+  .btn.icon small{font-weight:900}
+  .pill{display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .tag{display:inline-block;border:1px solid var(--ring);border-radius:999px;padding:.25em .7em;font-size:var(--fs-14)}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .field{flex:1 1 auto;min-width:220px;padding:.8em .9em;border:1px solid var(--ring);border-radius:10px;font-size:var(--fs-16);background:var(--card);color:inherit}
+  .field:focus{outline:2px solid transparent;box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+  .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .chip{display:flex;align-items:center;justify-content:center;padding:12px;border:1px solid var(--ring);border-radius:12px;background:#f2f3f5;color:inherit;cursor:pointer;user-select:none;font-weight:800}
+  .chip:hover{background:#e9eaee}
+  .chip:active{background:#ffd6bf}
+  .chip.sel{background:#ffe0cc;border-color:#ff6600}
+  @media (prefers-color-scheme: dark){
+    .chip{background:#1c2430;border-color:#2c3340}
+    .chip:hover{background:#212b39}
+    .chip:active{background:#40332a}
+    .chip.sel{background:#3a2a22;border-color:#ff8a4a}
+  }
+  .qcard{padding:16px}
+  .qmeta{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .qnum{font-weight:900;color:var(--muted);font-size:var(--fs-14)}
+  .statement{font-weight:800;font-size:var(--fs-18);margin:6px 0 8px}
+  .legend{display:flex;justify-content:space-between;color:var(--muted);font-size:var(--fs-12);margin-top:6px}
+  .result-grid{display:grid;gap:12px}
+  .section{padding:14px;border:1px solid var(--ring);border-radius:var(--radius);background:var(--card)}
+  .sec-title{font-weight:900;font-size:var(--fs-18);margin:2px 0 10px}
+  .meter{height:12px;border-radius:999px;background:#e9ebf3;overflow:hidden}
+  .meter > div{height:100%;background:var(--brand);width:0}
+  .dl{display:grid;grid-template-columns:160px 1fr;gap:8px 14px}
+  .dl dt{margin:0;color:var(--muted)}
+  .dl dd{margin:0;white-space:pre-wrap;line-height:1.8}
+  @media (max-width:640px){ .dl{grid-template-columns:1fr} .dl dt{opacity:.9} }
+  details.copybox textarea{min-height:24vh}
+  .notice{background:rgba(255,102,0,.08);border:1px dashed rgba(255,102,0,.45);padding:12px 14px;border-radius:12px}
+</style>
+</head>
+<body>
+  <div class="toolbar-top" aria-label="字級調整">
+    <button class="btn icon" id="zoomOut" title="縮小字級"><small>A−</small></button>
+    <button class="btn icon" id="zoomIn" title="放大字級"><small>A＋</small></button>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div class="title">中高齡錄取機率自評（SAFER 模型）</div>
+      <div class="sub">用 5 個向度 × 25 題（每題 0–4 分）快速盤點：你現在被企業錄取的「相對機率」，以及最該優先補強的地方。</div>
+      <div class="sub">※ 這個工具不會上傳或記錄你的資料；分數只存於你的瀏覽器（可一鍵清除）。</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card landing" id="landing" aria-label="起始畫面">
+      <div class="grid">
+        <button class="btn block" id="startBtn">▶︎ 開始自評</button>
+        <button class="btn secondary block" id="sampleBtn">✨ 載入範例（看看結果長相）</button>
+      </div>
+      <div class="notice">
+        <b>怎麼填才準？</b><br/>
+        0=完全不符合 / 1=比較不符合 / 2=一半一半 / 3=比較符合 / 4=非常符合。<br/>
+        你可以把「想要應徵的職缺」當成標準來回答。
+      </div>
+      <p class="hint">提示：若你正在轉職初期，先做一次「現況版」；修改履歷/技能後，再做一次「改善版」，對比差距會很有感。</p>
+    </section>
+
+    <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
+  </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const stage = document.getElementById('stage');
+  const landing = document.getElementById('landing');
+
+  // ------- Zoom (same spirit as reference UI) -------
+  (function(){
+    const root = document.documentElement;
+    const saved = localStorage.getItem('hs_zoom') || '1';
+    root.style.setProperty('--zoom', saved);
+    function setZoom(z){
+      z = Math.max(0.85, Math.min(1.4, Math.round(z*100)/100));
+      root.style.setProperty('--zoom', z);
+      localStorage.setItem('hs_zoom', z);
+    }
+    document.getElementById('zoomIn').addEventListener('click', ()=> setZoom(parseFloat(getComputedStyle(root).getPropertyValue('--zoom')) + 0.1));
+    document.getElementById('zoomOut').addEventListener('click', ()=> setZoom(parseFloat(getComputedStyle(root).getPropertyValue('--zoom')) - 0.1));
+  })();
+
+  // ------- Model -------
+  const model = [
+    {
+      key:'S', name:'S｜Skill Fit 技能契合', short:'技能契合',
+      why:'企業想看到：你的能力能「立刻解決問題」，而不是只靠年資。',
+      tips:[
+        '把履歷改成「成果導向」：用數字/情境/前後對比寫出你做成了什麼。',
+        '針對目標職缺，補 1–2 個可快速驗證的技能（證照/作品/小專案）。',
+        '面試用 STAR（情境-任務-行動-結果）講 2–3 個代表案例。'
+      ],
+      items:[
+        '我的核心技能與目標職缺的關鍵需求高度相符（至少命中 70%）。',
+        '我能用「具體成果」說明我做過的貢獻（例如：成本、效率、品質、營收、風險）。',
+        '我對目標職缺的工具/流程/知識，具備可上手的程度（不用從零學）。',
+        '我有作品集/案例/簡報/報告等證據，能快速讓對方看懂我的能力。',
+        '我能清楚說明：我能替公司解決哪 1–2 個最痛的問題。'
+      ]
+    },
+    {
+      key:'A', name:'A｜Adapt & Learn 適應學習', short:'適應學習',
+      why:'企業想看到：你能跟上變化、願意學新東西、且學得動。',
+      tips:[
+        '把「最近一年」的學習列出來：課程、證照、實作、社群、讀書會。',
+        '先選「一個」與目標職缺最相關的數位工具（Excel/BI/AI/專業系統）練到可展示。',
+        '用「我怎麼學」來說服：你有方法、有節奏、能自我驅動。'
+      ],
+      items:[
+        '我在過去 6–12 個月有持續學習並產出可展示成果（作品/證照/專案）。',
+        '遇到新系統或新流程，我通常能在 2–4 週內適應並獨立作業。',
+        '我能自在使用日常數位工具（雲端協作、線上會議、文件/表單等）。',
+        '我對 AI/自動化/新科技持開放態度，願意嘗試把它用進工作。',
+        '我能用具體例子說明：我曾成功面對改制/轉型/新任務並做出成果。'
+      ]
+    },
+    {
+      key:'F', name:'F｜Fit & Reliability 穩定可信', short:'穩定可信',
+      why:'企業想看到：出勤、健康、情緒與風險管理「穩」，能放心交付。',
+      tips:[
+        '把可預期的限制說清楚（例如：排班/出差/體力），同時提出替代方案。',
+        '準備 2 位推薦人（前主管/合作夥伴），並先告知可能會被聯繫。',
+        '用「穩定輸出」說服：例行交付、品質控管、風險預防、紀錄留存。'
+      ],
+      items:[
+        '我能穩定出勤與準時交付（過去一年缺勤/遲到狀況很少）。',
+        '我目前身心狀態能支撐目標工作的節奏（含輪班/久站/高專注等）。',
+        '我做事會留下可追溯的紀錄（報表、文件、流程、交接），降低風險。',
+        '我面對壓力時能自我調節，不會把情緒帶到團隊與客戶。',
+        '我過去的工作評價多是可靠、可托付、能把事情做完做對。'
+      ]
+    },
+    {
+      key:'E', name:'E｜Engage & Collaborate 合作影響', short:'合作影響',
+      why:'企業想看到：你能跟不同世代合作、溝通順、且不會造成摩擦成本。',
+      tips:[
+        '把你的合作風格說清楚：如何對齊目標、怎麼回報、如何協調衝突。',
+        '準備 1 個「跨部門/跨世代合作」案例，強調你如何讓事情更順。',
+        '面試避免用「以前我們都…」；改用「現在我會…」展現彈性。'
+      ],
+      items:[
+        '我能與不同年齡/不同專業的同事合作順暢，願意互相學習。',
+        '我習慣主動溝通、同步進度，讓主管與夥伴能放心。',
+        '我能把複雜事情講清楚（對上對下都懂），且尊重對方感受。',
+        '我能處理意見不合或衝突，讓事情往前推而不是卡住。',
+        '我能在團隊中創造正向影響（帶新人、補位、解決盲點、提升效率）。'
+      ]
+    },
+    {
+      key:'R', name:'R｜Ready-to-Market 求職策略', short:'求職策略',
+      why:'企業想看到：你理解市場、定位清楚、條件談得實際、管道走得對。',
+      tips:[
+        '把目標職缺收斂到「1 個主軸 + 1 個備案」；比什麼都投更有效。',
+        '履歷/自傳/面試話術一致：你要去的方向、你能提供的價值、你要的條件。',
+        '擴大管道：主動投遞 + 內推 + 社群/協會/同學會 + 作品曝光。'
+      ],
+      items:[
+        '我能用 30 秒說清楚：我想應徵什麼、我能帶來什麼價值、我為何適合。',
+        '我的履歷與自傳已針對目標職缺客製（不是同一份投到底）。',
+        '我清楚自己的薪資與工時底線，且能用價值/成果合理說明期待。',
+        '我有穩定的求職節奏（每週投遞/追蹤/面試準備），而不是隨緣。',
+        '我有建立人脈/內推/社群曝光的管道，增加被看見的機會。'
+      ]
+    }
+  ];
+
+  // State
+  const S = {
+    step: 0,
+    totalSteps: 1 + model.length * 5 + 2, // intro + 25 items + profile + result
+    answers: {}, // key -> [5]
+    profile: { target:'', role:'', city:'', workStyle:'' }
+  };
+
+  function resetAll(){
+    S.step = 0;
+    S.answers = {};
+    S.profile = { target:'', role:'', city:'', workStyle:'' };
+    localStorage.removeItem('hs_state');
+    render();
+  }
+
+  function save(){
+    localStorage.setItem('hs_state', JSON.stringify(S));
+  }
+
+  function load(){
+    const raw = localStorage.getItem('hs_state');
+    if(!raw) return;
+    try{
+      const obj = JSON.parse(raw);
+      if(obj && typeof obj === 'object'){
+        Object.assign(S, obj);
+      }
+    }catch(e){}
+  }
+
+  load();
+
+  // Landing buttons
+  document.getElementById('startBtn').addEventListener('click', () => {
+    S.step = 1;
+    landing.hidden = true;
+    render();
+  });
+
+  document.getElementById('sampleBtn').addEventListener('click', () => {
+    S.step = 1;
+    landing.hidden = true;
+    // Fill sample: mostly 2~3, with a weak R.
+    model.forEach(dim => {
+      S.answers[dim.key] = dim.items.map((_, idx) => {
+        if(dim.key === 'R') return idx < 2 ? 1 : 2;
+        if(dim.key === 'A') return idx === 0 ? 2 : 3;
+        return 3;
+      });
+    });
+    S.profile = { target:'內勤行政/人資助理/客服', role:'協調與流程管理', city:'台北/新北', workStyle:'全職/部分遠端可' };
+    save();
+    render();
+  });
+
+  function progress(){
+    const pct = Math.round(Math.min(S.step, S.totalSteps) / S.totalSteps * 100);
+    return `<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}">
+      <div class="bar" style="width:${pct}%"></div></div>`;
+  }
+
+  function nav(){
+    if(S.step <= 0) return '';
+    if(S.step >= S.totalSteps) return '';
+    return `<div class="toolbar" role="toolbar" aria-label="導覽按鈕">
+      <button class="btn ghost" id="prev" ${S.step<=1?'disabled':''}>← 上一題</button>
+      <button class="btn" id="next">下一題 →</button>
+    </div>`;
+  }
+
+  function qWrap(title, subtitle, inner){
+    stage.innerHTML = progress() + `
+      <section class="card qcard" aria-live="polite">
+        <div class="qmeta">
+          <div>
+            <div class="qtitle">${title}</div>
+            ${subtitle ? `<div class="hint">${subtitle}</div>` : ``}
+          </div>
+          <div class="qnum">進度：${Math.min(S.step, S.totalSteps)} / ${S.totalSteps}</div>
+        </div>
+        <div class="grid" style="margin-top:10px">${inner}</div>
+        ${nav()}
+      </section>`;
+    const prev = stage.querySelector('#prev');
+    if(prev) prev.onclick = () => { if(S.step>1){ S.step--; save(); render(); } };
+    const next = stage.querySelector('#next');
+    if(next) next.onclick = () => { S.step++; save(); render(); };
+    const first = stage.querySelector('input, textarea, .chip, .btn');
+    if(first) first.focus({preventScroll:true});
+  }
+
+  function ensureDim(key){
+    if(!S.answers[key]) S.answers[key] = Array(5).fill(null);
+  }
+
+  function scaleUI(dimKey, idx, value){
+    const labels = ['0','1','2','3','4'];
+    let html = `<div class="scale" role="radiogroup" aria-label="0到4分">`;
+    labels.forEach((lab, v) => {
+      const sel = (value === v) ? ' sel' : '';
+      html += `<button type="button" class="chip${sel}" data-v="${v}" aria-label="${v}分">${lab}</button>`;
+    });
+    html += `</div>
+      <div class="legend"><span>不符合</span><span>非常符合</span></div>`;
+    return html;
+  }
+
+  function bindScale(dimKey, idx){
+    stage.querySelectorAll('.chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const v = +btn.getAttribute('data-v');
+        ensureDim(dimKey);
+        S.answers[dimKey][idx] = v;
+        save();
+        render(); // re-render to show selection
+      });
+      btn.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); btn.click(); }
+      });
+    });
+  }
+
+  function stepToQuestion(step){
+    // step 1 = intro; steps 2..26 are questions; step 27 profile; step 28 results
+    // Return null or {dimIndex, itemIndex}
+    const qStart = 2;
+    const qEnd = qStart + model.length*5 - 1; // 26
+    if(step < qStart || step > qEnd) return null;
+    const q = step - qStart; // 0..24
+    const dimIndex = Math.floor(q / 5);
+    const itemIndex = q % 5;
+    return { dimIndex, itemIndex };
+  }
+
+  function compute(){
+    const per = {};
+    let total = 0;
+    let answered = 0;
+    model.forEach(dim => {
+      ensureDim(dim.key);
+      const arr = S.answers[dim.key];
+      const sum = arr.reduce((a,b)=> a + (Number.isFinite(b)?b:0), 0);
+      const cnt = arr.filter(v=>Number.isFinite(v)).length;
+      per[dim.key] = { sum, max: 20, cnt, pct: Math.round(sum/20*100) };
+      total += sum;
+      answered += cnt;
+    });
+    const maxTotal = 100;
+    const pct = Math.round(total / maxTotal * 100);
+    return { per, total, pct, answered, maxTotal };
+  }
+
+  function band(pct){
+    if(pct >= 80) return { label:'很高', desc:'你的條件很有競爭力，建議把火力集中在「對的職缺 + 對的說法」上，加速拿到 offer。' };
+    if(pct >= 60) return { label:'偏高', desc:'你已有不錯的基礎；只要補強 1–2 個弱項、把履歷與面試表達做對齊，錄取率會明顯上升。' };
+    if(pct >= 40) return { label:'中等', desc:'你有亮點，但企業可能仍有疑慮（匹配度/學習/條件/合作成本）。建議先把最短板補到 60%。' };
+    return { label:'偏低', desc:'目前條件與職缺要求可能落差較大；先做「定位收斂 + 能力證據化 + 求職節奏」三件事，會比硬投有效。' };
+  }
+
+  function topGaps(per){
+    const arr = model.map(dim => ({ key: dim.key, short: dim.short, pct: per[dim.key].pct }));
+    arr.sort((a,b)=> a.pct - b.pct);
+    return arr.slice(0,2); // two lowest
+  }
+
+  function adviceFor(key){
+    const dim = model.find(d=>d.key===key);
+    if(!dim) return [];
+    return dim.tips;
+  }
+
+  function buildPrompt(result){
+    const lines = [];
+    lines.push('你是我的求職教練。請用繁體中文，且以條列清楚回答。');
+    lines.push('我的目標：' + (S.profile.target||'（未填）') );
+    lines.push('我希望應徵的角色/價值主張：' + (S.profile.role||'（未填）'));
+    lines.push('地區/通勤：' + (S.profile.city||'（未填）'));
+    lines.push('偏好工時/型態：' + (S.profile.workStyle||'（未填）'));
+    lines.push('---');
+    lines.push('以下是我的 SAFER 自評分數（0-20）：');
+    model.forEach(dim => {
+      lines.push(`${dim.key} ${dim.short}：${result.per[dim.key].sum}/20（${result.per[dim.key].pct}%）`);
+    });
+    lines.push(`總分：${result.total}/100（整體：${band(result.pct).label}）`);
+    lines.push('---');
+    lines.push('請根據最低的 2 個向度，提出：');
+    lines.push('1) 我最該優先調整的履歷段落與寫法（請給範例句）。');
+    lines.push('2) 我接下來 14 天的補強任務清單（每週 3-5 個可完成的任務）。');
+    lines.push('3) 面試時企業可能的疑慮與我的最佳說法（至少 6 題 Q&A）。');
+    return lines.join('\\n');
+  }
+
+  function render(){
+    // If step 0, show landing
+    if(S.step === 0){
+      landing.hidden = false;
+      stage.innerHTML = '';
+      return;
+    }
+    landing.hidden = true;
+
+    // Step 1: intro
+    if(S.step === 1){
+      const inner = `
+        <div class="section">
+          <div class="sec-title">SAFER 五向度（每向度 0–20 分）</div>
+          <div class="pill">
+            ${model.map(d=>`<span class="tag"><b>${d.key}</b>｜${d.short}</span>`).join('')}
+          </div>
+          <p class="muted" style="margin:10px 0 0">接下來會依序出現 25 題，請直覺作答即可。</p>
+        </div>
+      `;
+      qWrap('開始前小提醒','每題 0–4 分，分數越高代表越接近企業常見錄取條件。', inner);
+      return;
+    }
+
+    // Question steps
+    const qInfo = stepToQuestion(S.step);
+    if(qInfo){
+      const dim = model[qInfo.dimIndex];
+      ensureDim(dim.key);
+      const value = S.answers[dim.key][qInfo.itemIndex];
+
+      const inner = `
+        <div class="section">
+          <div class="sec-title">${dim.name}</div>
+          <div class="muted">${dim.why}</div>
+        </div>
+        <div class="section">
+          <div class="statement">${qInfo.itemIndex+1}. ${dim.items[qInfo.itemIndex]}</div>
+          ${scaleUI(dim.key, qInfo.itemIndex, value)}
+          <div class="hint">小技巧：如果你「有做到，但不穩定」，選 2；如果你「大多時候能做到」，選 3。</div>
+        </div>
+      `;
+      qWrap('請為這題打分','0=不符合 … 4=非常符合', inner);
+
+      bindScale(dim.key, qInfo.itemIndex);
+      // Next button: require answer
+      const next = stage.querySelector('#next');
+      if(next){
+        next.disabled = !Number.isFinite(value);
+        next.title = next.disabled ? '請先選 0–4 分' : '';
+      }
+      return;
+    }
+
+    // Profile step (after 25 questions)
+    const profileStep = 2 + model.length*5; // 27
+    if(S.step === profileStep){
+      const p = S.profile;
+      const inner = `
+        <div class="section">
+          <div class="sec-title">加分：把「目標」寫清楚，建議才會更到位</div>
+          <div class="hint">不想填也可以直接下一步（仍可產出建議）。</div>
+        </div>
+        <div class="section">
+          <div class="grid">
+            <label class="hint">目標職缺/方向（例：門市店長、行政、客服、採購…）</label>
+            <input class="field" id="target" value="${escapeHtml(p.target)}" placeholder="例如：行政總務／客服／業務助理">
+            <label class="hint">你想呈現的角色/價值（例：流程控管、服務、帶人…）</label>
+            <input class="field" id="role" value="${escapeHtml(p.role)}" placeholder="例如：流程與協調，穩定交付">
+            <label class="hint">地區/通勤（例：台北市、通勤 40 分內…）</label>
+            <input class="field" id="city" value="${escapeHtml(p.city)}" placeholder="例如：台中市／通勤 30 分內">
+            <label class="hint">偏好工時/型態（例：全職、兼職、排班可、遠端…）</label>
+            <input class="field" id="workStyle" value="${escapeHtml(p.workStyle)}" placeholder="例如：全職／固定日班">
+          </div>
+        </div>
+      `;
+      qWrap('補充你的求職目標（選填）','填完會自動帶入你的「一鍵求職教練 Prompt」。', inner);
+      stage.querySelector('#target').oninput = e => { S.profile.target = e.target.value; save(); };
+      stage.querySelector('#role').oninput = e => { S.profile.role = e.target.value; save(); };
+      stage.querySelector('#city').oninput = e => { S.profile.city = e.target.value; save(); };
+      stage.querySelector('#workStyle').oninput = e => { S.profile.workStyle = e.target.value; save(); };
+      return;
+    }
+
+    // Results step
+    const resultStep = profileStep + 1;
+    if(S.step === resultStep){
+      const result = compute();
+      const b = band(result.pct);
+      const gaps = topGaps(result.per);
+
+      const bars = model.map(dim => {
+        const pct = result.per[dim.key].pct;
+        return `
+          <div class="section">
+            <div class="sec-title">${dim.key}｜${dim.short}（${result.per[dim.key].sum}/20）</div>
+            <div class="meter" aria-label="${dim.short}進度"><div style="width:${pct}%"></div></div>
+            <div class="hint">${dim.why}</div>
+          </div>`;
+      }).join('');
+
+      const gapAdvice = gaps.map(g => {
+        const tips = adviceFor(g.key).map(t=>`<li>${escapeHtml(t)}</li>`).join('');
+        return `
+          <div class="section">
+            <div class="sec-title">優先補強：${g.key}｜${g.short}（${g.pct}%）</div>
+            <ol class="hint" style="margin:0;padding-left:1.2em;line-height:1.8">${tips}</ol>
+          </div>`;
+      }).join('');
+
+      const promptText = buildPrompt(result);
+
+      stage.innerHTML = progress() + `
+        <section class="card qcard">
+          <div class="qtitle">你的結果：${result.total}/100（整體：${b.label}）</div>
+          <div class="muted">${b.desc}</div>
+
+          <div class="result-grid" style="margin-top:12px">
+            <div class="section">
+              <div class="sec-title">整體解讀（參考）</div>
+              <div class="dl">
+                <dt>80–100</dt><dd>很高：選對職缺、把價值講清楚，offer 機率高。</dd>
+                <dt>60–79</dt><dd>偏高：補強 1–2 個短板 + 客製履歷，成功率會上升。</dd>
+                <dt>40–59</dt><dd>中等：先處理「最短板」，再擴大投遞。</dd>
+                <dt>0–39</dt><dd>偏低：先收斂方向、做能力證據、建立節奏，再投遞。</dd>
+              </div>
+              <div class="hint" style="margin-top:10px">提醒：這是自評工具，用來「找出最該補強的地方」。真正錄取仍與職缺稀缺性、產業景氣、面試表現等有關。</div>
+            </div>
+
+            ${bars}
+
+            ${gapAdvice}
+
+            <div class="section">
+              <div class="sec-title">一鍵生成「求職教練 Prompt」</div>
+              <div class="hint">把下面內容貼到 ChatGPT / Gemini / Copilot，請 AI 幫你把履歷與面試策略做成 14 天行動計畫。</div>
+              <div class="row" style="justify-content:center;margin-top:10px">
+                <button class="btn" id="copyBtn" style="font-size:var(--fs-18);padding:1em 1.4em;">一鍵複製 Prompt</button>
+                <button class="btn ghost" id="clearBtn">清除我的作答</button>
+              </div>
+              <details class="copybox" style="margin-top:10px">
+                <summary class="btn ghost" style="cursor:pointer;">顯示/收合 Prompt</summary>
+                <textarea class="field" id="promptBox" aria-label="求職教練 Prompt" style="margin-top:10px">${escapeHtml(promptText)}</textarea>
+              </details>
+            </div>
+
+            <div class="section">
+              <div class="sec-title">下一步：用「最短板」拉升錄取率（超實用）</div>
+              <ol style="margin:0;padding-left:1.2em;line-height:1.9">
+                <li>挑一個你最想要的職缺，找 3 份 JD，圈出重複出現的 5 個關鍵字。</li>
+                <li>用關鍵字改寫履歷（技能/經歷/成果），每一段都回答：<b>我做了什麼 → 做成什麼 → 為何重要</b>。</li>
+                <li>把低分向度的建議做成 14 天任務：每天 20 分鐘（學/改/投/練），就會有差。</li>
+              </ol>
+              <div style="text-align:center;margin-top:12px">
+                <button class="btn secondary" id="restartBtn">重新開始</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+
+      document.getElementById('restartBtn').onclick = () => { S.step = 1; save(); render(); };
+      document.getElementById('clearBtn').onclick = () => { resetAll(); };
+      document.getElementById('copyBtn').onclick = async () => {
+        const txt = document.getElementById('promptBox').value;
+        try{
+          if(navigator.clipboard && window.isSecureContext){
+            await navigator.clipboard.writeText(txt);
+            toast('已複製到剪貼簿！');
+          }else{
+            fallbackCopy(txt);
+          }
+        }catch(e){
+          fallbackCopy(txt);
+        }
+      };
+      return;
+    }
+
+    // Safety fallback
+    if(S.step > resultStep){
+      S.step = resultStep;
+      save();
+      render();
+      return;
+    }
+  }
+
+  // helpers
+  function escapeHtml(str){
+    return (str ?? '').toString()
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
+  }
+
+  function toast(msg){
+    const n=document.createElement('div');
+    n.textContent=msg;
+    Object.assign(n.style,{
+      position:'fixed',left:'50%',bottom:'18px',transform:'translateX(-50%)',
+      background:'rgba(0,0,0,.78)',color:'#fff',padding:'10px 12px',borderRadius:'10px',
+      fontWeight:'800',zIndex:1000,fontSize:'14px',maxWidth:'92vw',textAlign:'center'
+    });
+    document.body.appendChild(n);
+    setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity .25s ease';},1100);
+    setTimeout(()=>n.remove(),1450);
+  }
+
+  function fallbackCopy(txt){
+    const ta=document.createElement('textarea');
+    ta.value=txt;
+    ta.style.position='fixed';
+    ta.style.left='-9999px';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try{ document.execCommand('copy'); toast('已複製到剪貼簿！'); }
+    catch(e){ toast('複製失敗，請手動全選複製'); }
+    ta.remove();
+  }
+
+  // initial render
+  render();
+});
+</script>
+</body>
+</html>
