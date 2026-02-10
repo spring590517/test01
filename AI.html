@@ -16,13 +16,15 @@
         .score-box { background: #eff6ff; border-left: 6px solid #2563eb; border-radius: 12px; }
         .dimension-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .suggestion-tag { background: #fffbeb; color: #92400e; border-radius: 8px; font-size: 0.85rem; }
+        .instruction-section { border-left: 4px solid #e2e8f0; padding-left: 1rem; }
     </style>
 </head>
 <body>
 
     <div id="app" v-cloak class="max-w-4xl mx-auto py-10 px-4">
         <header v-if="!showResult" class="text-center mb-10">
-            <h1 class="text-3xl font-black text-slate-900 mb-3">掌握自己的AI職場競爭力</h1>
+            <h1 class="text-3xl font-black text-slate-900 mb-3">AI 時代職場競爭力檢核表</h1>
+            <p class="text-slate-600 font-medium">基於 SEED 模型，協助您規劃「怦然心動的第二人生」。</p>
         </header>
 
         <main v-if="!showResult">
@@ -32,7 +34,7 @@
                 </div>
                 
                 <div v-for="(q, qIdx) in category.items" :key="q.id" class="mb-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <p class="text-lg font-bold mb-4 text-slate-800">{{ cIdx*5 + qIdx + 1 }}. {{ q.text }}</p>
+                    <p class="text-lg font-bold mb-4 text-slate-800">{{ q.displayIndex }}. {{ q.text }}</p>
                     <div class="grid grid-cols-1 gap-3">
                         <button v-for="(opt, oIdx) in q.shuffledOpts" :key="oIdx"
                                 @click="selectAnswer(q.id, opt.score)"
@@ -44,15 +46,17 @@
                 </div>
             </div>
 
-            <button @click="calculateScore" 
-                    class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-2xl hover:bg-blue-800 transition-all text-xl sticky bottom-6 z-10">
-                產出深度評估報告
-            </button>
+            <div class="mt-12 mb-20 text-center">
+                <button @click="calculateScore" 
+                        class="w-full max-w-md bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-800 transition-all text-xl">
+                    產生檢核報告
+                </button>
+            </div>
         </main>
 
         <div v-else>
             <div id="report-capture" class="overflow-hidden shadow-2xl">
-                <div class="bg-blue-900 p-10 text-white text-center">
+                <div class="bg-blue-900 p-8 text-white text-center">
                     <h1 class="text-2xl font-bold mb-1">AI 職場競爭力報告 (SEED)</h1>
                     <p class="text-xs opacity-70">測驗時間：{{ reportDate }}</p>
                 </div>
@@ -73,7 +77,7 @@
                         <span class="w-1.5 h-6 bg-blue-600 mr-2 rounded-full"></span> 維度深度分析
                     </h3>
                     
-                    <div class="dimension-grid text-left">
+                    <div class="dimension-grid text-left mb-10">
                         <div v-for="(analysis, key) in dimensionAnalysis" :key="key" class="mb-6">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="font-bold text-slate-800 text-sm">{{ analysis.title }}</span>
@@ -90,15 +94,73 @@
                         </div>
                     </div>
 
-                    <div class="mt-10 pt-8 border-t border-slate-100 text-center">
-                        <p class="text-xs italic text-slate-500 mb-4">「在 AI 時代，最核心的競爭力不是取代機器，而是開展人類特有的天賦。」</p>
-                        <p class="font-black text-blue-900 text-lg">用AI啟動你怦然心動的第二人生</p>
-                        <p class="text-xs text-slate-400 mt-2">檢核表的內容是與AI協作取得，檢核結果純供參考</p>
+                    <div class="mt-10 pt-8 border-t border-slate-200">
+                        <h3 class="text-lg font-black text-slate-800 mb-6 text-center">如何提升個人的 AI 競爭力？</h3>
+                        
+                        <div class="space-y-8">
+                            <div class="instruction-section">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">S</span>
+                                    <h4 class="font-bold text-blue-900">Strategy 策略思維 (策略腦)</h4>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">評估工作者能否從「策略高度」看待 AI。這不僅是把 AI 當工具，而是能規劃 AI 在職涯中的定位。知道何時該啟動 AI 發散創意，何時由人類決策收斂。</p>
+                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
+                                    <li><b>AI 敏銳度：</b>識別哪些環節適合交給 AI（如重複任務、數據摘要）。</li>
+                                    <li><b>成長心態：</b>面對 AI 頻繁更新能保持學習熱情而非焦慮。</li>
+                                    <li><b>協作意識：</b>將 AI 視為「副駕駛 (Copilot)」而非替代者。</li>
+                                </ul>
+                            </div>
+
+                            <div class="instruction-section">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">E</span>
+                                    <h4 class="font-bold text-blue-900">Execution 執行效能 (行動手)</h4>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">將想法轉化為產出的能力。評估 Prompt 精準度、多模組掌控力，利用 AI 提升工作的「單位產值」與「品質」。</p>
+                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
+                                    <li><b>提示詞工程：</b>提供清晰背景與格式，具備「多輪對話」修正能力。</li>
+                                    <li><b>工具多樣性：</b>熟悉不同 AI 工具（如文本、影像、數據分析）。</li>
+                                    <li><b>工作流整合：</b>將 AI 嵌入現有流程（如會議記錄、電子郵件自動化）。</li>
+                                </ul>
+                            </div>
+
+                            <div class="instruction-section">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">E</span>
+                                    <h4 class="font-bold text-blue-900">Evaluation 評估辨析 (辨析眼)</h4>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">具備「檢驗 AI 產出」的能力，從邏輯、事實、情緒溫度中發現幻覺或偏見。不盲從答案，具備最高裁決權。</p>
+                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
+                                    <li><b>事實查核：</b>查證 AI 內容準確性的意識，不盲目相信輸出。</li>
+                                    <li><b>幻覺識別：</b>了解語言模型侷限，判斷哪些回答可能是編造的。</li>
+                                    <li><b>偏見識別：</b>察覺輸出中隱含的性別、文化或專業偏見。</li>
+                                </ul>
+                            </div>
+
+                            <div class="instruction-section">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">D</span>
+                                    <h4 class="font-bold text-blue-900">Duty 責任與倫理 (倫理心)</h4>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">對「職業義務」的守護與風險控管。在使用 AI 服務他人時，確保不侵害隱私、不傳播錯誤資訊，對成果負責。</p>
+                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
+                                    <li><b>資安防護：</b>不將公司機密或客戶個資上傳至雲端模型。</li>
+                                    <li><b>智財權素養：</b>清楚 AI 生成內容在智產法律上的使用規範。</li>
+                                    <li><b>道德責任：</b>在使用 AI 時能誠實標註，對最終結果負起專業責任。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-slate-100 text-center">
+                        <p class="text-xs italic text-slate-400 mb-4">「在 AI 時代，最核心的競爭力不是取代機器，而是開展人類特有的天賦。」</p>
+                        <p class="text-sm font-bold text-blue-900">用AI啟動你怦然心動的第二人生</p>
+                        <p class="text-[10px] text-slate-400 mt-2">檢核表的內容是與 AI 協作取得，檢核報告純供參考</p>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-8 space-y-4 no-print max-w-[500px] mx-auto">
+            <div class="mt-8 space-y-4 max-w-[500px] mx-auto pb-20">
                 <button @click="downloadJPG" class="w-full bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-800 transition">
                     下載分析結果
                 </button>
@@ -118,32 +180,32 @@
 
                 const seedQuestions = [
                     { id_key: "Strategy", title: "S — Strategy (策略思維)", items: [
-                        { id: "s1", text: "當面對複雜的跨部門專案時，您如何整合 AI 技術？", opts: [{t: "維持既有協作流程，因 AI 存在不確定性而暫緩導入", s: 1}, {t: "在局部環節嘗試使用，但尚未建立系統性的工具地圖", s: 2}, {t: "將 AI 視為生產力外掛，由其產出草案後再進行人工覆核", s: 4}, {t: "將 AI 視為專案副駕駛，有策略地配置人機職責與決策邊界", s: 5}] },
-                        { id: "s2", text: "對於 AI 技術的快速更迭（如 GPT 模型升級），您的職涯應對是？", opts: [{t: "對技術爆炸感到焦慮，傾向守住核心專業而非學習新工具", s: 1}, {t: "被動接受公司教育訓練，確保基本操作不掉隊即可", s: 2}, {t: "建立個人知識庫，持續追蹤並測試工具在職位上的新應用", s: 4}, {t: "將變革視為職涯紅利，積極將新技術轉化為解決業務問題的槓桿", s: 5}] },
-                        { id: "s3", text: "您如何理解「人機協作」對您專業地位的影響？", opts: [{t: "AI 是一種自動化競爭對手，其普及將導致個人議價能力下降", s: 1}, {t: "AI 是高效率的雜事處理器，本質上不具備專業夥伴價值", s: 2}, {t: "AI 是數位賦能的夥伴，能顯著擴展我的服務深度與範疇", s: 4}, {t: "AI 是認知增強的 Copilot，透過數據導向協作提升我的策略權重", s: 5}] },
-                        { id: "s4", text: "在啟動創意專案時，您如何規劃 AI 的介入時機點？", opts: [{t: "堅持純人工創作以維護專業本真性，不考慮 AI 介入", s: 1}, {t: "在陷入僵局或時間緊迫時，偶爾使用 AI 生成靈感參考", s: 2}, {t: "初期運用 AI 進行大規模創意發散，再由人工進行篩選收斂", s: 4}, {t: "設計「雙軌協作」機制，運用 AI 進行多維度方案預演與策略模擬", s: 5}] },
-                        { id: "s5", text: "面對產業的 AI 轉型，您對自我的定位規劃為何？", opts: [{t: "維持現狀，相信長期累積的經驗與人脈足以抵禦技術衝擊", s: 1}, {t: "尋求工具操作類的技能證照，以補強職務技能的缺口", s: 2}, {t: "將 AI 深度嵌入工作流，成為具備數位生產力的跨域人才", s: 4}, {t: "定位為「AI 賦能決策者」，引領團隊發揮 AI 無法取代的人本價值", s: 5}] }
+                        { id: "s1", text: "主管要求你今天下班前彙整 20 份長篇專案進度，你會：", opts: [{t: "認命加班逐份閱讀手寫摘要，不考慮工具輔助", s: 1}, {t: "感到煩躁並開始抱怨，最後只草草看完重點", s: 2}, {t: "全部丟給 AI 摘要後直接貼上，不另外確認內容", s: 4}, {t: "請 AI 根據特定格式提取異常點，由我針對疑點複查", s: 5}] },
+                        { id: "s2", text: "當你常用的 AI 工具突然升級且功能大改時，你的習慣是：", opts: [{t: "排斥學習新介面，固守原本熟悉的手動流程", s: 1}, {t: "覺得很麻煩，等公司強制要求使用時再去學", s: 2}, {t: "利用空暇自行探索新功能，看看是否有幫助", s: 4}, {t: "第一時間測試新舊差異，優化自己的工作 SOP", s: 5}] },
+                        { id: "s3", text: "面對職涯規劃，你如何看待 AI 對你專業的影響？", opts: [{t: "AI 終將取代我的工作，覺得未來發展希望渺茫", s: 1}, {t: "AI 只是玩具，目前的專業經驗才是生存唯一保障", s: 2}, {t: "AI 是好用的工具，能幫我處理掉大部分的雜務", s: 4}, {t: "AI 是我的數位副駕駛，能與我共同提升職涯產值", s: 5}] },
+                        { id: "s4", text: "當你有一個新點子卻不知如何起頭撰寫企劃書時：", opts: [{t: "堅持純人工思考，不希望 AI 的邏輯介入個人原創", s: 1}, {t: "上網搜尋別人的舊模板，套用現成的架構來填寫", s: 2}, {t: "輸入關鍵字讓 AI 給出大綱，選一組看起來順眼的", s: 4}, {t: "透過 AI 進行發散思考，再由我收斂與決定策略方向", s: 5}] },
+                        { id: "s5", text: "公司評估引進新的 AI 協作系統，你的主動行為會是：", opts: [{t: "質疑系統準確度與成本，建議維持現狀最穩定", s: 1}, {t: "觀望他人使用後的成效，決定是否要跟進學習", s: 2}, {t: "主動嘗試將系統應用在目前手邊的繁瑣任務上", s: 4}, {t: "規劃人機協作藍圖，重新定義團隊成員的核心價值", s: 5}] }
                     ]},
                     { id_key: "Execution", title: "E — Execution (執行效能)", items: [
-                        { id: "e1", text: "當 AI 產出的結果不符預期時，您的提示詞最佳化策略是？", opts: [{t: "判斷 AI 不堪大用，決定回歸人工處理模式", s: 1}, {t: "反覆重貼同樣的指令，期待 AI 能隨機產出較好的答案", s: 2}, {t: "調整 Prompt 結構，加入具體的角色定義、情境與輸出格式", s: 4}, {t: "運用多輪對話與邏輯鏈引導 (CoT)，逐步校準 AI 的認知邏輯", s: 5}] },
-                        { id: "e2", text: "您目前對生成式 AI 模組的應用深度為何？", opts: [{t: "僅限於單一文本對話工具的基礎檢索與問答", s: 1}, {t: "能運用多種文本模型進行摘要，但尚不熟悉影音或圖像生成", s: 2}, {t: "能熟練調配多種 AI 工具（如圖文、數據）完成複合型任務", s: 4}, {t: "具備「全流程 AI 應用能力」，能整合多元模組解決複雜工作問題", s: 5}] },
-                        { id: "e3", text: "您如何處理高頻率的文書與行政任務（如信件、報告）？", opts: [{t: "堅持親力親為，認為這是確保品質與態度的唯一途徑", s: 1}, {t: "運用傳統的固定模板進行編寫，僅在極少數情況諮詢 AI", s: 2}, {t: "運用 AI 進行內容架構生成與風格潤色，提高產出效率", s: 4}, {t: "建立個人化的自動化協作 SOP，將例行任務交由 AI 同步執行", s: 5}] },
-                        { id: "e4", text: "在使用 AI 協作後，您的單位產值與品質有何變化？", opts: [{t: "效率未提升且需花費更多時間核對，品質亦不穩定", s: 1}, {t: "產量雖有小幅增加，但內容層次與專業度並未明顯進步", s: 2}, {t: "產出速度大幅提升，能維持穩定的專業水準並處理更多業務", s: 4}, {t: "在釋放例行工作後，專注於高價值的質性研發，產出具備戰略深度", s: 5}] },
-                        { id: "e5", text: "面對結構化數據或複雜邏輯處理，您的 AI 使用能力為何？", opts: [{t: "避免交予 AI，認為人腦的邏輯推理較工具更具可靠度", s: 1}, {t: "將部分代碼或數據丟給 AI 參考，但對結果缺乏除錯能力", s: 2}, {t: "能提供清晰的邏輯框架請 AI 生成解法，並具備基本校正力", s: 4}, {t: "善用 AI 的數據分析與編碼潛力，加速複雜問題的模型化與驗證", s: 5}] }
+                        { id: "e1", text: "請 AI 寫出的信件太過官腔、不像你的風格時，你會：", opts: [{t: "放棄 AI 回歸手寫，認為自己寫還比較快", s: 1}, {t: "反覆要求它「寫好一點」，不給具體指令直到它寫好", s: 2}, {t: "在指令中補上收件者背景與回信目標重新生成", s: 4}, {t: "餵入自己寫過的範本讓 AI 學習語氣後再生成", s: 5}] },
+                        { id: "e2", text: "你需要製作一份專業的跨部門簡報，你會：", opts: [{t: "手動一張張排版並從搜尋引擎一張張找配圖", s: 1}, {t: "使用 PPT 內建模板，圖文全由人工手動輸入", s: 2}, {t: "請 AI 生成文字初稿，再搭配 AI 生成的圖庫素材", s: 4}, {t: "整合多種 AI 工具，將數據轉成分析圖表並美化", s: 5}] },
+                        { id: "e3", text: "面對收件匣中累積了數十封郵件，你的處理習慣是：", opts: [{t: "堅持逐封閱讀回覆，認為這樣才展現專業態度", s: 1}, {t: "先處理最緊急的，剩下的拖延到最後才處理", s: 2}, {t: "利用 AI 摘要郵件重點，我再根據摘要挑重點回", s: 4}, {t: "讓 AI 根據歷史習慣預擬草稿，由我進行最後審核", s: 5}] },
+                        { id: "e4", text: "當你面對一個複雜的 Excel 公式或程式碼錯誤時：", opts: [{t: "靠個人邏輯一步步檢驗，或翻閱過往的筆記資料", s: 1}, {t: "直接向專業同事詢問答案，等待他人幫忙解決", s: 2}, {t: "將報錯資訊丟給 AI，並嘗試套用它給的解法", s: 4}, {t: "清晰描述數據結構請 AI 提供架構，由我驗證邏輯", s: 5}] },
+                        { id: "e5", text: "回顧今天的工作流程，你使用 AI 的實際情況是：", opts: [{t: "今天完全沒有想到任何一個環節可以交給 AI 處理", s: 1}, {t: "只有在被別人提醒或強烈要求時，才會被動開啟", s: 2}, {t: "在多個任務中主動詢問 AI 的建議或協作產出", s: 4}, {t: "AI 已經是日常工作流的一環，操作時不需刻意思考", s: 5}] }
                     ]},
                     { id_key: "Evaluation", title: "E — Evaluation (評估辨析)", items: [
-                        { id: "v1", text: "對於 AI 產出的事實資訊（Fact-based info），您的審核意識為何？", opts: [{t: "完全信任 AI 產出的權威感，將其內容直接轉化為正式決策", s: 1}, {t: "若內容看起來合乎常理即採用，缺乏主動查證的行為習慣", s: 2}, {t: "具備查核意識，會針對關鍵數據進行主流搜尋引擎的二次驗證", s: 4}, {t: "建立嚴謹的檢驗機制，能識別資訊來源的真偽與邏輯謬誤", s: 5}] },
-                        { id: "v2", text: "您對大型語言模型產生的「幻覺（Hallucination）」有何應對？", opts: [{t: "未察覺 AI 會編造虛假資訊，傾向將其視為百科全書", s: 1}, {t: "知道 AI 可能會瞎掰，但通常僅能憑感覺判斷內容正確度", s: 2}, {t: "了解模型生成原理的侷限性，能識別易出錯的情境並保持警覺", s: 4}, {t: "能針對高風險情境進行預防性提問，降低幻覺發生的機率", s: 5}] },
-                        { id: "v3", text: "當 AI 產出具備文化或專業偏見（Bias）的內容時，您會？", opts: [{t: "完全未察覺其中的偏誤，認為 AI 是客觀中立的科技產物", s: 1}, {t: "感到些微不妥但未採取行動，認為偏見是科技發展的必然", s: 2}, {t: "能敏銳察覺輸出中的刻板印象，並在人工校對時予以修正", s: 4}, {t: "具備最高裁決權，能主動調整提示策略以引導 AI 產出多元視角", s: 5}] },
-                        { id: "v4", text: "您如何評估 AI 在情緒勞務或關係維護上的產出品質？", opts: [{t: "認為 AI 的文字具備完美禮節，優於人工撰寫的情感表達", s: 1}, {t: "將 AI 撰寫的慰問或激勵信件直接發送，不再進行情感修飾", s: 2}, {t: "辨識出 AI 的制式化語氣，並注入人類真實的情感連結點", s: 4}, {t: "評估 AI 僅能作為格式參考，在涉及深度共感的溝通上堅持親自執行", s: 5}] },
-                        { id: "v5", text: "在決策流程中，您如何定義自己與 AI 的決策權界線？", opts: [{t: "傾向讓數據決定一切，將高難度決策權讓渡予 AI 演算法", s: 1}, {t: "在決策時感到猶豫，對 AI 的建議與自身判斷缺乏整合邏輯", s: 2}, {t: "參考 AI 的量化建議，但保留對關鍵質性指標的審核權", s: 4}, {t: "始終掌握最高裁決權，將 AI 定位為資訊提供者而非決策主體", s: 5}] }
+                        { id: "v1", text: "AI 提供了一段看似專業的歷史數據或法條引言，你會：", opts: [{t: "非常有說服力，直接將其運用在正式簡報或對外報告", s: 1}, {t: "只要讀起來順暢、沒有明顯錯字，我就選擇採信", s: 2}, {t: "產生警覺，快速利用搜尋引擎核對內容的真實性", s: 4}, {t: "具備查證意識，針對關鍵資訊建立多方核實的流程", s: 5}] },
+                        { id: "v2", text: "在生成團隊示意圖時，AI 出現了某種職業與性別的偏見：", opts: [{t: "完全沒發現異常，認為這只是隨機生成的結果", s: 1}, {t: "覺得有點不妥但懶得改，認為這不影響工作品質", s: 2}, {t: "在人工挑選時手動排除掉偏見較明顯的圖檔", s: 4}, {t: "主動介入修改指令，引導產出具備多元性的結果", s: 5}] },
+                        { id: "v3", text: "面對 AI 產出「市場成功率極高」的分析報告，你會：", opts: [{t: "完全採信，認為 AI 的大數據預測絕不會出錯", s: 1}, {t: "當作推諉工具，若決策出錯可以推說是 AI 建議的", s: 2}, {t: "參考數據，並結合第一線的非結構化經驗來調整", s: 4}, {t: "我始終擁有最高裁決權，數據僅是我的參考資訊", s: 5}] },
+                        { id: "v4", text: "AI 撰寫的溫情慰問信件讀起來很有禮貌但略顯生硬時：", opts: [{t: "非常完美，因為 AI 寫得很專業，直接按發送鍵", s: 1}, {t: "只要稱謂沒寫錯，就不花時間修改，原樣發送", s: 2}, {t: "覺得不像我的口吻，決定由自己手寫大部分內容", s: 4}, {t: "辨識 AI 模式，注入真實的情感連結點再發送", s: 5}] },
+                        { id: "v5", text: "在使用 AI 尋找資訊時，發現它給了一個不存在的術語：", opts: [{t: "完全沒發現，甚至在會議中錯誤引用了該資訊", s: 1}, {t: "感到困惑，但懷疑是自己專業知識不足而不敢挑戰", s: 2}, {t: "立刻意識到這就是所謂的「AI 幻覺」，並主動對該內容予以駁回", s: 4}, {t: "分析該錯誤情境，優化未來的提問指令以降低出錯率", s: 5}] }
                     ]},
                     { id_key: "Duty", title: "D — Duty (責任與倫理)", items: [
-                        { id: "d1", text: "關於數據隱私，您將敏感個資上傳至 AI 平台的防護意識為何？", opts: [{t: "未曾思考資安風險，為了追求效率而直接上傳機密文件", s: 1}, {t: "認為主流平台的隱私聲明具備法律保障，無須額外人為介入", s: 2}, {t: "具備去識別化意識，上傳前會刪除敏感客戶資料或專利核心", s: 4}, {t: "嚴格遵守組織合規準則，僅在安全隔離或經核准的環境內操作", s: 5}] },
-                        { id: "d2", text: "對於 AI 生成內容的智慧財產權（IP）與使用風險，您的掌握度為何？", opts: [{t: "認為 AI 產出物皆為共有財產，可無限制進行商業化使用", s: 1}, {t: "不確定目前的智財法律架構，在不明規範的情況下冒險使用", s: 2}, {t: "清楚目前的智財爭議點，會謹慎過濾具備侵權風險的生成素材", s: 4}, {t: "熟知授權合約與使用限制，確保 AI 輔助成果符合職業合規要求", s: 5}] },
-                        { id: "d3", text: "在對外提交 AI 協作的重大任務成果時，您的職業誠信立場是？", opts: [{t: "完全隱匿使用 AI 的事實，試圖包裝成 100% 的純手工原創", s: 1}, {t: "若被主管或客戶質疑才承認有工具輔助，採取被動揭露策略", s: 2}, {t: "在備註中簡述輔助工具與應用範疇，維持基本的透明度", s: 4}, {t: "具備高度倫理心，主動聲明 AI 應用範圍並對最終品質負全責", s: 5}] },
-                        { id: "d4", text: "若 AI 生成的宣傳文案具備吸睛但誤導的潛力，您的取捨為何？", opts: [{t: "優先追求流量與轉換，認為技術生成的內容誤導亦非人為責任", s: 1}, {t: "感到心虛但因時間壓力仍決定發佈，期待聽眾自行判斷", s: 2}, {t: "剔除明顯的錯誤資訊，但保留灰色地帶的誇大描述以利傳播", s: 4}, {t: "守護職業聲望底線，絕不容許 AI 工具成為散佈錯誤資訊的溫床", s: 5}] },
-                        { id: "d5", text: "您認為 AI 技術的普及，是否重新定義了您的「專業責任」？", opts: [{t: "AI 減少了思考負荷，責任感也隨之稀釋，趨向任務外包心態", s: 1}, {t: "依賴 AI 作為專業背書，當出現錯誤時傾向將責任推諉予系統", s: 2}, {t: "AI 是工具，我的專業責任不變，但在操作面上需更加謹慎", s: 4}, {t: "AI 促使我更嚴肅審視專業本質，承擔更高層次的審核與指導責任", s: 5}] }
+                        { id: "d1", text: "為了快速分析客戶需求，你會將哪種檔案直接上傳至 AI？", opts: [{t: "將包含客戶全名、電話等機密清單直接上傳處理", s: 1}, {t: "認為雲端系統很安全，直接上傳未經處理的內部文件", s: 2}, {t: "先將檔案中的敏感資訊手動遮蔽或刪除後再上傳", s: 4}, {t: "嚴守資安準則，絕不上傳任何涉及隱私或機密的檔案", s: 5}] },
+                        { id: "d2", text: "在商業文案中使用 AI 生成的圖像時，你的權責觀念是：", opts: [{t: "認為網路上的東西隨便抓隨便用，不需要擔心智財", s: 1}, {t: "認為法律尚未規範，先用了再說，出了問題再處理", s: 2}, {t: "會先確認該工具的商用授權合約，確保合法後使用", s: 4}, {t: "對智財風險高度敏銳，必要時請法務或專家進行評估", s: 5}] },
+                        { id: "d3", text: "當你完成的成果中有很大一部分是靠 AI 協助時，你會：", opts: [{t: "完全隱瞞使用 AI 的事實，將功勞全部歸於個人努力與原創", s: 1}, {t: "被主管詢問時才被動承認，並淡化 AI 的參與程度", s: 2}, {t: "在成果中簡述輔助工具名稱，維持基本的職業透明度", s: 4}, {t: "主動聲明協作範疇，並對最終產出負起完全專業責任", s: 5}] },
+                        { id: "d4", text: "發現 AI 生成的行銷文案為了吸引點閱而有誇大不實時：", opts: [{t: "只要能帶動業績，誇大一點也無傷大雅，直接發布", s: 1}, {t: "感到心虛但因時間緊迫，還是決定不修改直接發送", s: 2}, {t: "修正最誇張的部分，保留其餘能吸引目光的灰色內容", s: 4}, {t: "守護誠信底線，寧可降低點閱也要確保資訊真實性", s: 5}] },
+                        { id: "d5", text: "在使用 AI 協作一段時間後，你對自身專業責任的感覺是：", opts: [{t: "工作變輕鬆了，腦力消耗減少，責任也隨之變少", s: 1}, {t: "開始依賴 AI 背書，若出錯傾向認為是工具的問題", s: 2}, {t: "AI 只是工具，我的專業地位不變，操作應更謹慎", s: 4}, {t: "AI 促使我更嚴謹審核成果，承擔更高層次的專業責任", s: 5}] }
                     ]}
                 ];
 
@@ -158,10 +220,12 @@
                 };
 
                 const initSurvey = () => {
+                    let globalIdx = 1;
                     shuffledQuestions.value = seedQuestions.map(cat => ({
                         ...cat,
                         items: cat.items.map(item => ({
                             ...item,
+                            displayIndex: globalIdx++,
                             shuffledOpts: shuffle(item.opts.map(o => ({ text: o.t, score: o.s })))
                         }))
                     }));
@@ -194,15 +258,24 @@
                 const dimensionAnalysis = computed(() => {
                     const s = dimensionScores.value;
                     return {
-                        Strategy: { title: "策略思維", feedback: s.Strategy >= 18 ? "具高度策略腦與協作視野。" : "決策較依賴舊有經驗路徑。", action: s.Strategy >= 18 ? "規劃跨部門 AI 導入專案。" : "練習挑戰數據結果與預設觀點。" },
-                        Execution: { title: "執行效能", feedback: s.Execution >= 18 ? "行動手高效，工具調配精準。" : "指令輸入精準度與層次有限。", action: s.Execution >= 18 ? "建立個人自動化協作模組。" : "學習結構化 Prompt (Role-Context-Task)。" },
-                        Evaluation: { title: "評估辨析", feedback: s.Evaluation >= 18 ? "辨析眼敏銳，守護最高裁決權。" : "對系統產出存有過度依賴偏誤。", action: s.Evaluation >= 18 ? "開發內容審核標準規範 (SOP)。" : "練習針對 AI 產出進行事實查核。" },
-                        Duty: { title: "責任倫理", feedback: s.Duty >= 18 ? "倫理心堅定，資安合規意識佳。" : "忽視潛在合規與職業倫理風險。", action: s.Duty >= 18 ? "推動組織級 AI 倫理使用準則。" : "加強智財權法律知識與隱私去標籤。" }
+                        Strategy: { title: "Strategy 策略思維", feedback: s.Strategy >= 18 ? "具高度策略腦與協作視野。" : "決策較依賴舊有經驗路徑。", action: s.Strategy >= 18 ? "規劃跨部門導入專案。" : "練習挑戰數據預設觀點。" },
+                        Execution: { title: "Execution 執行效能", feedback: s.Execution >= 18 ? "行動手高效，工具調配精準。" : "指令輸入層次有限。", action: s.Execution >= 18 ? "建立個人自動化 SOP。" : "學習結構化提示詞技巧。" },
+                        Evaluation: { title: "Evaluation 評估辨析", feedback: s.Evaluation >= 18 ? "辨析眼敏銳，守護最高裁決。" : "對系統產出存有依賴偏誤。", action: s.Evaluation >= 18 ? "開發內容審核標準。" : "練習針對 AI 產出事實查核。" },
+                        Duty: { title: "Duty 責任倫理", feedback: s.Duty >= 18 ? "倫理心堅定，資安意識佳。" : "忽視潛在合規風險。", action: s.Duty >= 18 ? "推動組織級倫理準則。" : "加強智財權法律知識。" }
                     };
                 });
 
                 const calculateScore = () => {
-                    if (Object.keys(userAnswers.value).length < 20) return alert("請完成所有測驗情境！");
+                    let unFinishedIds = [];
+                    shuffledQuestions.value.forEach(cat => {
+                        cat.items.forEach(q => {
+                            if (!userAnswers.value[q.id]) { unFinishedIds.push(q.displayIndex); }
+                        });
+                    });
+                    if (unFinishedIds.length > 0) {
+                        alert(`請完成尚未回答的題目：第 ${unFinishedIds.join(', ')} 題`);
+                        return;
+                    }
                     reportDate.value = new Date().toLocaleString();
                     showResult.value = true;
                     window.scrollTo(0, 0);
