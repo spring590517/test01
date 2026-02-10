@@ -3,102 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 時代職場競爭力檢核表 - RISE Model</title>
+    <title>AI 時代職場競爭力檢核表 - SEED Model</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
-        [v-cloak] { display: none; } /* 防止 Vue 未載入前閃爍原始碼 */
-        .option-card:hover { border-color: #3b82f6; background-color: #eff6ff; transform: translateY(-1px); }
-        .selected { border-color: #2563eb !important; background-color: #dbeafe !important; border-width: 2px; }
-        .category-header { border-left: 6px solid #1e40af; }
-        @media print { .no-print { display: none !important; } }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; }
+        [v-cloak] { display: none; }
+        .selected { border-color: #2563eb !important; background-color: #eff6ff !important; border-width: 2px; }
+        #report-capture { width: 100%; max-width: 600px; margin: 0 auto; background: white; border-radius: 24px; }
+        .score-box { background: #eff6ff; border-left: 6px solid #2563eb; border-radius: 12px; }
+        .dimension-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .suggestion-tag { background: #fffbeb; color: #92400e; border-radius: 8px; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
     <div id="app" v-cloak class="max-w-4xl mx-auto py-10 px-4">
-        <header v-if="!showResult" class="text-center mb-12">
-            <h1 class="text-3xl md:text-4xl font-black text-blue-900 mb-4">AI 時代職場競爭力檢核表</h1>
-            <p class="text-slate-600 text-lg">透過 20 個模擬情境，評估您的職場生存率與轉型力。</p>
+        <header v-if="!showResult" class="text-center mb-10">
+            <h1 class="text-3xl font-black text-slate-900 mb-3">掌握自己的AI職場競爭力</h1>
         </header>
 
         <main v-if="!showResult">
-            <div v-for="(category, cIdx) in shuffledQuestions" :key="cIdx" class="mb-12">
-                <div class="category-header bg-white p-4 shadow-sm mb-6 rounded-r-lg">
-                    <h2 class="text-2xl font-bold text-blue-900">{{ category.title }}</h2>
+            <div v-for="(category, cIdx) in shuffledQuestions" :key="cIdx" class="mb-10">
+                <div class="border-l-8 border-blue-700 bg-white p-4 shadow-sm mb-6 rounded-r-lg">
+                    <h2 class="text-xl font-bold text-blue-900">{{ category.title }}</h2>
                 </div>
                 
-                <div v-for="(q, qIdx) in category.items" :key="q.id" class="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div v-for="(q, qIdx) in category.items" :key="q.id" class="mb-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <p class="text-lg font-bold mb-4 text-slate-800">{{ cIdx*5 + qIdx + 1 }}. {{ q.text }}</p>
                     <div class="grid grid-cols-1 gap-3">
                         <button v-for="(opt, oIdx) in q.shuffledOpts" :key="oIdx"
                                 @click="selectAnswer(q.id, opt.score)"
-                                :class="['option-card text-left p-4 border rounded-xl transition-all duration-200', 
+                                :class="['text-left p-4 border rounded-xl transition-all duration-200 hover:border-blue-400', 
                                 { 'selected': userAnswers[q.id] === opt.score }]">
-                            {{ opt.text }}
+                            <span class="text-sm leading-relaxed">{{ opt.text }}</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="sticky bottom-10 z-10">
-                <button @click="calculateScore" 
-                        class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-2xl hover:bg-blue-800 transition-all text-xl">
-                    產出深度評估報告
-                </button>
-            </div>
+            <button @click="calculateScore" 
+                    class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-2xl hover:bg-blue-800 transition-all text-xl sticky bottom-6 z-10">
+                產出深度評估報告
+            </button>
         </main>
 
-        <div v-else id="report-content" class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-            <div class="bg-blue-900 p-10 text-white text-center">
-                <h1 class="text-3xl font-bold mb-2">AI 職場競爭力報告 (RISE)</h1>
-                <p class="opacity-80">測驗時間：{{ reportDate }}</p>
+        <div v-else>
+            <div id="report-capture" class="overflow-hidden shadow-2xl">
+                <div class="bg-blue-900 p-10 text-white text-center">
+                    <h1 class="text-2xl font-bold mb-1">AI 職場競爭力報告 (SEED)</h1>
+                    <p class="text-xs opacity-70">測驗時間：{{ reportDate }}</p>
+                </div>
+
+                <div class="p-8 text-left">
+                    <div class="flex items-center gap-8 mb-10">
+                        <div class="flex-shrink-0 text-center">
+                            <p class="text-slate-400 font-bold text-xs uppercase mb-1">Survival Rate</p>
+                            <div class="text-7xl font-black text-blue-700">{{ totalScore }}%</div>
+                        </div>
+                        <div class="score-box p-5 flex-1">
+                            <h3 class="text-xl font-bold text-blue-900 mb-1">{{ resultTitle }}</h3>
+                            <p class="text-slate-600 text-sm leading-snug">{{ resultDesc }}</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="w-1.5 h-6 bg-blue-600 mr-2 rounded-full"></span> 維度深度分析
+                    </h3>
+                    
+                    <div class="dimension-grid text-left">
+                        <div v-for="(analysis, key) in dimensionAnalysis" :key="key" class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-slate-800 text-sm">{{ analysis.title }}</span>
+                                <span class="text-blue-600 font-bold text-xs">{{ dimensionScores[key] }} / 25</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
+                                <div class="bg-blue-600 h-full" :style="{ width: (dimensionScores[key]/25*100) + '%' }"></div>
+                            </div>
+                            <p class="text-[11px] text-slate-500 leading-tight mb-2 h-8">{{ analysis.feedback }}</p>
+                            <div class="suggestion-tag p-2 flex items-start gap-1">
+                                <span class="flex-shrink-0">💡</span>
+                                <span class="text-[10px] leading-tight font-medium">建議：{{ analysis.action }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 pt-8 border-t border-slate-100 text-center">
+                        <p class="text-xs italic text-slate-500 mb-4">「在 AI 時代，最核心的競爭力不是取代機器，而是開展人類特有的天賦。」</p>
+                        <p class="font-black text-blue-900 text-lg">用AI啟動你怦然心動的第二人生</p>
+                        <p class="text-xs text-slate-400 mt-2">檢核表的內容是與AI協作取得，檢核結果純供參考</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="p-8 md:p-12">
-                <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-10">
-                    <div class="text-center">
-                        <p class="text-slate-500 font-bold uppercase tracking-widest text-sm">Survival Rate</p>
-                        <div class="text-8xl font-black text-blue-700">{{ totalScore }}%</div>
-                    </div>
-                    <div class="bg-blue-50 p-6 rounded-2xl border-l-8 border-blue-600 flex-1">
-                        <h3 class="text-2xl font-bold text-blue-900 mb-2">{{ resultTitle }}</h3>
-                        <p class="text-slate-700 leading-relaxed">{{ resultDesc }}</p>
-                    </div>
-                </div>
-
-                <h3 class="text-xl font-bold mb-6 border-b pb-2 flex items-center">
-                    <span class="w-2 h-6 bg-blue-600 mr-2"></span>維度深度分析
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 text-left">
-                    <div v-for="(analysis, key) in dimensionAnalysis" :key="key">
-                        <div class="flex justify-between items-end mb-2">
-                            <span class="font-black text-slate-700">{{ analysis.title }}</span>
-                            <span class="text-blue-600 font-bold">{{ dimensionScores[key] }} / 25</span>
-                        </div>
-                        <div class="w-full bg-slate-100 h-3 rounded-full mb-3 overflow-hidden border">
-                            <div class="bg-blue-600 h-full transition-all duration-1000" :style="{ width: (dimensionScores[key]/25*100) + '%' }"></div>
-                        </div>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-2">{{ analysis.feedback }}</p>
-                        <div class="bg-yellow-50 p-3 rounded-lg text-sm text-yellow-800 font-medium">
-                            💡 建議：{{ analysis.action }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-12 pt-8 border-t border-slate-100 text-center">
-                    <p class="italic text-slate-500 mb-4">「在 AI 時代，最核心的競爭力不是取代機器，而是開展人類特有的天賦。」</p>
-                    <p class="font-bold text-blue-900">Spring 博士 | 104人力銀行職涯永續長</p>
-                    <p class="text-xs text-slate-400 mt-2">© 2026 第二人生社會企業 版權所有</p>
-                </div>
-            </div>
-
-            <div class="p-8 bg-slate-50 flex flex-col md:flex-row gap-4 no-print">
-                <button @click="downloadPDF" class="flex-1 bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition shadow-lg">匯出 PDF 報告</button>
-                <button @click="reset" class="flex-1 border-2 border-slate-300 text-slate-500 font-bold py-4 rounded-xl hover:bg-slate-100 transition">重新測試</button>
+            <div class="mt-8 space-y-4 no-print max-w-[500px] mx-auto">
+                <button @click="downloadJPG" class="w-full bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-800 transition">
+                    下載分析結果
+                </button>
+                <button @click="reset" class="w-full text-slate-400 font-bold py-2 text-sm">重新進行測驗</button>
             </div>
         </div>
     </div>
@@ -112,142 +116,112 @@
                 const userAnswers = ref({}); 
                 const reportDate = ref("");
 
-                const rawQuestions = [
-                    {
-                        id_key: "Resilience", title: "【R】心理韌性與適應力",
-                        items: [
-                            { id: "r1", text: "主管宣布引進 AI 取代你目前一半的工作，你的反應是？", opts: [{t: "焦慮失業，情緒低落", s: 1}, {t: "觀望他人，被動配合", s: 2}, {t: "思考剩餘工作的價值", s: 4}, {t: "提議如何利用省下的時間創造新價值", s: 5}] },
-                            { id: "r2", text: "必須學習全新的 AI 系統但工作已滿載，你會？", opts: [{t: "抱怨增加負擔", s: 1}, {t: "學最低限度能交差", s: 2}, {t: "擠時間自學嘗試", s: 4}, {t: "視為自我升級機會主動精進", s: 5}] },
-                            { id: "r3", text: "AI 產出的方案被客戶批評缺乏靈魂，你會？", opts: [{t: "認為 AI 難用而放棄", s: 1}, {t: "感到挫折不予修改", s: 2}, {t: "優化 Prompt 修正指令", s: 4}, {t: "補足 AI 缺乏的人性細節", s: 5}] },
-                            { id: "r4", text: "看到 AI 在各領域超越人類的新聞時？", opts: [{t: "覺得人類必輸無疑", s: 1}, {t: "不安但維持現狀", s: 2}, {t: "接受這是時代趨勢", s: 4}, {t: "發展 AI 做不到的核心天賦", s: 5}] },
-                            { id: "r5", text: "職務因 AI 需要改組轉型，你的心態是？", opts: [{t: "抗拒改變與懷舊", s: 1}, {t: "疲憊地接受現實", s: 2}, {t: "快速調整工作流", s: 4}, {t: "引領團隊進行轉型", s: 5}] }
-                        ]
-                    },
-                    {
-                        id_key: "Integration", title: "【I】AI 工具整合力",
-                        items: [
-                            { id: "i1", text: "面對大量英文報告需今日產出摘要，你會？", opts: [{t: "逐字翻譯加班完成", s: 1}, {t: "找同事分擔協助", s: 2}, {t: "丟給線上軟體直出", s: 4}, {t: "利用 AI 摘要並親自校對", s: 5}] },
-                            { id: "i2", text: "遇到電腦軟體不會操作，你通常？", opts: [{t: "等 IT 專家處理", s: 1}, {t: "詢問周遭同事", s: 2}, {t: "自行 Google 搜尋", s: 4}, {t: "用 AI 診斷並逐步操作", s: 5}] },
-                            { id: "i3", text: "需要寫具說服力的提案信，你會？", opts: [{t: "抄錄舊範本修改", s: 1}, {t: "請託他人撰寫", s: 2}, {t: "用 AI 生成初稿潤飾", s: 4}, {t: "與 AI 反覆對話優化內容", s: 5}] },
-                            { id: "i4", text: "AI 的答案看似專業但真偽不明時？", opts: [{t: "直接引用相信科技", s: 1}, {t: "大略看過就使用", s: 2}, {t: "搜尋一兩個來源核對", s: 4}, {t: "運用專業知識進行邏輯查核", s: 5}] },
-                            { id: "i5", text: "日常工作中，你使用 AI 的頻率是？", opts: [{t: "幾乎不使用", s: 1}, {t: "被動且偶爾使用", s: 2}, {t: "每週規律使用", s: 4}, {t: "每天主動整合多種工具", s: 5}] }
-                        ]
-                    },
-                    {
-                        id_key: "Strategy", title: "【S】戰略性思考與決策",
-                        items: [
-                            { id: "s1", text: "數據顯示滿意度下降但沒原因，你會？", opts: [{t: "急忙檢討下屬", s: 1}, {t: "懷疑數據準確性", s: 2}, {t: "分析關聯數據", s: 4}, {t: "結合數據並訪談客戶洞察人性", s: 5}] },
-                            { id: "s2", text: "AI 預測 A 高成功率，你直覺 B 更有潛力？", opts: [{t: "完全採信 AI 數據", s: 1}, {t: "交由主管定奪", s: 2}, {t: "尋找 AI 遺漏的參數", s: 4}, {t: "整合數據與洞察提出新方案", s: 5}] },
-                            { id: "s3", text: "未來三年的職涯規劃，你的策略是？", opts: [{t: "守住現有職位", s: 1}, {t: "報考傳統證照", s: 2}, {t: "學習熱門 AI 工具", s: 4}, {t: "打造 AI 難取代的專業組合", s: 5}] },
-                            { id: "s4", text: "工作流程效率低下時，你會？", opts: [{t: "照舊模式忍受", s: 1}, {t: "向上呈報不介入", s: 2}, {t: "微調負責的部分", s: 4}, {t: "重組人機協作新流程", s: 5}] },
-                            { id: "s5", text: "若有學習預算，你會投入在哪？", opts: [{t: "維持現狀運作", s: 1}, {t: "購買新硬體", s: 2}, {t: "參加工具操作課", s: 4}, {t: "投資創新實驗與人類價值發展", s: 5}] }
-                        ]
-                    },
-                    {
-                        id_key: "Empathy", title: "【E】同理心與倫理判斷",
-                        items: [
-                            { id: "e1", text: "部屬因分工不均起爭執，你會？", opts: [{t: "法規制度裁決", s: 1}, {t: "忽視自行處理", s: 2}, {t: "傾聽安慰雙方", s: 4}, {t: "協助安身立命開展天賦", s: 5}] },
-                            { id: "e2", text: "AI 建議使用未授權數據完成任務？", opts: [{t: "為了績效採納", s: 1}, {t: "考慮後決定使用", s: 2}, {t: "拒絕並找替代方案", s: 4}, {t: "建立團隊 AI 倫理規範", s: 5}] },
-                            { id: "e3", text: "團隊因裁員流言士氣低落時？", opts: [{t: "保持沉默不應對", s: 1}, {t: "傳遞官方說法", s: 2}, {t: "安慰會保護大家", s: 4}, {t: "溝通轉型並重新定位天賦", s: 5}] },
-                            { id: "e4", text: "高額簽約談判時關鍵是？", opts: [{t: "數據報表完美度", s: 1}, {t: "給出最低報價", s: 2}, {t: "展示專業技術知識", s: 4}, {t: "建立信任與情感連結", s: 5}] },
-                            { id: "e5", text: "掌握 AI 技能後，你的想法是？", opts: [{t: "當作私藏競爭力", s: 1}, {t: "僅完成分內工作", s: 2}, {t: "願意教導同事", s: 4}, {t: "用技術幫助弱勢群體", s: 5}] }
-                        ]
-                    }
+                const seedQuestions = [
+                    { id_key: "Strategy", title: "S — Strategy (策略思維)", items: [
+                        { id: "s1", text: "當面對複雜的跨部門專案時，您如何整合 AI 技術？", opts: [{t: "維持既有協作流程，因 AI 存在不確定性而暫緩導入", s: 1}, {t: "在局部環節嘗試使用，但尚未建立系統性的工具地圖", s: 2}, {t: "將 AI 視為生產力外掛，由其產出草案後再進行人工覆核", s: 4}, {t: "將 AI 視為專案副駕駛，有策略地配置人機職責與決策邊界", s: 5}] },
+                        { id: "s2", text: "對於 AI 技術的快速更迭（如 GPT 模型升級），您的職涯應對是？", opts: [{t: "對技術爆炸感到焦慮，傾向守住核心專業而非學習新工具", s: 1}, {t: "被動接受公司教育訓練，確保基本操作不掉隊即可", s: 2}, {t: "建立個人知識庫，持續追蹤並測試工具在職位上的新應用", s: 4}, {t: "將變革視為職涯紅利，積極將新技術轉化為解決業務問題的槓桿", s: 5}] },
+                        { id: "s3", text: "您如何理解「人機協作」對您專業地位的影響？", opts: [{t: "AI 是一種自動化競爭對手，其普及將導致個人議價能力下降", s: 1}, {t: "AI 是高效率的雜事處理器，本質上不具備專業夥伴價值", s: 2}, {t: "AI 是數位賦能的夥伴，能顯著擴展我的服務深度與範疇", s: 4}, {t: "AI 是認知增強的 Copilot，透過數據導向協作提升我的策略權重", s: 5}] },
+                        { id: "s4", text: "在啟動創意專案時，您如何規劃 AI 的介入時機點？", opts: [{t: "堅持純人工創作以維護專業本真性，不考慮 AI 介入", s: 1}, {t: "在陷入僵局或時間緊迫時，偶爾使用 AI 生成靈感參考", s: 2}, {t: "初期運用 AI 進行大規模創意發散，再由人工進行篩選收斂", s: 4}, {t: "設計「雙軌協作」機制，運用 AI 進行多維度方案預演與策略模擬", s: 5}] },
+                        { id: "s5", text: "面對產業的 AI 轉型，您對自我的定位規劃為何？", opts: [{t: "維持現狀，相信長期累積的經驗與人脈足以抵禦技術衝擊", s: 1}, {t: "尋求工具操作類的技能證照，以補強職務技能的缺口", s: 2}, {t: "將 AI 深度嵌入工作流，成為具備數位生產力的跨域人才", s: 4}, {t: "定位為「AI 賦能決策者」，引領團隊發揮 AI 無法取代的人本價值", s: 5}] }
+                    ]},
+                    { id_key: "Execution", title: "E — Execution (執行效能)", items: [
+                        { id: "e1", text: "當 AI 產出的結果不符預期時，您的提示詞最佳化策略是？", opts: [{t: "判斷 AI 不堪大用，決定回歸人工處理模式", s: 1}, {t: "反覆重貼同樣的指令，期待 AI 能隨機產出較好的答案", s: 2}, {t: "調整 Prompt 結構，加入具體的角色定義、情境與輸出格式", s: 4}, {t: "運用多輪對話與邏輯鏈引導 (CoT)，逐步校準 AI 的認知邏輯", s: 5}] },
+                        { id: "e2", text: "您目前對生成式 AI 模組的應用深度為何？", opts: [{t: "僅限於單一文本對話工具的基礎檢索與問答", s: 1}, {t: "能運用多種文本模型進行摘要，但尚不熟悉影音或圖像生成", s: 2}, {t: "能熟練調配多種 AI 工具（如圖文、數據）完成複合型任務", s: 4}, {t: "具備「全流程 AI 應用能力」，能整合多元模組解決複雜工作問題", s: 5}] },
+                        { id: "e3", text: "您如何處理高頻率的文書與行政任務（如信件、報告）？", opts: [{t: "堅持親力親為，認為這是確保品質與態度的唯一途徑", s: 1}, {t: "運用傳統的固定模板進行編寫，僅在極少數情況諮詢 AI", s: 2}, {t: "運用 AI 進行內容架構生成與風格潤色，提高產出效率", s: 4}, {t: "建立個人化的自動化協作 SOP，將例行任務交由 AI 同步執行", s: 5}] },
+                        { id: "e4", text: "在使用 AI 協作後，您的單位產值與品質有何變化？", opts: [{t: "效率未提升且需花費更多時間核對，品質亦不穩定", s: 1}, {t: "產量雖有小幅增加，但內容層次與專業度並未明顯進步", s: 2}, {t: "產出速度大幅提升，能維持穩定的專業水準並處理更多業務", s: 4}, {t: "在釋放例行工作後，專注於高價值的質性研發，產出具備戰略深度", s: 5}] },
+                        { id: "e5", text: "面對結構化數據或複雜邏輯處理，您的 AI 使用能力為何？", opts: [{t: "避免交予 AI，認為人腦的邏輯推理較工具更具可靠度", s: 1}, {t: "將部分代碼或數據丟給 AI 參考，但對結果缺乏除錯能力", s: 2}, {t: "能提供清晰的邏輯框架請 AI 生成解法，並具備基本校正力", s: 4}, {t: "善用 AI 的數據分析與編碼潛力，加速複雜問題的模型化與驗證", s: 5}] }
+                    ]},
+                    { id_key: "Evaluation", title: "E — Evaluation (評估辨析)", items: [
+                        { id: "v1", text: "對於 AI 產出的事實資訊（Fact-based info），您的審核意識為何？", opts: [{t: "完全信任 AI 產出的權威感，將其內容直接轉化為正式決策", s: 1}, {t: "若內容看起來合乎常理即採用，缺乏主動查證的行為習慣", s: 2}, {t: "具備查核意識，會針對關鍵數據進行主流搜尋引擎的二次驗證", s: 4}, {t: "建立嚴謹的檢驗機制，能識別資訊來源的真偽與邏輯謬誤", s: 5}] },
+                        { id: "v2", text: "您對大型語言模型產生的「幻覺（Hallucination）」有何應對？", opts: [{t: "未察覺 AI 會編造虛假資訊，傾向將其視為百科全書", s: 1}, {t: "知道 AI 可能會瞎掰，但通常僅能憑感覺判斷內容正確度", s: 2}, {t: "了解模型生成原理的侷限性，能識別易出錯的情境並保持警覺", s: 4}, {t: "能針對高風險情境進行預防性提問，降低幻覺發生的機率", s: 5}] },
+                        { id: "v3", text: "當 AI 產出具備文化或專業偏見（Bias）的內容時，您會？", opts: [{t: "完全未察覺其中的偏誤，認為 AI 是客觀中立的科技產物", s: 1}, {t: "感到些微不妥但未採取行動，認為偏見是科技發展的必然", s: 2}, {t: "能敏銳察覺輸出中的刻板印象，並在人工校對時予以修正", s: 4}, {t: "具備最高裁決權，能主動調整提示策略以引導 AI 產出多元視角", s: 5}] },
+                        { id: "v4", text: "您如何評估 AI 在情緒勞務或關係維護上的產出品質？", opts: [{t: "認為 AI 的文字具備完美禮節，優於人工撰寫的情感表達", s: 1}, {t: "將 AI 撰寫的慰問或激勵信件直接發送，不再進行情感修飾", s: 2}, {t: "辨識出 AI 的制式化語氣，並注入人類真實的情感連結點", s: 4}, {t: "評估 AI 僅能作為格式參考，在涉及深度共感的溝通上堅持親自執行", s: 5}] },
+                        { id: "v5", text: "在決策流程中，您如何定義自己與 AI 的決策權界線？", opts: [{t: "傾向讓數據決定一切，將高難度決策權讓渡予 AI 演算法", s: 1}, {t: "在決策時感到猶豫，對 AI 的建議與自身判斷缺乏整合邏輯", s: 2}, {t: "參考 AI 的量化建議，但保留對關鍵質性指標的審核權", s: 4}, {t: "始終掌握最高裁決權，將 AI 定位為資訊提供者而非決策主體", s: 5}] }
+                    ]},
+                    { id_key: "Duty", title: "D — Duty (責任與倫理)", items: [
+                        { id: "d1", text: "關於數據隱私，您將敏感個資上傳至 AI 平台的防護意識為何？", opts: [{t: "未曾思考資安風險，為了追求效率而直接上傳機密文件", s: 1}, {t: "認為主流平台的隱私聲明具備法律保障，無須額外人為介入", s: 2}, {t: "具備去識別化意識，上傳前會刪除敏感客戶資料或專利核心", s: 4}, {t: "嚴格遵守組織合規準則，僅在安全隔離或經核准的環境內操作", s: 5}] },
+                        { id: "d2", text: "對於 AI 生成內容的智慧財產權（IP）與使用風險，您的掌握度為何？", opts: [{t: "認為 AI 產出物皆為共有財產，可無限制進行商業化使用", s: 1}, {t: "不確定目前的智財法律架構，在不明規範的情況下冒險使用", s: 2}, {t: "清楚目前的智財爭議點，會謹慎過濾具備侵權風險的生成素材", s: 4}, {t: "熟知授權合約與使用限制，確保 AI 輔助成果符合職業合規要求", s: 5}] },
+                        { id: "d3", text: "在對外提交 AI 協作的重大任務成果時，您的職業誠信立場是？", opts: [{t: "完全隱匿使用 AI 的事實，試圖包裝成 100% 的純手工原創", s: 1}, {t: "若被主管或客戶質疑才承認有工具輔助，採取被動揭露策略", s: 2}, {t: "在備註中簡述輔助工具與應用範疇，維持基本的透明度", s: 4}, {t: "具備高度倫理心，主動聲明 AI 應用範圍並對最終品質負全責", s: 5}] },
+                        { id: "d4", text: "若 AI 生成的宣傳文案具備吸睛但誤導的潛力，您的取捨為何？", opts: [{t: "優先追求流量與轉換，認為技術生成的內容誤導亦非人為責任", s: 1}, {t: "感到心虛但因時間壓力仍決定發佈，期待聽眾自行判斷", s: 2}, {t: "剔除明顯的錯誤資訊，但保留灰色地帶的誇大描述以利傳播", s: 4}, {t: "守護職業聲望底線，絕不容許 AI 工具成為散佈錯誤資訊的溫床", s: 5}] },
+                        { id: "d5", text: "您認為 AI 技術的普及，是否重新定義了您的「專業責任」？", opts: [{t: "AI 減少了思考負荷，責任感也隨之稀釋，趨向任務外包心態", s: 1}, {t: "依賴 AI 作為專業背書，當出現錯誤時傾向將責任推諉予系統", s: 2}, {t: "AI 是工具，我的專業責任不變，但在操作面上需更加謹慎", s: 4}, {t: "AI 促使我更嚴肅審視專業本質，承擔更高層次的審核與指導責任", s: 5}] }
+                    ]}
                 ];
 
                 const shuffledQuestions = ref([]);
-
                 const shuffle = (array) => {
-                    let currentIndex = array.length, randomIndex;
-                    while (currentIndex != 0) {
-                        randomIndex = Math.floor(Math.random() * currentIndex);
-                        currentIndex--;
-                        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                    let arr = [...array];
+                    for (let i = arr.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [arr[i], arr[j]] = [arr[j], arr[i]];
                     }
-                    return array;
+                    return arr;
                 };
 
                 const initSurvey = () => {
-                    shuffledQuestions.value = rawQuestions.map(cat => ({
+                    shuffledQuestions.value = seedQuestions.map(cat => ({
                         ...cat,
                         items: cat.items.map(item => ({
                             ...item,
-                            shuffledOpts: shuffle([...item.opts].map(o => ({ text: o.t, score: o.s })))
+                            shuffledOpts: shuffle(item.opts.map(o => ({ text: o.t, score: o.s })))
                         }))
                     }));
                 };
 
-                const selectAnswer = (qId, score) => {
-                    userAnswers.value[qId] = score;
-                };
+                const selectAnswer = (qId, score) => { userAnswers.value[qId] = score; };
 
                 const dimensionScores = computed(() => {
-                    const res = { Resilience: 0, Integration: 0, Strategy: 0, Empathy: 0 };
-                    rawQuestions.forEach(cat => {
-                        cat.items.forEach(item => {
-                            res[cat.id_key] += (userAnswers.value[item.id] || 0);
-                        });
-                    });
+                    const res = { Strategy: 0, Execution: 0, Evaluation: 0, Duty: 0 };
+                    seedQuestions.forEach(cat => { cat.items.forEach(item => { res[cat.id_key] += (userAnswers.value[item.id] || 0); }); });
                     return res;
                 });
 
                 const totalScore = computed(() => Object.values(dimensionScores.value).reduce((a, b) => a + b, 0));
 
                 const resultTitle = computed(() => {
-                    if (totalScore.value >= 85) return "AI 領航員 (Pioneer)";
-                    if (totalScore.value >= 65) return "積極轉型者 (Adapter)";
-                    if (totalScore.value >= 45) return "傳統守成者 (Protector)";
-                    return "職涯警訊者 (Risk Taker)";
+                    if (totalScore.value >= 85) return "AI 領航導師 (Pioneer)";
+                    if (totalScore.value >= 65) return "效能實踐者 (Practitioner)";
+                    if (totalScore.value >= 45) return "適應觀察者 (Observer)";
+                    return "傳統守成者 (Protector)";
                 });
 
                 const resultDesc = computed(() => {
-                    if (totalScore.value >= 85) return "你完美整合了技術與人性，是 AI 時代最具競爭力的領航者。";
-                    if (totalScore.value >= 65) return "你具備穩定競爭力，只要在戰略思考再進一步，就能脫穎而出。";
-                    if (totalScore.value >= 45) return "你仍依賴舊模式，AI 可能成為威脅而非助力，請即刻開啟學習。";
-                    return "你的工作極易被自動化取代。這是一個重新審視天賦與開啟第二人生的時刻。";
+                    if (totalScore.value >= 85) return "您能從策略高度駕馭技術，兼顧高效執行與倫理責任，是 AI 時代最具價值的領航人才。";
+                    if (totalScore.value >= 65) return "您具備成熟的協作意識，建議深化策略布局與風險控管，進一步發揮數位領導力。";
+                    if (totalScore.value >= 45) return "您已跨入 AI 門檻，但在流程整合、事實辨析與資安風險管理上仍有顯著的強化空間。";
+                    return "您仍依賴傳統運作模式，對 AI 衝擊與侷限掌握不足。建議即刻重塑職涯策略，補強 SEED 核心素養。";
                 });
 
                 const dimensionAnalysis = computed(() => {
                     const s = dimensionScores.value;
                     return {
-                        Resilience: { title: "心理韌性", feedback: s.Resilience >= 18 ? "具備高度成長心態。" : "對變動適應較為保守。", action: s.Resilience >= 18 ? "挑戰跨領域大型專案。" : "嘗試每日使用一個新的 AI 工具。" },
-                        Integration: { title: "工具整合", feedback: s.Integration >= 18 ? "能高效駕馭多種數位工具。" : "與 AI 協作經驗尚淺。", action: s.Integration >= 18 ? "建立團隊自動化 SOP。" : "學習基礎 Prompt 提示詞技巧。" },
-                        Strategy: { title: "戰略思考", feedback: s.Strategy >= 18 ? "具備優秀的邏輯判斷力。" : "決策較依賴經驗慣性。", action: s.Strategy >= 18 ? "引領部門數位轉型規劃。" : "練習針對數據結果提出挑戰。" },
-                        Empathy: { title: "同理倫理", feedback: s.Empathy >= 18 ? "重視人性價值的守護者。" : "溝通時較偏向任務導向。", action: s.Empathy >= 18 ? "發揮影響力協助團隊共融。" : "增加非正式溝通關注夥伴情緒。" }
+                        Strategy: { title: "策略思維", feedback: s.Strategy >= 18 ? "具高度策略腦與協作視野。" : "決策較依賴舊有經驗路徑。", action: s.Strategy >= 18 ? "規劃跨部門 AI 導入專案。" : "練習挑戰數據結果與預設觀點。" },
+                        Execution: { title: "執行效能", feedback: s.Execution >= 18 ? "行動手高效，工具調配精準。" : "指令輸入精準度與層次有限。", action: s.Execution >= 18 ? "建立個人自動化協作模組。" : "學習結構化 Prompt (Role-Context-Task)。" },
+                        Evaluation: { title: "評估辨析", feedback: s.Evaluation >= 18 ? "辨析眼敏銳，守護最高裁決權。" : "對系統產出存有過度依賴偏誤。", action: s.Evaluation >= 18 ? "開發內容審核標準規範 (SOP)。" : "練習針對 AI 產出進行事實查核。" },
+                        Duty: { title: "責任倫理", feedback: s.Duty >= 18 ? "倫理心堅定，資安合規意識佳。" : "忽視潛在合規與職業倫理風險。", action: s.Duty >= 18 ? "推動組織級 AI 倫理使用準則。" : "加強智財權法律知識與隱私去標籤。" }
                     };
                 });
 
                 const calculateScore = () => {
-                    if (Object.keys(userAnswers.value).length < 20) {
-                        alert("請完成所有題目後再點擊喔！");
-                        return;
-                    }
+                    if (Object.keys(userAnswers.value).length < 20) return alert("請完成所有測驗情境！");
                     reportDate.value = new Date().toLocaleString();
                     showResult.value = true;
                     window.scrollTo(0, 0);
                 };
 
-                const downloadPDF = () => {
-                    const element = document.getElementById('report-content');
-                    const opt = {
-                        margin: 0.2,
-                        filename: 'AI_Competency_Report.pdf',
-                        html2canvas: { scale: 2 },
-                        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                    };
-                    html2pdf().set(opt).from(element).save();
+                const downloadJPG = async () => {
+                    const element = document.getElementById('report-capture');
+                    const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                    link.download = `SEED_Report_${new Date().getTime()}.jpg`;
+                    link.click();
                 };
 
-                const reset = () => {
-                    userAnswers.value = {};
-                    showResult.value = false;
-                    initSurvey();
-                    window.scrollTo(0, 0);
-                };
+                const reset = () => { userAnswers.value = {}; showResult.value = false; initSurvey(); window.scrollTo(0, 0); };
 
                 onMounted(initSurvey);
 
-                return { shuffledQuestions, userAnswers, showResult, totalScore, dimensionScores, resultTitle, resultDesc, dimensionAnalysis, reportDate, selectAnswer, calculateScore, downloadPDF, reset };
+                return { shuffledQuestions, userAnswers, showResult, totalScore, dimensionScores, resultTitle, resultDesc, dimensionAnalysis, reportDate, selectAnswer, calculateScore, downloadJPG, reset };
             }
         }).mount('#app');
     </script>
