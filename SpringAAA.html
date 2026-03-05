@@ -1,988 +1,835 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <title>spring001｜AI職涯教練：生涯發展與探索資訊整理</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --primary: #ff6b00;         /* 104 橘 */
-      --primary-dark: #e15800;
-      --primary-light: #fff3e6;
-      --accent: #0f172a;          /* 深藍 */
-      --bg: #f3f4f6;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --text-main: #111827;
-      --text-sub: #4b5563;
-      --text-note: #6b7280;
-      --danger: #b91c1c;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
-        sans-serif;
-      background-color: var(--bg);
-      color: var(--text-main);
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 12px 12px 40px;
-    }
-
-    .top-bar {
-      background: var(--accent);
-      color: #f9fafb;
-      padding: 10px 14px 12px;
-      border-radius: 0 0 18px 18px;
-      margin: 0 0 10px;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .top-bar-main {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .logo-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-
-    .logo-sub {
-      font-size: 0.78rem;
-      color: #e5e7eb;
-    }
-
-    .top-btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .top-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(249, 250, 251, 0.4);
-      background: rgba(15, 23, 42, 0.4);
-      color: #f9fafb;
-      padding: 4px 9px;
-      font-size: 0.78rem;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-    }
-
-    .top-btn span {
-      font-size: 0.95rem;
-    }
-
-    .progress-wrap {
-      margin-top: 8px;
-    }
-
-    .progress-label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.78rem;
-      color: #e5e7eb;
-    }
-
-    .progress-bar-outer {
-      margin-top: 4px;
-      width: 100%;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.7);
-      overflow: hidden;
-    }
-
-    .progress-bar-inner {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #fed7aa, #ff6b00);
-      transition: width 0.25s ease-out;
-    }
-
-    .tab-nav {
-      margin: 10px 0 10px;
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .tab-btn {
-      flex: 0 0 auto;
-      border-radius: 999px;
-      border: 1px solid #e5e7eb;
-      padding: 5px 10px;
-      font-size: 0.78rem;
-      background: #ffffff;
-      color: #374151;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .tab-btn.primary {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary-dark);
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      border-radius: 16px;
-      padding: 16px 16px 18px;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-      border: 1px solid var(--border);
-      margin-bottom: 14px;
-    }
-
-    h1 {
-      font-size: 1.3rem;
-      margin: 0 0 4px;
-      color: var(--accent);
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: var(--text-sub);
-      margin-bottom: 6px;
-    }
-
-    .chip-row {
-      margin-top: 4px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .chip {
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-    }
-
-    .section-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin: 8px 0 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--accent);
-    }
-
-    .section-title span.badge {
-      font-size: 0.78rem;
-      padding: 1px 8px;
-      border-radius: 999px;
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    p {
-      margin: 2px 0 6px;
-      font-size: 0.9rem;
-    }
-
-    ul {
-      padding-left: 20px;
-      margin: 4px 0 6px;
-    }
-
-    li {
-      font-size: 0.9rem;
-      margin: 2px 0;
-    }
-
-    .field-group {
-      margin-top: 8px;
-    }
-
-    .field-label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-    }
-
-    .field-label small {
-      font-weight: 400;
-      font-size: 0.78rem;
-      color: var(--text-note);
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 90px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      font-family: inherit;
-      font-size: 0.9rem;
-      resize: vertical;
-      outline: none;
-      color: #1d4ed8;   /* 使用者個人資料：藍色文字 */
-      background-color: #f9fafb;
-    }
-
-    textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(255, 107, 0, 0.35);
-      background-color: #ffffff;
-    }
-
-    .hint {
-      font-size: 0.8rem;
-      color: var(--text-note);
-      margin-top: 2px;
-    }
-
-    details {
-      margin-top: 6px;
-      border-radius: 10px;
-      border: 1px dashed #d1d5db;
-      padding: 6px 8px;
-      background: #f9fafb;
-    }
-
-    details summary {
-      cursor: pointer;
-      font-size: 0.82rem;
-      color: var(--text-sub);
-      list-style: none;
-    }
-
-    details[open] summary {
-      margin-bottom: 4px;
-      color: var(--primary-dark);
-      font-weight: 500;
-    }
-
-    details summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .summary-body {
-      font-size: 0.8rem;
-      color: var(--text-note);
-      margin-top: 4px;
-    }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 0.88rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #ffffff;
-    }
-
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .btn-sample {
-      background: #fef9c3;
-      color: #92400e;
-      border: 1px solid #fcd34d;
-    }
-
-    .output-area {
-      width: 100%;
-      min-height: 260px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
-      font-size: 0.85rem;
-      white-space: pre-wrap;
-      background: #020617;
-      color: #e5e7eb;
-    }
-
-    .status {
-      font-size: 0.8rem;
-      margin-top: 4px;
-      color: var(--text-note);
-    }
-
-    .status.ok {
-      color: #166534;
-    }
-
-    .status.error {
-      color: var(--danger);
-    }
-
-    @media (min-width: 768px) {
-      h1 {
-        font-size: 1.5rem;
-      }
-      .card {
-        padding: 18px 18px 20px;
-        margin-bottom: 16px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圖書資料管理人員 職業介紹</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap');
+:root{--gold:#c9a84c;--deep:#3d2b1f;--sub-bg:rgba(15,8,3,0.82)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a0e07;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Noto Sans TC',sans-serif}
+.stage{position:relative;width:960px;height:540px;max-width:100vw;overflow:hidden;border-radius:10px;box-shadow:0 30px 100px rgba(0,0,0,.9)}
+.scene{position:absolute;inset:0;z-index:2;opacity:0;transition:opacity .7s ease}
+.scene.active{opacity:1}
+.char-strip{position:absolute;right:0;top:0;width:52%;height:100%;z-index:5;pointer-events:none;overflow:hidden}
+.char-img{width:100%;height:100%;object-fit:cover;object-position:left top;opacity:0;transition:opacity .8s}
+.char-img.visible{opacity:1}
+.char-blend{position:absolute;left:0;top:0;width:55%;height:100%;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,transparent 100%);pointer-events:none;z-index:2}
+.top-bar{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(180deg,rgba(0,0,0,.75) 0%,transparent);z-index:20;display:flex;align-items:center;padding:0 22px;gap:12px}
+.badge{background:var(--gold);color:var(--deep);font-family:'Noto Serif TC',serif;font-weight:900;font-size:12px;padding:4px 13px;border-radius:2px;letter-spacing:2px}
+.src{color:rgba(255,255,255,.5);font-size:11px;letter-spacing:1px}
+.ts{position:absolute;top:16px;right:20px;color:rgba(255,255,255,.45);font-size:12px;letter-spacing:2px}
+.tbar{position:absolute;top:0;left:0;height:3px;background:var(--gold);z-index:30;width:0}
+.scene-label{position:absolute;top:64px;left:22px;z-index:22;opacity:0;transform:translateX(-14px);transition:opacity .4s,transform .4s}
+.scene-label.vis{opacity:1;transform:translateX(0)}
+.scene-label-inner{background:rgba(20,10,4,.82);backdrop-filter:blur(10px);border-left:3px solid var(--gold);padding:9px 16px;border-radius:0 6px 6px 0}
+.scene-label-en{color:rgba(255,255,255,.4);font-size:10px;letter-spacing:3px;margin-bottom:3px}
+.scene-label-zh{color:var(--gold);font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;letter-spacing:1px}
+.chips{position:absolute;left:22px;bottom:118px;z-index:22;display:flex;flex-direction:column;gap:7px}
+.chip{background:rgba(20,10,4,.78);backdrop-filter:blur(8px);border:1px solid rgba(201,168,76,.4);color:rgba(255,255,255,.85);font-size:12px;padding:5px 13px;border-radius:20px;letter-spacing:1px;opacity:0;transform:translateY(10px);transition:opacity .35s,transform .35s}
+.chip.vis{opacity:1;transform:translateY(0)}
+.subbox{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:25;max-width:820px;width:92%;text-align:center}
+.subline{display:inline-block;background:var(--sub-bg);backdrop-filter:blur(10px);color:#fff;font-family:'Noto Serif TC',serif;font-size:21px;font-weight:700;line-height:1.6;padding:7px 22px;border-radius:5px;letter-spacing:1px;opacity:0;transform:translateY(8px);transition:opacity .28s,transform .28s;text-shadow:0 1px 5px rgba(0,0,0,.8);border-bottom:2px solid var(--gold)}
+.subline.on{opacity:1;transform:translateY(0)}
+.spkrow{position:absolute;bottom:98px;left:50%;transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .4s;white-space:nowrap}
+.spkrow.vis{opacity:1}
+.spkdot{width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pk 1.2s ease-in-out infinite}
+@keyframes pk{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+.spktxt{color:var(--gold);font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:3px;font-weight:700}
+.wavewrap{display:flex;gap:3px;align-items:flex-end;height:18px;opacity:0;transition:opacity .3s;margin-left:6px}
+.wavewrap.on{opacity:1}
+.wb{width:3px;background:var(--gold);border-radius:2px;animation:wba .65s ease-in-out infinite}
+.wb:nth-child(1){height:6px;animation-delay:0s}.wb:nth-child(2){height:12px;animation-delay:.1s}.wb:nth-child(3){height:18px;animation-delay:.2s}.wb:nth-child(4){height:12px;animation-delay:.3s}.wb:nth-child(5){height:6px;animation-delay:.4s}
+@keyframes wba{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1)}}
+.pdots{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:25;display:flex;gap:9px;opacity:0;transition:opacity .3s}
+.pdots.vis{opacity:1}
+.pd{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);transition:background .3s,transform .3s}
+.pd.on{background:var(--gold);border-color:var(--gold);transform:scale(1.4)}
+.povly{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(15,7,2,.65);backdrop-filter:blur(2px);cursor:pointer;transition:opacity .5s}
+.povly.gone{opacity:0;pointer-events:none}
+.pbtn{width:82px;height:82px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;box-shadow:0 0 0 14px rgba(201,168,76,.18),0 0 0 28px rgba(201,168,76,.09)}
+.pbtn:hover{transform:scale(1.1)}
+.phint{color:rgba(255,255,255,.75);font-family:'Noto Serif TC',serif;font-size:14px;margin-top:22px;letter-spacing:3px}
+.endcard{position:absolute;inset:0;z-index:35;background:linear-gradient(135deg,#1e0f06 0%,#3d2110 50%,#2c1508 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .8s}
+.endcard.vis{opacity:1;pointer-events:all}
+.etitle{font-family:'Noto Serif TC',serif;font-size:34px;font-weight:900;color:var(--gold);letter-spacing:6px;margin-bottom:8px;text-shadow:0 2px 22px rgba(201,168,76,.45)}
+.esub{color:rgba(255,255,255,.45);font-size:12px;letter-spacing:5px;margin-bottom:34px}
+.egrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:560px;width:90%;margin-bottom:32px}
+.eitem{background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.28);border-radius:7px;padding:13px 16px}
+.eititle{color:var(--gold);font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;margin-bottom:5px;font-weight:700}
+.eicontent{color:rgba(255,255,255,.7);font-size:12px;line-height:1.85}
+.rbtn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:4px;padding:10px 30px;cursor:pointer;border-radius:3px;transition:background .2s,color .2s}
+.rbtn:hover{background:var(--gold);color:var(--deep)}
+.ctrls{position:absolute;bottom:6px;right:14px;z-index:30;display:flex;gap:7px;opacity:.45;transition:opacity .2s}
+.ctrls:hover{opacity:1}
+.cbtn{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);font-size:11px;padding:4px 10px;cursor:pointer;border-radius:3px;font-family:'Noto Sans TC',sans-serif;letter-spacing:1px;transition:background .15s}
+.cbtn:hover{background:rgba(201,168,76,.3)}
+.ptcl{position:absolute;border-radius:50%;opacity:0;animation:fup linear infinite}
+@keyframes fup{0%{opacity:0;transform:translateY(0) scale(0)}10%{opacity:.5}85%{opacity:.15}100%{opacity:0;transform:translateY(-150px) scale(0)}}
+</style>
 </head>
 <body>
-  <div class="top-bar">
-    <div class="top-bar-main">
-      <div>
-        <div class="logo-title">spring001｜生涯發展與探索資訊整理</div>
-        <div class="logo-sub">整理你的十類生涯資料，產生貼給 ChatGPT 的完整指令</div>
-      </div>
-      <div class="top-btn-row">
-        <!-- 若未有 Step1，可保留但日後再串接 -->
-        <a href="AICareer.html" class="top-btn">
-          <span>⬅</span> 回到 Step1：啟動 AI 職涯教練
-        </a>
-        <button class="top-btn" type="button" onclick="loadSpringSample()">
-          <span>🧪</span> 載入 Spring 範例
-        </button>
-      </div>
-    </div>
-    <div class="progress-wrap">
-      <div class="progress-label-row">
-        <span>填寫進度</span>
-        <span id="progressCount">0 / 11</span>
-      </div>
-      <div class="progress-bar-outer">
-        <div class="progress-bar-inner" id="progressBar"></div>
-      </div>
-    </div>
+<div class="stage" id="stage">
+<div class="tbar" id="tbar"></div>
+
+<!-- ══ SCENE 0: 自我介紹 – warm library interior ══ -->
+<div class="scene active" id="s0">
+<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
+  <defs>
+    <radialGradient id="g0a" cx="38%" cy="45%" r="55%"><stop offset="0%" stop-color="#ff9800" stop-opacity=".25"/><stop offset="100%" stop-color="#1a0800" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="960" height="540" fill="#2a1408"/>
+  <rect width="960" height="540" fill="url(#g0a)"/>
+  <!-- back wall -->
+  <rect x="0" y="0" width="490" height="480" fill="#1e0e04" opacity=".6"/>
+  <!-- shelf boards -->
+  <g stroke="#6b3a10" stroke-width="2.5" opacity=".6">
+    <line x1="0" y1="85" x2="490" y2="85"/>
+    <line x1="0" y1="175" x2="490" y2="175"/>
+    <line x1="0" y1="265" x2="490" y2="265"/>
+    <line x1="0" y1="355" x2="490" y2="355"/>
+    <line x1="0" y1="445" x2="490" y2="445"/>
+  </g>
+  <!-- vertical dividers -->
+  <g fill="#3a1c08" opacity=".5">
+    <rect x="0" y="0" width="7" height="480"/>
+    <rect x="163" y="0" width="6" height="480"/>
+    <rect x="326" y="0" width="6" height="480"/>
+    <rect x="483" y="0" width="7" height="480"/>
+  </g>
+  <!-- books row 1 -->
+  <g opacity=".9">
+    <rect x="10" y="18" width="17" height="62" rx="1" fill="#c0392b"/>
+    <rect x="29" y="26" width="13" height="54" rx="1" fill="#2980b9"/>
+    <rect x="44" y="14" width="19" height="66" rx="1" fill="#27ae60"/>
+    <rect x="65" y="22" width="15" height="58" rx="1" fill="#8e44ad"/>
+    <rect x="82" y="16" width="21" height="64" rx="1" fill="#e67e22"/>
+    <rect x="105" y="26" width="13" height="54" rx="1" fill="#16a085"/>
+    <rect x="120" y="18" width="18" height="62" rx="1" fill="#d35400"/>
+    <rect x="140" y="24" width="15" height="56" rx="1" fill="#95a5a6"/>
+    <rect x="170" y="16" width="19" height="64" rx="1" fill="#1abc9c"/>
+    <rect x="191" y="24" width="14" height="56" rx="1" fill="#9b59b6"/>
+    <rect x="207" y="18" width="18" height="62" rx="1" fill="#e74c3c"/>
+    <rect x="227" y="14" width="21" height="66" rx="1" fill="#3498db"/>
+    <rect x="250" y="22" width="15" height="58" rx="1" fill="#f39c12"/>
+    <rect x="267" y="16" width="19" height="64" rx="1" fill="#2ecc71"/>
+    <rect x="288" y="26" width="13" height="54" rx="1" fill="#e91e63"/>
+    <rect x="303" y="18" width="17" height="62" rx="1" fill="#00bcd4"/>
+    <rect x="333" y="22" width="19" height="58" rx="1" fill="#ff5722"/>
+    <rect x="354" y="14" width="15" height="66" rx="1" fill="#607d8b"/>
+    <rect x="371" y="20" width="21" height="60" rx="1" fill="#9c27b0"/>
+    <rect x="394" y="16" width="17" height="64" rx="1" fill="#4caf50"/>
+    <rect x="413" y="26" width="13" height="54" rx="1" fill="#ff9800"/>
+    <rect x="428" y="18" width="19" height="62" rx="1" fill="#2196f3"/>
+    <rect x="449" y="22" width="15" height="58" rx="1" fill="#f44336"/>
+    <rect x="466" y="16" width="18" height="64" rx="1" fill="#795548"/>
+  </g>
+  <!-- books row 2 -->
+  <g opacity=".8">
+    <rect x="10" y="106" width="18" height="62" rx="1" fill="#1565c0"/>
+    <rect x="30" y="114" width="14" height="54" rx="1" fill="#ad1457"/>
+    <rect x="46" y="102" width="21" height="66" rx="1" fill="#558b2f"/>
+    <rect x="69" y="110" width="16" height="58" rx="1" fill="#6a1f5e"/>
+    <rect x="87" y="104" width="19" height="64" rx="1" fill="#bf360c"/>
+    <rect x="108" y="116" width="13" height="52" rx="1" fill="#00838f"/>
+    <rect x="123" y="106" width="21" height="62" rx="1" fill="#f57f17"/>
+    <rect x="146" y="112" width="15" height="56" rx="1" fill="#4e342e"/>
+    <rect x="172" y="104" width="20" height="64" rx="1" fill="#1b5e20"/>
+    <rect x="194" y="114" width="14" height="54" rx="1" fill="#4a148c"/>
+    <rect x="210" y="106" width="18" height="62" rx="1" fill="#c62828"/>
+    <rect x="230" y="102" width="22" height="66" rx="1" fill="#006064"/>
+    <rect x="254" y="114" width="13" height="54" rx="1" fill="#e65100"/>
+    <rect x="269" y="108" width="16" height="60" rx="1" fill="#880e4f"/>
+    <rect x="287" y="102" width="20" height="66" rx="1" fill="#0d47a1"/>
+    <rect x="309" y="114" width="15" height="54" rx="1" fill="#33691e"/>
+    <rect x="335" y="106" width="19" height="62" rx="1" fill="#b71c1c"/>
+    <rect x="356" y="112" width="14" height="56" rx="1" fill="#1a237e"/>
+    <rect x="372" y="104" width="21" height="64" rx="1" fill="#004d40"/>
+    <rect x="395" y="110" width="17" height="58" rx="1" fill="#f57f17"/>
+    <rect x="414" y="106" width="19" height="62" rx="1" fill="#880e4f"/>
+    <rect x="435" y="114" width="14" height="54" rx="1" fill="#37474f"/>
+    <rect x="451" y="104" width="18" height="64" rx="1" fill="#6d4c41"/>
+    <rect x="471" y="110" width="13" height="58" rx="1" fill="#9e9d24"/>
+  </g>
+  <!-- desk lamp -->
+  <rect x="148" y="308" width="6" height="88" fill="#8b6020"/>
+  <ellipse cx="151" cy="303" rx="40" ry="20" fill="#c8960a" opacity=".75"/>
+  <ellipse cx="151" cy="402" rx="32" ry="9" fill="#5a3808" opacity=".9"/>
+  <ellipse cx="151" cy="360" rx="100" ry="55" fill="rgba(255,200,80,.1)"/>
+  <!-- info sign -->
+  <rect x="28" y="278" width="130" height="30" rx="3" fill="#5a3210" opacity=".9"/>
+  <text x="93" y="298" fill="#f5c842" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle" letter-spacing="2">INFORMATION</text>
+  <!-- book return -->
+  <rect x="28" y="358" width="120" height="72" rx="4" fill="#3a1e08" stroke="#7a5018" stroke-width="1.5"/>
+  <text x="88" y="380" fill="#c8960a" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle" letter-spacing="1">BOOK RETURN</text>
+  <!-- owl mascot -->
+  <circle cx="255" cy="280" r="18" fill="#7a4010"/>
+  <circle cx="248" cy="274" r="7" fill="#fff" opacity=".9"/>
+  <circle cx="262" cy="274" r="7" fill="#fff" opacity=".9"/>
+  <circle cx="248" cy="275" r="3.5" fill="#1a0800"/>
+  <circle cx="262" cy="275" r="3.5" fill="#1a0800"/>
+  <polygon points="255,284 250,292 260,292" fill="#c8960a"/>
+  <!-- floor -->
+  <rect x="0" y="480" width="960" height="60" fill="rgba(8,4,1,.7)"/>
+</svg>
+<div class="ptcl" style="left:8%;top:75%;width:5px;height:5px;background:#c9a84c;animation-duration:5s;animation-delay:0s"></div>
+<div class="ptcl" style="left:18%;top:80%;width:3px;height:3px;background:#e8b860;animation-duration:6.5s;animation-delay:1s"></div>
+</div>
+
+<!-- ══ SCENE 1: 採訪、分類與編目 – desk + cataloging ══ -->
+<div class="scene" id="s1">
+<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
+  <defs>
+    <radialGradient id="g1a" cx="32%" cy="60%" r="55%"><stop offset="0%" stop-color="#ff9800" stop-opacity=".22"/><stop offset="100%" stop-color="#1a0800" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="960" height="540" fill="#1e0e04"/>
+  <rect width="960" height="540" fill="url(#g1a)"/>
+  <!-- wooden desk -->
+  <rect x="0" y="330" width="490" height="210" fill="#4a2508"/>
+  <rect x="0" y="326" width="490" height="9" fill="#6b3a12"/>
+  <line x1="0" y1="360" x2="490" y2="360" stroke="#3a1c06" stroke-width="1" opacity=".5"/>
+  <!-- stacked books on desk -->
+  <rect x="28" y="262" width="115" height="68" rx="3" fill="#c0392b"/>
+  <rect x="28" y="258" width="115" height="9" rx="2" fill="#a93226"/>
+  <rect x="33" y="244" width="108" height="20" rx="3" fill="#2980b9"/>
+  <rect x="33" y="240" width="108" height="9" rx="2" fill="#2471a3"/>
+  <rect x="38" y="228" width="102" height="17" rx="3" fill="#27ae60"/>
+  <rect x="38" y="224" width="102" height="9" rx="2" fill="#1e8449"/>
+  <!-- catalog card tray -->
+  <rect x="168" y="266" width="165" height="66" rx="4" fill="#7a5018" stroke="#a07028" stroke-width="1.5"/>
+  <rect x="174" y="272" width="153" height="54" rx="2" fill="#5a3808"/>
+  <!-- catalog cards -->
+  <rect x="178" y="276" width="64" height="44" rx="2" fill="#fdf6ee" opacity=".93"/>
+  <text x="182" y="284" fill="#3a1c06" font-size="7.5" font-family="sans-serif" font-weight="bold">分類號：020.1</text>
+  <line x1="182" y1="288" x2="238" y2="288" stroke="#888" stroke-width=".8"/>
+  <line x1="182" y1="295" x2="238" y2="295" stroke="#aaa" stroke-width=".8"/>
+  <line x1="182" y1="302" x2="232" y2="302" stroke="#aaa" stroke-width=".8"/>
+  <line x1="182" y1="309" x2="228" y2="309" stroke="#aaa" stroke-width=".8"/>
+  <rect x="250" y="276" width="64" height="44" rx="2" fill="#fdf6ee" opacity=".85"/>
+  <text x="254" y="284" fill="#3a1c06" font-size="7.5" font-family="sans-serif" font-weight="bold">分類號：158.3</text>
+  <line x1="254" y1="288" x2="310" y2="288" stroke="#888" stroke-width=".8"/>
+  <line x1="254" y1="295" x2="310" y2="295" stroke="#aaa" stroke-width=".8"/>
+  <!-- barcode scanner -->
+  <rect x="48" y="306" width="84" height="19" rx="3" fill="#1a1a1a"/>
+  <g fill="#e74c3c">
+    <rect x="53" y="309" width="3" height="13"/>
+    <rect x="58" y="309" width="2" height="13"/>
+    <rect x="62" y="309" width="4" height="13"/>
+    <rect x="68" y="309" width="2" height="13"/>
+    <rect x="73" y="309" width="3" height="13"/>
+    <rect x="79" y="309" width="2" height="13"/>
+    <rect x="84" y="309" width="4" height="13"/>
+    <rect x="90" y="309" width="2" height="13"/>
+    <rect x="95" y="309" width="3" height="13"/>
+    <rect x="101" y="309" width="2" height="13"/>
+    <rect x="106" y="309" width="4" height="13"/>
+    <rect x="112" y="309" width="2" height="13"/>
+    <rect x="117" y="309" width="3" height="13"/>
+    <rect x="122" y="309" width="2" height="13"/>
+  </g>
+  <line x1="53" y1="315" x2="126" y2="315" stroke="rgba(255,80,80,.75)" stroke-width="1.5">
+    <animate attributeName="y1" values="309;322;309" dur="1.2s" repeatCount="indefinite"/>
+    <animate attributeName="y2" values="309;322;309" dur="1.2s" repeatCount="indefinite"/>
+  </line>
+  <!-- monitor with MARC -->
+  <rect x="338" y="200" width="140" height="122" rx="6" fill="#111" stroke="#555" stroke-width="2"/>
+  <rect x="344" y="206" width="128" height="104" rx="3" fill="#0a1628"/>
+  <text x="352" y="222" fill="#4fc3f7" font-size="9" font-family="monospace">MARC 21 編目系統</text>
+  <text x="348" y="235" fill="#80cbc4" font-size="8" font-family="monospace">020 $a 978-626-xxx</text>
+  <text x="348" y="247" fill="#80cbc4" font-size="8" font-family="monospace">100 $a 作者姓名</text>
+  <text x="348" y="259" fill="#80cbc4" font-size="8" font-family="monospace">245 $a 書名正題</text>
+  <text x="348" y="271" fill="#80cbc4" font-size="8" font-family="monospace">650 $a 圖書館學</text>
+  <text x="348" y="283" fill="#a5d6a7" font-size="8" font-family="monospace">✓ 編目完成</text>
+  <rect x="348" y="291" width="5" height="8" fill="#4fc3f7" opacity=".8">
+    <animate attributeName="opacity" values=".8;0;.8" dur="1s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="397" y="322" width="10" height="20" fill="#333"/>
+  <rect x="377" y="340" width="50" height="6" rx="2" fill="#444"/>
+  <!-- DDC chart on wall -->
+  <rect x="0" y="55" width="205" height="242" fill="rgba(18,8,2,.68)"/>
+  <text x="102" y="78" fill="#c9a84c" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle" letter-spacing="2">中國圖書分類法</text>
+  <g fill="rgba(255,255,255,.6)" font-size="9.5" font-family="sans-serif">
+    <text x="14" y="97">000 總類</text>
+    <text x="14" y="113">100 哲學類</text>
+    <text x="14" y="129">200 宗教類</text>
+    <text x="14" y="145">300 科學類</text>
+    <text x="14" y="161">400 應用科學</text>
+    <text x="14" y="177">500 社會科學</text>
+    <text x="14" y="193">600 中國史地</text>
+    <text x="14" y="209">700 世界史地</text>
+    <text x="14" y="225">800 語言文學</text>
+    <text x="14" y="241">900 藝術</text>
+  </g>
+  <line x1="10" y1="85" x2="195" y2="85" stroke="rgba(201,168,76,.4)" stroke-width="1"/>
+  <rect x="8" y="133" width="192" height="16" rx="2" fill="rgba(201,168,76,.15)"/>
+  <text x="14" y="145" fill="#f5c842" font-size="9.5" font-family="sans-serif" font-weight="bold">300 科學類 ◀</text>
+  <!-- floor -->
+  <rect x="0" y="480" width="960" height="60" fill="rgba(8,4,1,.7)"/>
+</svg>
+</div>
+
+<!-- ══ SCENE 2: 書在對的位置 – tall shelves spotlight ══ -->
+<div class="scene" id="s2">
+<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
+  <defs>
+    <radialGradient id="spot2" cx="22%" cy="44%" r="40%"><stop offset="0%" stop-color="#ffe090" stop-opacity=".45"/><stop offset="100%" stop-color="#0e0804" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a2808"/><stop offset="100%" stop-color="#1e0c04"/></linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#0e0804"/>
+  <rect width="960" height="540" fill="url(#spot2)"/>
+  <rect x="0" y="0" width="448" height="540" fill="url(#shG)" opacity=".65"/>
+  <!-- shelf boards -->
+  <g fill="#3a1c08" opacity=".9">
+    <rect x="0" y="86" width="448" height="10"/>
+    <rect x="0" y="176" width="448" height="10"/>
+    <rect x="0" y="266" width="448" height="10"/>
+    <rect x="0" y="356" width="448" height="10"/>
+    <rect x="0" y="446" width="448" height="10"/>
+  </g>
+  <g fill="#3a1c08" opacity=".65">
+    <rect x="0" y="0" width="8" height="540"/>
+    <rect x="150" y="0" width="7" height="540"/>
+    <rect x="300" y="0" width="7" height="540"/>
+    <rect x="440" y="0" width="8" height="540"/>
+  </g>
+  <!-- many book spines row 1 -->
+  <g opacity=".88">
+    <rect x="12" y="16" width="16" height="65" rx="1" fill="#c0392b"/>
+    <rect x="30" y="24" width="12" height="57" rx="1" fill="#2980b9"/>
+    <rect x="44" y="12" width="19" height="69" rx="1" fill="#27ae60"/>
+    <rect x="65" y="20" width="14" height="61" rx="1" fill="#8e44ad"/>
+    <rect x="81" y="14" width="21" height="67" rx="1" fill="#e67e22"/>
+    <rect x="104" y="24" width="12" height="57" rx="1" fill="#16a085"/>
+    <rect x="118" y="16" width="17" height="65" rx="1" fill="#d35400"/>
+    <rect x="137" y="22" width="14" height="59" rx="1" fill="#607d8b"/>
+    <rect x="158" y="14" width="20" height="67" rx="1" fill="#1abc9c"/>
+    <rect x="180" y="22" width="13" height="59" rx="1" fill="#9b59b6"/>
+    <rect x="195" y="16" width="18" height="65" rx="1" fill="#e74c3c"/>
+    <rect x="215" y="12" width="21" height="69" rx="1" fill="#3498db"/>
+    <rect x="238" y="20" width="14" height="61" rx="1" fill="#f39c12"/>
+    <rect x="254" y="14" width="19" height="67" rx="1" fill="#2ecc71"/>
+    <rect x="275" y="24" width="12" height="57" rx="1" fill="#e91e63"/>
+    <rect x="289" y="16" width="17" height="65" rx="1" fill="#00bcd4"/>
+    <rect x="308" y="20" width="19" height="61" rx="1" fill="#ff5722"/>
+    <rect x="329" y="12" width="15" height="69" rx="1" fill="#607d8b"/>
+    <rect x="346" y="18" width="21" height="63" rx="1" fill="#9c27b0"/>
+    <rect x="369" y="14" width="17" height="67" rx="1" fill="#4caf50"/>
+    <rect x="388" y="24" width="13" height="57" rx="1" fill="#ff9800"/>
+    <rect x="403" y="16" width="19" height="65" rx="1" fill="#2196f3"/>
+    <rect x="424" y="20" width="15" height="61" rx="1" fill="#f44336"/>
+  </g>
+  <!-- row 2 -->
+  <g opacity=".78">
+    <rect x="12" y="108" width="17" height="61" rx="1" fill="#1565c0"/>
+    <rect x="31" y="116" width="13" height="53" rx="1" fill="#ad1457"/>
+    <rect x="46" y="104" width="21" height="65" rx="1" fill="#558b2f"/>
+    <rect x="69" y="112" width="16" height="57" rx="1" fill="#6a1f5e"/>
+    <rect x="87" y="106" width="19" height="63" rx="1" fill="#bf360c"/>
+    <rect x="108" y="118" width="13" height="51" rx="1" fill="#00838f"/>
+    <rect x="123" y="108" width="21" height="61" rx="1" fill="#f57f17"/>
+    <rect x="146" y="114" width="15" height="55" rx="1" fill="#4e342e"/>
+    <rect x="160" y="106" width="20" height="63" rx="1" fill="#1b5e20"/>
+    <rect x="182" y="116" width="14" height="53" rx="1" fill="#4a148c"/>
+    <rect x="198" y="108" width="18" height="61" rx="1" fill="#c62828"/>
+    <rect x="218" y="104" width="22" height="65" rx="1" fill="#006064"/>
+    <rect x="242" y="116" width="13" height="53" rx="1" fill="#e65100"/>
+    <rect x="257" y="110" width="16" height="59" rx="1" fill="#880e4f"/>
+    <rect x="275" y="104" width="20" height="65" rx="1" fill="#0d47a1"/>
+    <rect x="297" y="116" width="15" height="53" rx="1" fill="#33691e"/>
+    <rect x="314" y="108" width="19" height="61" rx="1" fill="#b71c1c"/>
+    <rect x="335" y="114" width="14" height="55" rx="1" fill="#1a237e"/>
+    <rect x="351" y="106" width="21" height="63" rx="1" fill="#004d40"/>
+    <rect x="374" y="112" width="17" height="57" rx="1" fill="#f57f17"/>
+    <rect x="393" y="108" width="19" height="61" rx="1" fill="#880e4f"/>
+    <rect x="414" y="116" width="14" height="53" rx="1" fill="#37474f"/>
+  </g>
+  <!-- spotlight cone -->
+  <polygon points="80,0 30,0 0,200 110,200" fill="rgba(255,220,120,.07)"/>
+  <!-- highlighted golden book -->
+  <rect x="62" y="196" width="21" height="64" rx="2" fill="#f5c842"/>
+  <text x="72" y="232" fill="#3a1c06" font-size="8" font-family="sans-serif" font-weight="bold" transform="rotate(-90,72,232)" text-anchor="middle">精選館藏</text>
+  <ellipse cx="72" cy="228" rx="30" ry="46" fill="rgba(245,200,66,.2)"/>
+  <!-- call number label -->
+  <rect x="57" y="260" width="30" height="14" rx="2" fill="white" opacity=".92"/>
+  <text x="72" y="271" fill="#1a0800" font-size="7.5" font-family="sans-serif" text-anchor="middle" font-weight="bold">020.2</text>
+  <!-- info bubble -->
+  <rect x="108" y="210" width="145" height="40" rx="5" fill="rgba(10,6,2,.82)" stroke="rgba(201,168,76,.5)" stroke-width="1"/>
+  <text x="118" y="226" fill="#c9a84c" font-size="11.5" font-family="sans-serif" font-weight="bold">書目索引完整</text>
+  <text x="118" y="242" fill="rgba(255,255,255,.6)" font-size="9.5" font-family="sans-serif">分類號・索書號・館藏位置</text>
+  <rect x="0" y="490" width="960" height="50" fill="rgba(5,3,1,.7)"/>
+</svg>
+</div>
+
+<!-- ══ SCENE 3: 館藏管理 – ILS screen, stats ══ -->
+<div class="scene" id="s3">
+<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
+  <defs>
+    <radialGradient id="g3a" cx="28%" cy="48%" r="52%"><stop offset="0%" stop-color="#1565c0" stop-opacity=".38"/><stop offset="100%" stop-color="#0a0e14" stop-opacity="0"/></radialGradient>
+    <linearGradient id="sBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d1a2e"/><stop offset="100%" stop-color="#061020"/></linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#0a0e14"/>
+  <rect width="960" height="540" fill="url(#g3a)"/>
+  <!-- main ILS terminal -->
+  <rect x="18" y="48" width="418" height="315" rx="8" fill="#0f1520" stroke="#1e3a5f" stroke-width="2"/>
+  <rect x="24" y="54" width="406" height="303" rx="5" fill="url(#sBg)"/>
+  <!-- system header -->
+  <rect x="24" y="54" width="406" height="28" rx="5" fill="#0d2a4a"/>
+  <text x="40" y="73" fill="#4fc3f7" font-size="11" font-family="monospace" font-weight="bold">📚 圖書館自動化系統 (ILS)</text>
+  <circle cx="404" cy="68" r="5" fill="#e74c3c" opacity=".7"/>
+  <circle cx="392" cy="68" r="5" fill="#f39c12" opacity=".7"/>
+  <circle cx="380" cy="68" r="5" fill="#27ae60" opacity=".7"/>
+  <!-- column headers -->
+  <text x="34" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">索書號</text>
+  <text x="108" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">書名</text>
+  <text x="230" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">狀態</text>
+  <text x="308" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">借閱者</text>
+  <text x="376" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">到期日</text>
+  <line x1="28" y1="106" x2="424" y2="106" stroke="#1e3a5f" stroke-width="1"/>
+  <!-- rows -->
+  <g font-size="9.5" font-family="monospace">
+    <rect x="24" y="108" width="406" height="14" fill="rgba(69,160,229,.08)"/>
+    <text x="34" y="119" fill="#4fc3f7">020.1</text>
+    <text x="108" y="119" fill="#80cbc4">圖書館學概論</text>
+    <text x="230" y="119" fill="#66bb6a">● 在架</text>
+
+    <text x="34" y="135" fill="#4fc3f7">158.3</text>
+    <text x="108" y="135" fill="#80cbc4">資訊素養教育</text>
+    <text x="230" y="135" fill="#ef5350">● 借出</text>
+    <text x="308" y="135" fill="#90a4ae">王○○</text>
+    <text x="376" y="135" fill="#ef5350">03/15</text>
+
+    <rect x="24" y="138" width="406" height="14" fill="rgba(69,160,229,.06)"/>
+    <text x="34" y="149" fill="#4fc3f7">370.1</text>
+    <text x="108" y="149" fill="#80cbc4">教育心理學</text>
+    <text x="230" y="149" fill="#66bb6a">● 在架</text>
+
+    <text x="34" y="165" fill="#4fc3f7">020.2</text>
+    <text x="108" y="165" fill="#80cbc4">編目實務手冊</text>
+    <text x="230" y="165" fill="#ffa726">● 預約</text>
+    <text x="308" y="165" fill="#90a4ae">李○○</text>
+
+    <rect x="24" y="168" width="406" height="14" fill="rgba(69,160,229,.06)"/>
+    <text x="34" y="179" fill="#4fc3f7">540.1</text>
+    <text x="108" y="179" fill="#80cbc4">化學導論</text>
+    <text x="230" y="179" fill="#66bb6a">● 在架</text>
+
+    <text x="34" y="195" fill="#4fc3f7">020.5</text>
+    <text x="108" y="195" fill="#80cbc4">數位圖書館</text>
+    <text x="230" y="195" fill="#ef5350">● 借出</text>
+    <text x="308" y="195" fill="#90a4ae">陳○○</text>
+    <text x="376" y="195" fill="#ef5350">03/20</text>
+
+    <rect x="24" y="198" width="406" height="14" fill="rgba(69,160,229,.06)"/>
+    <text x="34" y="209" fill="#4fc3f7">800.1</text>
+    <text x="108" y="209" fill="#80cbc4">現代文學選</text>
+    <text x="230" y="209" fill="#66bb6a">● 在架</text>
+
+    <text x="34" y="225" fill="#4fc3f7">310.5</text>
+    <text x="108" y="225" fill="#80cbc4">統計學原理</text>
+    <text x="230" y="225" fill="#ffa726">● 預約</text>
+    <text x="308" y="225" fill="#90a4ae">張○○</text>
+  </g>
+  <rect x="34" y="336" width="5" height="9" fill="#4fc3f7">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+  </rect>
+  <!-- stats panel -->
+  <rect x="240" y="386" width="195" height="118" rx="6" fill="rgba(10,18,30,.9)" stroke="#1e3a5f" stroke-width="1.5"/>
+  <text x="255" y="406" fill="#4fc3f7" font-size="11" font-family="sans-serif" font-weight="bold" letter-spacing="1">館藏統計</text>
+  <g font-size="10.5" font-family="sans-serif">
+    <text x="255" y="426" fill="rgba(255,255,255,.6)">總館藏量</text>
+    <text x="427" y="426" fill="#66bb6a" text-anchor="end">45,280 冊</text>
+    <text x="255" y="444" fill="rgba(255,255,255,.6)">今日借出</text>
+    <text x="427" y="444" fill="#ffa726" text-anchor="end">127 冊</text>
+    <text x="255" y="462" fill="rgba(255,255,255,.6)">逾期未還</text>
+    <text x="427" y="462" fill="#ef5350" text-anchor="end">23 冊</text>
+    <text x="255" y="480" fill="rgba(255,255,255,.6)">採購中</text>
+    <text x="427" y="480" fill="#4fc3f7" text-anchor="end">56 冊</text>
+  </g>
+  <!-- donut chart -->
+  <circle cx="100" cy="440" r="60" fill="none" stroke="#1e3a5f" stroke-width="1"/>
+  <circle cx="100" cy="440" r="60" fill="none" stroke="#66bb6a" stroke-width="13" stroke-dasharray="226 151" stroke-dashoffset="0" transform="rotate(-90 100 440)"/>
+  <circle cx="100" cy="440" r="60" fill="none" stroke="#ef5350" stroke-width="13" stroke-dasharray="60 317" stroke-dashoffset="-226" transform="rotate(-90 100 440)"/>
+  <circle cx="100" cy="440" r="60" fill="none" stroke="#ffa726" stroke-width="13" stroke-dasharray="46 331" stroke-dashoffset="-286" transform="rotate(-90 100 440)"/>
+  <circle cx="100" cy="440" r="60" fill="none" stroke="#4fc3f7" stroke-width="13" stroke-dasharray="45 332" stroke-dashoffset="-332" transform="rotate(-90 100 440)"/>
+  <text x="100" y="436" fill="white" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="bold">館藏</text>
+  <text x="100" y="452" fill="white" font-size="9" font-family="sans-serif" text-anchor="middle">分布</text>
+  <g font-size="9" font-family="sans-serif">
+    <rect x="24" y="502" width="8" height="8" rx="1" fill="#66bb6a"/><text x="36" y="511" fill="rgba(255,255,255,.55)">在架</text>
+    <rect x="78" y="502" width="8" height="8" rx="1" fill="#ef5350"/><text x="90" y="511" fill="rgba(255,255,255,.55)">借出</text>
+    <rect x="132" y="502" width="8" height="8" rx="1" fill="#ffa726"/><text x="144" y="511" fill="rgba(255,255,255,.55)">預約</text>
+    <rect x="186" y="502" width="8" height="8" rx="1" fill="#4fc3f7"/><text x="198" y="511" fill="rgba(255,255,255,.55)">採購</text>
+  </g>
+</svg>
+</div>
+
+<!-- ══ SCENE 4: 讀者諮詢 – reference desk consultation ══ -->
+<div class="scene" id="s4">
+<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
+  <defs>
+    <radialGradient id="g4a" cx="30%" cy="52%" r="52%"><stop offset="0%" stop-color="#2e7d32" stop-opacity=".32"/><stop offset="100%" stop-color="#0a1208" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="960" height="540" fill="#0a1208"/>
+  <rect width="960" height="540" fill="url(#g4a)"/>
+  <!-- reference books on back wall -->
+  <g opacity=".78">
+    <rect x="8"  y="40" width="17" height="270" rx="1" fill="#1b5e20"/>
+    <rect x="27" y="60" width="14" height="250" rx="1" fill="#4a148c"/>
+    <rect x="43" y="32" width="20" height="275" rx="1" fill="#b71c1c"/>
+    <rect x="65" y="52" width="15" height="260" rx="1" fill="#e65100"/>
+    <rect x="82" y="38" width="21" height="270" rx="1" fill="#006064"/>
+    <rect x="105" y="58" width="13" height="250" rx="1" fill="#4e342e"/>
+    <rect x="120" y="44" width="18" height="265" rx="1" fill="#1565c0"/>
+    <rect x="140" y="52" width="16" height="255" rx="1" fill="#f57f17"/>
+    <rect x="158" y="36" width="21" height="272" rx="1" fill="#880e4f"/>
+    <rect x="181" y="56" width="14" height="252" rx="1" fill="#2e7d32"/>
+    <rect x="197" y="42" width="19" height="266" rx="1" fill="#37474f"/>
+    <rect x="218" y="50" width="17" height="258" rx="1" fill="#c62828"/>
+    <rect x="237" y="38" width="22" height="270" rx="1" fill="#0d47a1"/>
+    <rect x="261" y="56" width="15" height="252" rx="1" fill="#33691e"/>
+  </g>
+  <!-- shelf board -->
+  <rect x="0" y="312" width="290" height="8" fill="#2e4a24" opacity=".8"/>
+  <!-- reference desk surface -->
+  <rect x="0" y="332" width="490" height="208" fill="#1e3a18"/>
+  <rect x="0" y="328" width="490" height="9" fill="#2a5020"/>
+  <!-- OPAC terminal on desk -->
+  <rect x="278" y="198" width="168" height="126" rx="6" fill="#0d1a0a" stroke="#2e7d32" stroke-width="1.5"/>
+  <rect x="284" y="204" width="156" height="113" rx="4" fill="#071208"/>
+  <rect x="284" y="204" width="156" height="24" rx="4" fill="#0a2010"/>
+  <text x="290" y="220" fill="#4caf50" font-size="10" font-family="sans-serif" font-weight="bold">📖 館藏查詢系統</text>
+  <rect x="287" y="232" width="136" height="15" rx="3" fill="#1b3a1a" stroke="#2e7d32" stroke-width="1"/>
+  <text x="291" y="243" fill="rgba(255,255,255,.5)" font-size="8.5" font-family="sans-serif">搜尋：氣候變遷</text>
+  <rect x="425" y="232" width="19" height="15" rx="3" fill="#2e7d32"/>
+  <text x="435" y="243" fill="white" font-size="9" font-family="sans-serif" text-anchor="middle">→</text>
+  <g font-size="8.5" font-family="sans-serif">
+    <text x="290" y="263" fill="#a5d6a7">1. 氣候變遷與永續發展</text>
+    <text x="290" y="276" fill="#81c784">2. 全球暖化的科學</text>
+    <text x="290" y="289" fill="#81c784">3. 碳中和策略指南</text>
+    <text x="290" y="302" fill="#66bb6a">找到 38 筆結果</text>
+    <text x="290" y="315" fill="rgba(255,255,255,.35)">--</text>
+  </g>
+  <!-- reader silhouette -->
+  <ellipse cx="128" cy="258" rx="32" ry="35" fill="#1a2e14" opacity=".85"/>
+  <rect x="96" y="286" width="64" height="65" rx="5" fill="#152610" opacity=".8"/>
+  <!-- thought bubble -->
+  <circle cx="172" cy="224" r="5" fill="rgba(255,255,255,.22)"/>
+  <circle cx="188" cy="212" r="8" fill="rgba(255,255,255,.22)"/>
+  <rect x="197" y="176" width="128" height="48" rx="8" fill="rgba(20,40,18,.88)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+  <text x="206" y="196" fill="rgba(255,255,255,.7)" font-size="10" font-family="sans-serif">我需要關於</text>
+  <text x="206" y="210" fill="#a5d6a7" font-size="10" font-family="sans-serif" font-weight="bold">「氣候變遷」的資料</text>
+  <text x="206" y="223" fill="rgba(255,255,255,.55)" font-size="9" font-family="sans-serif">怎麼找呢？</text>
+  <!-- librarian speech bubble -->
+  <rect x="315" y="142" width="120" height="55" rx="8" fill="rgba(16,48,16,.92)" stroke="#4caf50" stroke-width="1"/>
+  <polygon points="375,197 362,214 388,197" fill="rgba(16,48,16,.92)" stroke="#4caf50" stroke-width="1"/>
+  <text x="322" y="162" fill="#a5d6a7" font-size="9.5" font-family="sans-serif">為您找到相關資料！</text>
+  <text x="322" y="177" fill="rgba(255,255,255,.72)" font-size="8.5" font-family="sans-serif">可參考 363.7 類，</text>
+  <text x="322" y="190" fill="rgba(255,255,255,.72)" font-size="8.5" font-family="sans-serif">及電子資料庫。</text>
+  <!-- floor -->
+  <rect x="0" y="490" width="960" height="50" fill="rgba(3,8,3,.7)"/>
+</svg>
+</div>
+
+<!-- ══ SCENE 5: 招募 Call to Action ══ -->
+<div class="scene" id="s5">
+<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
+  <defs>
+    <radialGradient id="g5a" cx="32%" cy="50%" r="62%"><stop offset="0%" stop-color="#ff9800" stop-opacity=".32"/><stop offset="100%" stop-color="#1a0800" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="960" height="540" fill="#1a0800"/>
+  <rect width="960" height="540" fill="url(#g5a)"/>
+  <!-- large open book silhouette -->
+  <g transform="translate(18,95)" opacity=".2">
+    <path d="M8,18 Q8,8 18,8 L195,8 Q215,8 215,23 L215,245 Q215,260 195,260 L18,260 Q8,260 8,250 Z" fill="#6b3810"/>
+    <path d="M215,23 L415,8 Q425,8 425,18 L425,250 Q425,260 415,260 L215,245 Z" fill="#5a2e08"/>
+    <g stroke="#a07030" stroke-width="1.5" opacity=".6">
+      <line x1="28" y1="48" x2="195" y2="48"/>
+      <line x1="28" y1="68" x2="195" y2="68"/>
+      <line x1="28" y1="88" x2="195" y2="88"/>
+      <line x1="28" y1="108" x2="195" y2="108"/>
+      <line x1="28" y1="128" x2="175" y2="128"/>
+      <line x1="235" y1="48" x2="410" y2="48"/>
+      <line x1="235" y1="68" x2="410" y2="68"/>
+      <line x1="235" y1="88" x2="410" y2="88"/>
+    </g>
+  </g>
+  <!-- education card -->
+  <rect x="18" y="72" width="208" height="118" rx="8" fill="rgba(28,12,2,.9)" stroke="rgba(201,168,76,.55)" stroke-width="1.5"/>
+  <text x="32" y="96" fill="#c9a84c" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">🎓 所需學歷</text>
+  <line x1="26" y1="101" x2="218" y2="101" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+  <g font-size="10.5" font-family="sans-serif" fill="rgba(255,255,255,.72)">
+    <text x="32" y="118">・圖書資訊學系</text>
+    <text x="32" y="135">・資訊管理相關科系</text>
+    <text x="32" y="152">・圖書館技術人員培訓</text>
+    <text x="32" y="169">・相關碩士學位佳</text>
+  </g>
+  <!-- workplace card -->
+  <rect x="18" y="208" width="208" height="138" rx="8" fill="rgba(28,12,2,.9)" stroke="rgba(201,168,76,.55)" stroke-width="1.5"/>
+  <text x="32" y="232" fill="#c9a84c" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">💼 工作場所</text>
+  <line x1="26" y1="237" x2="218" y2="237" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+  <g font-size="10.5" font-family="sans-serif" fill="rgba(255,255,255,.72)">
+    <text x="32" y="254">・公共圖書館</text>
+    <text x="32" y="271">・大學院校圖書館</text>
+    <text x="32" y="288">・中小學圖書館</text>
+    <text x="32" y="305">・企業資料中心</text>
+    <text x="32" y="322">・政府檔案機構</text>
+  </g>
+  <!-- invitation banner -->
+  <rect x="18" y="364" width="430" height="96" rx="8" fill="rgba(14,6,1,.85)" stroke="rgba(201,168,76,.65)" stroke-width="2"/>
+  <text x="38" y="394" fill="#c9a84c" font-family="'Noto Serif TC',serif" font-size="22" font-weight="900" letter-spacing="2">歡迎加入我們的行列！</text>
+  <text x="38" y="418" fill="rgba(255,255,255,.62)" font-family="sans-serif" font-size="12.5" letter-spacing="1">連結知識與人，推動終身學習</text>
+  <text x="38" y="436" fill="rgba(255,255,255,.4)" font-family="sans-serif" font-size="11" letter-spacing="1">Knowledge · Service · Community</text>
+  <!-- sparkles -->
+  <g fill="#c9a84c">
+    <circle cx="244" cy="58" r="3" opacity=".6"><animate attributeName="opacity" values=".2;.9;.2" dur="1.8s" repeatCount="indefinite"/></circle>
+    <circle cx="22" cy="355" r="2.5" opacity=".5"><animate attributeName="opacity" values=".1;.8;.1" dur="2.2s" repeatCount="indefinite" begin=".4s"/></circle>
+    <circle cx="18" cy="205" r="2" opacity=".5"><animate attributeName="opacity" values=".15;.85;.15" dur="2.6s" repeatCount="indefinite" begin=".9s"/></circle>
+    <circle cx="232" cy="200" r="3" opacity=".55"><animate attributeName="opacity" values=".1;.75;.1" dur="1.5s" repeatCount="indefinite" begin=".2s"/></circle>
+  </g>
+</svg>
+<div class="ptcl" style="left:6%;top:82%;width:5px;height:5px;background:#c9a84c;animation-duration:4.5s;animation-delay:0s"></div>
+<div class="ptcl" style="left:14%;top:88%;width:3px;height:3px;background:#e8b860;animation-duration:5.5s;animation-delay:.7s"></div>
+<div class="ptcl" style="left:22%;top:76%;width:4px;height:4px;background:#c9a84c;animation-duration:6s;animation-delay:1.4s"></div>
+<div class="ptcl" style="left:30%;top:90%;width:3px;height:3px;background:#ffe090;animation-duration:4s;animation-delay:.3s"></div>
+</div>
+
+<!-- ══ CHARACTER (right side, always) ══ -->
+<div class="char-strip">
+  <img class="char-img" id="charImg" src="/mnt/user-data/uploads/1772708343485_image.png" alt="圖書館員"/>
+  <div class="char-blend"></div>
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="badge">職業介紹</div>
+  <div class="src">資料來源：104工作世界</div>
+  <div class="ts" id="ts">00:30</div>
+</div>
+
+<!-- SCENE LABEL -->
+<div class="scene-label" id="sceneLabel">
+  <div class="scene-label-inner">
+    <div class="scene-label-en" id="slEn">INTRODUCTION</div>
+    <div class="scene-label-zh" id="slZh">圖書資料管理人員</div>
   </div>
+</div>
 
-  <div class="container">
+<!-- KEYWORD CHIPS -->
+<div class="chips" id="chips"></div>
 
-    <!-- 頁籤導覽 -->
-    <div class="tab-nav">
-      <button class="tab-btn primary" type="button" onclick="scrollToSection('card-intro')">簡介</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-flow')">心流時光</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-major')">科系</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-subjects')">科目/專題</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-clubs')">社團/志工</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-jobs')">工作經驗</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-skills')">技能</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-certs')">證照</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-values')">價值觀</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-interest')">生涯興趣</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-intelligence')">多元智能</button>
-      <button class="tab-btn" type="button" onclick="scrollToSection('card-output')">產出結果</button>
-    </div>
+<!-- PROGRESS DOTS -->
+<div class="pdots" id="pdots">
+  <div class="pd on" id="pd0"></div>
+  <div class="pd" id="pd1"></div>
+  <div class="pd" id="pd2"></div>
+  <div class="pd" id="pd3"></div>
+  <div class="pd" id="pd4"></div>
+  <div class="pd" id="pd5"></div>
+</div>
 
-    <!-- 封面＋簡介 -->
-    <div class="card" id="card-intro">
-      <h1>運用 ChatGPT 打造你的 AI 職涯教練</h1>
-      <div class="subtitle">
-        解析你的心流時光與生涯紀錄，探索優勢天賦，找到職涯方向。
-      </div>
-      <div class="chip-row">
-        <span class="chip">心流時光解析</span>
-        <span class="chip">生涯紀錄整理</span>
-        <span class="chip">AI 職涯教練</span>
-      </div>
-
-      <div class="section-title" style="margin-top:10px;">
-        使用方法
-      </div>
-      <ul>
-        <li>依序填寫下方「簡介＋十類生涯資訊」，先粗略填也沒關係，之後再慢慢補充。</li>
-        <li>若想先看示範，可以點上方「🧪 載入 Spring 範例」。</li>
-        <li>填寫完成後，滑到最下方按「產生給 ChatGPT 的完整內容」，再按「一鍵複製」。</li>
-        <li>將內容貼到 ChatGPT，就能啟動你的專屬 AI 職涯教練（會依 A～G 問題完整解析）。</li>
-      </ul>
-
-      <div class="section-title" style="margin-top:12px;">
-        0. 我的簡介
-      </div>
-      <p class="hint">
-        範例：「我目前 19 歲，就讀 ○○ 大學 ○○ 系，是一個喜歡＿＿、擅長＿＿的人，未來希望在＿＿相關領域發展。」
-      </p>
-      <div class="field-group">
-        <div class="field-label">
-          <span>請用 2～5 句話介紹你自己</span>
-          <small>學歷、目前身份、興趣、想發展的方向</small>
-        </div>
-        <textarea id="intro" placeholder="範例：我目前就讀 ○○ 大學 ○○ 系，平常喜歡＿＿，擅長＿＿，未來希望往＿＿相關領域發展。"></textarea>
-      </div>
-    </div>
-
-    <!-- A~G 問題說明 -->
-    <div class="card">
-      <div class="section-title">
-        ChatGPT 會怎麼幫你？
-        <span class="badge">固定提示（黑字，系統自動帶入）</span>
-      </div>
-      <p class="hint">
-        這一段 A～G 問題會自動帶進產生的文字裡，你只要專心填寫自己的十類資料即可。
-      </p>
-      <details>
-        <summary>▸ 展開查看問題 A～G 內容（不用改，系統會自動帶入）</summary>
-        <div class="summary-body">
-          <p>
-            請你擔任我的「AI職涯教練」，從以下「1.我的心流時光」、「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、及「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我喜歡的生涯興趣」、「10.我擅長的多元智能」十類資訊，回答我 ABCDEFG 這七個問題。
-          </p>
-          <p>
-            請一次性地回答下面 ABCDEFG 七個的問題。回答的格式，請用列點配合文字說明的方式呈現。每個列表，請加上淺顯易懂的標題，讓我比較容易解讀。再回答完最後一個問題 G 後，請你變成我的「AI職涯教練」，根據我提供的各項資訊與你對我的瞭解，提供我三個最適合的職涯發展建議。
-          </p>
-
-          <p><strong>問題 A.</strong> 解析我的五個熱情特質。</p>
-          <p><strong>問題 B.</strong> 解析我的五個專業才能。</p>
-          <p><strong>問題 C.</strong> 推薦我六個適合從事的職業。</p>
-          <p><strong>問題 D.</strong> 推薦我六個適合加入的產業。</p>
-          <p><strong>問題 E.</strong> 推薦我二個適合從事的新興職業。</p>
-          <p><strong>問題 F.</strong> 推薦我二個適合加入的新興產業。</p>
-          <p><strong>問題 G.</strong> 請用條列方式，將你對 ABCDEF 六個問題的回答內容，彙整出直覺易懂的摘要。</p>
-        </div>
-      </details>
-    </div>
-
-    <!-- 1. 心流時光 -->
-    <div class="card" id="card-flow">
-      <div class="section-title">1. 我的心流時光</div>
-      <p class="hint">
-        心流時光事件＝從小到大，讓你覺得來勁、忘我、如魚得水、心想事成的關鍵片段。
-      </p>
-      <details>
-        <summary>▸ 什麼是「Time / Flow / Score」？（灰色說明，不會進 ChatGPT）</summary>
-        <div class="summary-body">
-          <ul>
-            <li><strong>Time：</strong>事件發生的時間或背景（例如：國三、高三、大二、2022 年）。</li>
-            <li><strong>Flow：</strong>簡述這個事件發生了什麼事。</li>
-            <li><strong>Score：</strong>你主觀感受到的情緒分數（0～10 分）。</li>
-          </ul>
-          <p>範例：高三。擔任班代，帶大家準備學測與指考，氣氛融洽成績進步。9。</p>
-        </div>
-      </details>
-      <div class="field-group">
-        <textarea
-          id="flow"
-          placeholder="請用一行一個事件的方式列出。&#10;範例：&#10;高三。擔任班代，帶大家準備學測與指考。9。&#10;大一。參加＿＿社團，負責＿＿，很投入很開心。8。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 2. 科系 -->
-    <div class="card" id="card-major">
-      <div class="section-title">2. 我就讀的科系所</div>
-      <div class="field-group">
-        <div class="field-label">
-          <span>請寫出你的學歷與科系</span>
-          <small>可以從高中／大學一路寫到現在</small>
-        </div>
-        <textarea
-          id="major"
-          placeholder="範例：&#10;高中：○○高中 自然組。&#10;大學：○○大學 ○○系。&#10;研究所：○○大學 ○○研究所，主修＿＿。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 3. 科目／專題 -->
-    <div class="card" id="card-subjects">
-      <div class="section-title">3. 我得心應手的科目／專題／論文／競賽</div>
-      <div class="field-group">
-        <div class="field-label">
-          <span>哪些學習經驗讓你覺得「好玩又有成就感」？</span>
-        </div>
-        <textarea
-          id="subjects"
-          placeholder="範例：擅長科目有＿＿。&#10;曾做過＿＿專題／論文，主題是＿＿，讓我很有成就感。&#10;參加＿＿競賽，負責＿＿。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 4. 社團／志工 -->
-    <div class="card" id="card-clubs">
-      <div class="section-title">4. 我的社團／志工經驗</div>
-      <div class="field-group">
-        <div class="field-label">
-          <span>請列出你覺得「投入、快樂、有意義」的社團或服務</span>
-        </div>
-        <textarea
-          id="clubs"
-          placeholder="範例：&#10;吉他社／教學組組長／設計與帶領吉他課程。&#10;偏鄉服務隊／活動組／設計探索職涯與工作的闖關活動。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 5. 工作經驗 -->
-    <div class="card" id="card-jobs">
-      <div class="section-title">5. 我曾做過的工作</div>
-      <div class="field-group">
-        <div class="field-label">
-          <span>打工、實習、正職都可以，重點是你學到什麼</span>
-        </div>
-        <textarea
-          id="jobs"
-          placeholder="範例：&#10;大學期間在＿＿擔任＿＿，主要學到＿＿。&#10;畢業後在＿＿公司擔任＿＿，負責＿＿。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 6. 技能 -->
-    <div class="card" id="card-skills">
-      <div class="section-title">6. 我擅長的專長技能</div>
-      <div class="field-group">
-        <div class="field-label">
-          <span>請用關鍵字列出你的硬實力＋軟實力</span>
-          <small>工具、語言、專業技術、溝通協調、領導等</small>
-        </div>
-        <textarea
-          id="skills"
-          placeholder="範例：Python、資料分析、簡報設計、企劃撰寫、帶領團隊、專案管理……"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 7. 證照 -->
-    <div class="card" id="card-certs">
-      <div class="section-title">7. 我擁有的專業證照</div>
-      <div class="field-group">
-        <div class="field-label">
-          <span>請列出與學校或職涯相關的證照或認證</span>
-        </div>
-        <textarea
-          id="certs"
-          placeholder="範例：多益 8xx 分、丙級技術士證照、某某專業認證……"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 8. 價值觀 -->
-    <div class="card" id="card-values">
-      <div class="section-title">8. 我在乎的職業價值觀（選三項）</div>
-      <p class="hint">
-        建議可以先做 104「職涯價值觀」測驗，再從十六項裡選出最重要的三個貼上。
-      </p>
-      <details>
-        <summary>▸ 查看 16 個職業價值觀說明（灰色說明，不會進 ChatGPT）</summary>
-        <div class="summary-body">
-          <ul>
-            <li>具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。</li>
-            <li>理念要有共鳴：工作或公司文化能符合我的核心價值。</li>
-            <li>樂於接受挑戰：工作有挑戰性，使我能從工作中持續獲得成就感。</li>
-            <li>終身學習最幸福：工作能提供學習成長機會，有利未來的專業發展或升遷。</li>
-            <li>公平最重要：工作的分派、管理、賞罰、薪酬分配都公平合理。</li>
-            <li>穩定生產力：工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。</li>
-            <li>重視薪水福利：工作提供的薪資福利，可讓我維持良好生活品質。</li>
-            <li>目標流程清楚：工作有清楚的流程及規範可依循，可以具體地評估工作成果。</li>
-            <li>工作符合興趣：工作內容符合我的興趣，讓我能樂在工作。</li>
-            <li>熱愛多樣化任務：工作內容豐富多元，不會一成不變。</li>
-            <li>自由不受限：工作時我能自行規劃工作方式，不受別人的阻礙或控制。</li>
-            <li>創意獨特：工作能發揮自己的長才與優勢，創造獨特的價值。</li>
-            <li>工作生活平衡：工作能讓我兼顧家庭和休閒生活。</li>
-            <li>服務他人：工作讓我能幫助他人，為社會大眾服務。</li>
-            <li>鼓勵起手式：主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。</li>
-            <li>歡樂工作氣氛：同事間能互助合作，有良好工作氛圍，讓人有歸屬感。</li>
-          </ul>
-        </div>
-      </details>
-      <div class="field-group">
-        <textarea
-          id="values"
-          placeholder="請從上面 16 個價值觀中選三項，照你在乎的順序貼上。&#10;範例：&#10;(1) 服務他人：＿＿＿＿。&#10;(2) 工作生活平衡：＿＿＿＿。&#10;(3) 終身學習最幸福：＿＿＿＿。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 9. 生涯興趣 -->
-    <div class="card" id="card-interest">
-      <div class="section-title">9. 我來勁的生涯興趣（選二項）</div>
-      <p class="hint">
-        建議做 104 生涯興趣測驗後，選最符合你的兩個類型貼上來。
-      </p>
-      <details>
-        <summary>▸ 查看 6 個生涯興趣類型說明（灰色說明，不會進 ChatGPT）</summary>
-        <div class="summary-body">
-          <ul>
-            <li>R. 實作型：喜歡具體、動手操作的任務，偏好戶外、機械、工具或體力活動。</li>
-            <li>I. 研究型：喜歡思考、探究、驗證理論，展現邏輯推理與獨立解決問題。</li>
-            <li>A. 藝術型：重視自我表達與創造，偏好音樂、繪畫、設計、表演等活動。</li>
-            <li>S. 社會型：喜歡助人、協作與引導他人，偏好溝通、人際互動與服務工作。</li>
-            <li>E. 企業型：喜歡影響與說服他人，展現領導、組織與決策的行為。</li>
-            <li>C. 事務型：喜歡有結構與秩序的環境，擅長處理數據、文件、流程。</li>
-          </ul>
-        </div>
-      </details>
-      <div class="field-group">
-        <textarea
-          id="interest"
-          placeholder="範例：&#10;(1) 社會型：＿＿＿＿。&#10;(2) 企業型：＿＿＿＿。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 10. 多元智能 -->
-    <div class="card" id="card-intelligence">
-      <div class="section-title">10. 我擅長的多元智能（選三項）</div>
-      <details>
-        <summary>▸ 查看 8 個多元智能說明（灰色說明，不會進 ChatGPT）</summary>
-        <div class="summary-body">
-          <ul>
-            <li>邏輯數學：擅長推理思考，喜歡提問尋找答案。</li>
-            <li>語言文字：口齒伶俐，善於表達，喜歡閱讀與寫作。</li>
-            <li>自然觀察：喜歡觀察大自然生態，對動植物有興趣。</li>
-            <li>肢體動覺：擅長用身體表達想法與感受，喜歡動手操作。</li>
-            <li>空間藝術：習慣用圖像與意象思考，喜歡繪畫、設計及空間規劃。</li>
-            <li>音樂旋律：能輕易記住歌曲、旋律及辨別音調。</li>
-            <li>人際互動：擅長觀察人的情緒，善於激勵他人與帶領團隊。</li>
-            <li>內省同理：擅長探索自己及同理他人，清楚自己的優缺點。</li>
-          </ul>
-        </div>
-      </details>
-      <div class="field-group">
-        <textarea
-          id="intelligence"
-          placeholder="範例：&#10;(1) 內省同理：＿＿＿＿。&#10;(2) 人際互動：＿＿＿＿。&#10;(3) 語言文字：＿＿＿＿。"
-        ></textarea>
-      </div>
-    </div>
-
-    <!-- 產出區 -->
-    <div class="card" id="card-output">
-      <div class="section-title">產生給 ChatGPT 的完整內容</div>
-      <p class="hint">
-        按下「產生」後，下方會自動生成一段文字，你只要按「一鍵複製」貼到 ChatGPT，就能啟動你的 AI 職涯教練。
-      </p>
-      <div class="btn-row">
-        <button class="btn-primary" type="button" onclick="generateOutput()">
-          ⚙ 產生給 ChatGPT 的完整內容
-        </button>
-        <button class="btn-secondary" type="button" onclick="copyOutput()">
-          📋 一鍵複製
-        </button>
-      </div>
-      <div class="field-group" style="margin-top:10px;">
-        <textarea
-          id="output"
-          class="output-area"
-          placeholder="這裡會顯示整理好的完整文字，請先按上方「產生」，再按「一鍵複製」，然後貼到 ChatGPT。"
-          readonly
-        ></textarea>
-      </div>
-      <div id="status" class="status">尚未產生內容。</div>
-    </div>
+<!-- SPEAKER ROW -->
+<div class="spkrow" id="spkrow">
+  <div class="spkdot"></div>
+  <div class="spktxt">圖書資料管理人員</div>
+  <div class="wavewrap" id="wave">
+    <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
   </div>
+</div>
 
-  <script>
-    // Spring 的完整示範資料
-    const springSample = {
-      intro: `Spring，今年55歲，最高學歷是國立政治大學心理學博士，主修工商心理學，副修心理輔導。目前在104人力銀行擔任副總經理與職涯教育長，協助發展及推動國中、高中、大學及職涯工作者的各項職涯產品與服務，並培訓職涯志工與輔導老師。`,
+<!-- SUBTITLE -->
+<div class="subbox">
+  <div class="subline" id="sub">　</div>
+</div>
 
-      flow: `就讀國高中。維護被罷凌同學。3。
-就讀大中小學。玩遍同學家聽同學成長故事。7.5。
-就讀國中。導師提攜，成績突飛猛進。如願考上第一志願高中。6。
-就讀高三。考上政大心理系。8.5。
-就讀政治大學心理系一～三年級。蘭友會返鄉服務隊。9.5。
-就讀政治大學心理系二年級。精神療養院見習不適應／少年輔導院見習無力感。2。
-就讀政治大學心理系二～四年級。參加棒球隊、二屆標槍金牌、擔任20年系慶總召。7。
-就讀政治大學心理系＆心理研究所。選擇工商心理學、正向心理學。8。
-國防部服役。考上預官，擔任國防部巡迴教官，負責執行生涯規劃、壓力管理講座。9。
-就讀工商心理學博士。研究領導、人力資源，兼職學校生涯輔導、企業人資顧問。8。
-就讀工商心理學博士。擔任宏碁電腦員工發展顧問，推動員工職涯發展＆團隊建立活動。9。
-擔任國防大學心理系助理教授。負責教學、研究、行政工作。4。
-擔任國防大學心理系教職期間。負責國防部專案、企業顧問案、大學生涯工作坊。8.5。
-任職104人力銀行。擔任研發中心主管，研發心理測驗／設計企業教育課程。8。
-任職104人力銀行。與博幼基金會及104職涯志工合作，執行偏鄉學生的生涯教育。9.5。
-任職104人力銀行。到大學與研究所，擔任人資管理、生涯規劃課程兼任助理教授。2。
-任職104人力銀行。擔任職涯教育長，到大學／高中職／國中進行職涯教育的推廣講座。8。
-任職104人力銀行。擔任職涯教育長，培訓職涯志工／輔導老師…的職涯諮詢技能。9。`,
+<!-- END CARD -->
+<div class="endcard" id="endcard">
+  <div class="etitle">圖書資料管理人員</div>
+  <div class="esub">LIBRARY &amp; INFORMATION MANAGER</div>
+  <div class="egrid">
+    <div class="eitem"><div class="eititle">🏛 工作場所</div><div class="eicontent">公共・學校・大學圖書館<br>企業資料中心・檔案館</div></div>
+    <div class="eitem"><div class="eititle">🎓 學歷要求</div><div class="eicontent">圖書資訊學系<br>相關資訊管理科系</div></div>
+    <div class="eitem"><div class="eititle">📋 核心任務</div><div class="eicontent">採訪編目・館藏管理<br>讀者服務・資訊推廣</div></div>
+    <div class="eitem"><div class="eititle">✨ 職涯特色</div><div class="eicontent">連結知識與人<br>推動終身學習</div></div>
+  </div>
+  <button class="rbtn" onclick="resetAndPlay()">↺ 重新播放</button>
+</div>
 
-      major: `大學就讀政治大學心理學系，同時選擇企管系與新聞系為輔系。
-碩士就讀政治大學心理學研究所，主修工商心理學、副修心理輔導。
-博士就讀政治大學心理學研究所，主修工商心理學、副修心理輔導。`,
+<!-- CONTROLS -->
+<div class="ctrls">
+  <button class="cbtn" onclick="togglePlay()" id="ppbtn">⏸ 暫停</button>
+  <button class="cbtn" onclick="resetAndPlay()">↺ 重播</button>
+</div>
 
-      subjects: `擅長科目有：人力資源管理、組織心理學、心理輔導、心理測驗、統計、SPSS。
-碩士論文：目標設定對工作動機的影響。
-博士論文：部屬對領導者的知覺與因應行為。`,
+<!-- PLAY OVERLAY -->
+<div class="povly" id="povly" onclick="startVideo()">
+  <div class="pbtn">
+    <svg width="32" height="32" viewBox="0 0 32 32"><polygon points="10,6 26,16 10,26" fill="#3d2b1f"/></svg>
+  </div>
+  <div class="phint">點擊播放 · 職業介紹影片</div>
+</div>
+</div>
 
-      clubs: `大學期間曾經參加返鄉服務隊，擔任領導人，帶領20位大學生到宜蘭大同鄉陪伴100名小學生，探索自己的生涯興趣與認識工作世界。
-大學期間擔任系代，負責籌備20週年系慶。`,
+<script>
+const lines = [
+  "大家好，我是一名圖書資料管理人員！",
+  "我們負責圖書的採訪、分類與編目，",
+  "讓每一本書都能在對的位置，等待對的讀者。",
+  "除了管理館藏，我們也提供參考諮詢服務，",
+  "協助讀者找到所需資訊，推廣資訊素養。",
+  "喜歡知識、熱愛服務？歡迎加入我們的行列！",
+];
 
-      jobs: `大學期間，曾經在市調中心擔任兼職的市調員。
-碩士的暑假，曾在某家大型建設公司擔任人力資源處教育訓練部的實習生。
-碩士期間，曾在大專院校擔任學生輔導中心生涯輔導員。
-博士期間，曾經擔任宏碁電腦員工發展室專案顧問。
-教職期間，曾在國防大學心理系教授統計、領導、人力資源管理、員工招募甄選與教育訓練。
-104人力銀行服務期間，曾經擔任研發中心主管負責編製各項心理測驗。
-目前在104人力銀行，擔任職涯教育長＆副總經理，負責職涯教育的推動。
-目前同時在中原大學心理系、東吳大學心理所、台北科技大學EMBA擔任兼任助理教授，教授人力資源管理、員工招募與甄選、職涯規劃及團隊領導課程。`,
+const scenes = [
+  { en:"INTRODUCTION",    zh:"認識這份職業",    chips:["📚 圖書館學","🎓 專業人員","🏛 知識的守護者"] },
+  { en:"CATALOGING",      zh:"採訪・分類・編目", chips:["📋 採訪作業","🔢 中國圖書分類法","💻 MARC 格式"] },
+  { en:"COLLECTION MGT",  zh:"書在對的位置",    chips:["📖 索書號","📍 館藏位置","🔍 書目查詢"] },
+  { en:"CIRCULATION SYS", zh:"館藏流通管理",    chips:["🖥 ILS 系統","📊 館藏統計","⏰ 借還期管理"] },
+  { en:"READER SERVICES", zh:"讀者諮詢服務",    chips:["💬 參考諮詢","🔎 資訊檢索","📡 資訊素養推廣"] },
+  { en:"JOIN US",         zh:"職涯邀請",        chips:["🎓 相關學系","💼 多元職場","🌟 終身學習推手"] },
+];
 
-      skills: `SPSS、統計、心理測驗、職涯諮詢、甄選工具研發、團隊建立。`,
+const synth = window.speechSynthesis;
+let playing = false, currentLineIdx = -1, shownLine = -1;
+let lineStartTimes = [], animFrame = null;
 
-      certs: `SPSS 認證。
-溝通交流分析（TA）相關訓練。`,
+function getZhVoice() {
+  const vs = synth.getVoices();
+  return vs.find(v=>v.lang==='zh-TW') || vs.find(v=>v.lang==='zh-CN') || vs.find(v=>v.lang.startsWith('zh')) || null;
+}
 
-      values: `(1) 服務他人：工作讓我能幫助他人，為社會大眾服務。
-(2) 具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。
-(3) 理念要有共鳴：工作或公司文化能符合我的核心價值。`,
+function switchScene(idx) {
+  document.querySelectorAll('.scene').forEach((s,i)=>s.classList.toggle('active',i===idx));
+  const sd = scenes[idx];
+  document.getElementById('slEn').textContent = sd.en;
+  document.getElementById('slZh').textContent = sd.zh;
+  const lbl = document.getElementById('sceneLabel');
+  lbl.classList.remove('vis');
+  setTimeout(()=>lbl.classList.add('vis'), 80);
+  const ch = document.getElementById('chips');
+  ch.innerHTML = '';
+  sd.chips.forEach((c,i)=>{
+    const el = document.createElement('div');
+    el.className = 'chip';
+    el.textContent = c;
+    ch.appendChild(el);
+    setTimeout(()=>el.classList.add('vis'), 200+i*150);
+  });
+}
 
-      interest: `(1) 社會型：喜歡與人群互動，重視人的需求感受及人際間的和諧。
-(2) 企業型：樂觀積極，處事果決且充滿信心，有影響與說服他人的能力。`,
+function showSub(idx) {
+  if (shownLine===idx) return;
+  shownLine = idx;
+  const el = document.getElementById('sub');
+  el.classList.remove('on');
+  setTimeout(()=>{ el.textContent = lines[idx]; el.classList.add('on'); }, 80);
+  for(let i=0;i<lines.length;i++){
+    const d=document.getElementById('pd'+i);
+    if(d) d.classList.toggle('on',i===idx);
+  }
+  switchScene(idx);
+}
 
-      intelligence: `(1) 內省同理：擅長探索自己及同理他人，能意識到自己的情緒與想法，可以安靜獨處，清楚自己的優缺點。
-(2) 人際互動：擅長觀察人的情緒，喜歡參與團體活動。善於激勵他人，喜歡扮演團體領導者的角色。
-(3) 語言文字：口齒伶俐，善於表達。用詞豐富，具說服力。能言善道，喜歡發問、閱讀、撰寫創作。`
-    };
+function speakLine(idx) {
+  if (idx >= lines.length || !playing) return;
+  const utt = new SpeechSynthesisUtterance(lines[idx]);
+  utt.lang = 'zh-TW'; utt.rate = 0.93; utt.pitch = 1.05;
+  const v = getZhVoice(); if(v) utt.voice = v;
+  utt.onstart = ()=>{
+    lineStartTimes[idx] = performance.now();
+    currentLineIdx = idx;
+    showSub(idx);
+    document.getElementById('wave').classList.add('on');
+  };
+  utt.onend = ()=>{
+    document.getElementById('wave').classList.remove('on');
+    if (!playing) return;
+    if (idx === lines.length-1) setTimeout(()=>{ playing=false; doEnd(); }, 400);
+    else speakLine(idx+1);
+  };
+  utt.onerror = ()=>{
+    if (idx < lines.length-1) speakLine(idx+1);
+    else { playing=false; doEnd(); }
+  };
+  synth.speak(utt);
+}
 
-    // 一鍵載入 Spring 範例
-    function loadSpringSample() {
-      document.getElementById("intro").value = springSample.intro;
-      document.getElementById("flow").value = springSample.flow;
-      document.getElementById("major").value = springSample.major;
-      document.getElementById("subjects").value = springSample.subjects;
-      document.getElementById("clubs").value = springSample.clubs;
-      document.getElementById("jobs").value = springSample.jobs;
-      document.getElementById("skills").value = springSample.skills;
-      document.getElementById("certs").value = springSample.certs;
-      document.getElementById("values").value = springSample.values;
-      document.getElementById("interest").value = springSample.interest;
-      document.getElementById("intelligence").value = springSample.intelligence;
+function startTimerBar() {
+  const tb = document.getElementById('tbar');
+  tb.style.transition='none'; tb.style.width='0%'; tb.offsetWidth;
+  tb.style.transition='width 32s linear'; tb.style.width='100%';
+}
 
-      updateProgress();
-      const statusEl = document.getElementById("status");
-      if (statusEl) {
-        statusEl.textContent = "已載入 Spring 範例，建議你可以先產生一次結果看看版型。";
-        statusEl.className = "status ok";
-      }
-      alert("已成功載入 Spring 範例！");
-    }
+function tickTs() {
+  if (!playing) return;
+  const idx = Math.max(0,currentLineIdx);
+  const le = lineStartTimes[idx] ? (performance.now()-lineStartTimes[idx])/1000 : 0;
+  const total = Math.min(30, idx*5+le);
+  const rem = Math.max(0, 30-total);
+  document.getElementById('ts').textContent = '00:'+String(Math.floor(rem)).padStart(2,'0');
+  animFrame = requestAnimationFrame(tickTs);
+}
 
-    // 動態進度條
-    function updateProgress() {
-      const ids = [
-        "intro",
-        "flow",
-        "major",
-        "subjects",
-        "clubs",
-        "jobs",
-        "skills",
-        "certs",
-        "values",
-        "interest",
-        "intelligence"
-      ];
-      let filled = 0;
-      ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.value.trim().length > 0) filled += 1;
-      });
-      const total = ids.length;
-      const percent = Math.round((filled / total) * 100);
+function doEnd() {
+  cancelAnimationFrame(animFrame);
+  document.getElementById('sub').classList.remove('on');
+  document.getElementById('spkrow').classList.remove('vis');
+  document.getElementById('wave').classList.remove('on');
+  document.getElementById('sceneLabel').classList.remove('vis');
+  document.getElementById('chips').innerHTML='';
+  document.getElementById('ts').textContent='00:00';
+  document.getElementById('endcard').classList.add('vis');
+}
 
-      const bar = document.getElementById("progressBar");
-      const count = document.getElementById("progressCount");
-      if (bar) bar.style.width = percent + "%";
-      if (count) count.textContent = filled + " / " + total;
-    }
+function startVideo() {
+  document.getElementById('povly').classList.add('gone');
+  document.getElementById('charImg').classList.add('visible');
+  document.getElementById('spkrow').classList.add('vis');
+  document.getElementById('pdots').classList.add('vis');
+  playing=true; currentLineIdx=0; lineStartTimes=[];
+  startTimerBar();
+  animFrame = requestAnimationFrame(tickTs);
+  const go = ()=>speakLine(0);
+  if (!synth.getVoices().length) { synth.onvoiceschanged=()=>{ synth.onvoiceschanged=null; go(); }; }
+  else go();
+}
 
-    // 頁籤滾動
-    function scrollToSection(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const offset = 90; // sticky top-bar 高度
-      const target = window.scrollY + rect.top - offset;
-      window.scrollTo({ top: target, behavior: "smooth" });
-    }
+function togglePlay() {
+  const btn = document.getElementById('ppbtn');
+  if (playing) {
+    playing=false; synth.pause(); cancelAnimationFrame(animFrame);
+    btn.textContent='▶ 播放';
+    document.getElementById('wave').classList.remove('on');
+    const tb=document.getElementById('tbar');
+    const w=parseFloat(getComputedStyle(tb).width);
+    const sw=document.getElementById('stage').offsetWidth;
+    tb.style.transition='none'; tb.style.width=(w/sw*100).toFixed(1)+'%';
+  } else {
+    if (currentLineIdx>=lines.length) return;
+    playing=true; btn.textContent='⏸ 暫停';
+    synth.resume(); animFrame=requestAnimationFrame(tickTs);
+  }
+}
 
-    // 產生完整給 ChatGPT 的內容
-    function generateOutput() {
-      const intro = document.getElementById("intro").value.trim();
-      const flow = document.getElementById("flow").value.trim();
-      const major = document.getElementById("major").value.trim();
-      const subjects = document.getElementById("subjects").value.trim();
-      const clubs = document.getElementById("clubs").value.trim();
-      const jobs = document.getElementById("jobs").value.trim();
-      const skills = document.getElementById("skills").value.trim();
-      const certs = document.getElementById("certs").value.trim();
-      const values = document.getElementById("values").value.trim();
-      const interest = document.getElementById("interest").value.trim();
-      const intelligence = document.getElementById("intelligence").value.trim();
-
-      const statusEl = document.getElementById("status");
-      const outputEl = document.getElementById("output");
-
-      if (!intro || !flow) {
-        statusEl.textContent = "建議至少填寫「我的簡介」與「我的心流時光」，再產生內容。";
-        statusEl.className = "status error";
-      } else {
-        statusEl.textContent = "已產生內容，請檢查後再按「一鍵複製」，貼到 ChatGPT。";
-        statusEl.className = "status ok";
-      }
-
-      const lines = [
-        "請你擔任我的「AI職涯教練」，從以下「1.我的心流時光」、「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、及「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我喜歡的生涯興趣」、「10.我擅長的多元智能」十類資訊，回答我ABCDEFG這七個問題。",
-        "請一次性地回答下面ABCDEFG 七個的問題。",
-        "回答的格式，請用列點配合文字說明的方式呈現。",
-        "每個列表，請加上淺顯易懂的標題，讓我比較容易解讀。",
-        "再回答完最後一個問題G後，請你變成我的「AI職涯教練」，根據我提供的各項資訊與你對我的瞭解，提供我三個最適合的職涯發展建議。",
-        "",
-        "問題A.解析我的五個熱情特質。",
-        "每個熱情特質的標題，請用四個字表示。後面加上一句話，讓讀者可以清楚地知悉這個熱情特質。接著列出每個熱情特質的：",
-        "#心流時光佐證資料：針對每個熱情特質從「1.我的心流時光」中舉出相關三個事件。",
-        "#學經歷或心理測驗佐證資料：從「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、及「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我喜歡的生涯興趣」、「10.我擅長的多元智能」的九類資訊中，條列出三項相關內容當做「佐證資料」。",
-        "#摘要說明：針對每個熱情特質提供200個字的「摘要說明」。",
-        "",
-        "問題B.解析我的五個專業才能。",
-        "每個專業才能的標題，請用四個字表示。後面加上一句話，讓讀者可以清楚地知悉這個專業才能。接著列出每個專業才能的：",
-        "#心流時光佐證資料：針對每個專業才能從「1.我的心流時光」中舉出相關三個事件。",
-        "#學經歷或心理測驗佐證資料：從「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、及「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我喜歡的生涯興趣」、「10.我擅長的多元智能」的九類資訊中，條列出三項相關內容當做「佐證資料」。",
-        "#摘要說明：針對每個專業才能提供200個字的「摘要說明」。",
-        "",
-        "問題C. 推薦我六個適合從事的職業。",
-        "請根據我的學經歷、熱情特質、專業才能，針對每個推薦的職業，條列回答這三個問題。",
-        "#工作內容：用100個字說明這個職業的工作內容。",
-        "#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個職業。",
-        "#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的職業發展，可能會遇到的挑戰問題。",
-        "",
-        "問題D. 推薦我六個適合加入的產業。",
-        "請根據我的學經歷、熱情特質、專業才能，針對每個推薦的產業，條列回答這三個問題。",
-        "#產業現況與趨勢：用100個字說明這個產業目前發展的現況與未來的趨勢 。",
-        "#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個產業。",
-        "#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的產業發展，可能會遇到的挑戰問題。",
-        "",
-        "問題E. 推薦我二個適合從事的新興職業。",
-        "請根據我的學經歷、熱情特質、專業才能，針對每個推薦的新興職業，條列回答這三個問題。",
-        "#工作內容：用100個字說明這個新興職業的工作內容。",
-        "#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個新興職業。",
-        "#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的新興職業發展，可能會遇到的挑戰問題。",
-        "",
-        "問題F. 推薦我二個適合加入的新興產業。",
-        "請根據我的學經歷、熱情特質、專業才能，針對每個推薦的新興產業，條列回答這三個問題。",
-        "#產業現況與趨勢：用100個字說明這個新興產業目前發展的現況與未來的趨勢 。",
-        "#推薦原因：根據我的學經歷、熱情特質、專業才能，用100個字說明為何推薦這個新興產業。",
-        "#思考問題：請條列提供我三個「思考問題」，讓我思考以自己目前的條件，如果要往推薦的新興產業發展，可能會遇到的挑戰問題。",
-        "",
-        "問題G. 請用條列的方式，將你對ABCDEF六個問題的回答內容，彙整出直覺易懂的摘要。",
-        "",
-        "＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝",
-        "",
-        "這是我的簡介：",
-        intro || "（此處可填寫個人簡介。）",
-        "",
-        "以下是我「1.我的心流時光」、「2.我就讀的科系」、「3.我得心應手的科目」、「4.我參加的社團」、「5.我曾做過的工作」、「6.我擅長的技能」、「7.我擁有的證照」、「8.我在乎的工作價值觀」、「9.我來勁的生涯興趣」、「10.我擅長的多元智能」十類資訊。",
-        "",
-        "1. 我的心流時光：",
-        flow || "（尚未填寫。）",
-        "",
-        "2. 我就讀的科系所：",
-        major || "（尚未填寫。）",
-        "",
-        "3. 我擅長的科目、做過的專題、論文或參與過的競賽：",
-        subjects || "（尚未填寫。）",
-        "",
-        "4. 我的社團／志工經驗：",
-        clubs || "（尚未填寫。）",
-        "",
-        "5. 我的工作經驗：",
-        jobs || "（尚未填寫。）",
-        "",
-        "6. 我擅長的專長技能有：",
-        skills || "（尚未填寫。）",
-        "",
-        "7. 我擁有的專業證照有：",
-        certs || "（尚未填寫。）",
-        "",
-        "8. 我在乎的職業價值觀是：",
-        values || "（尚未填寫。）",
-        "",
-        "9. 我來勁的生涯興趣是：",
-        interest || "（尚未填寫。）",
-        "",
-        "10. 我擅長的多元智能是：",
-        intelligence || "（尚未填寫。）",
-        "",
-        "＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝",
-        "以上是我的生涯發展與探索資訊，請依照前面的 ABCDEFG 問題，幫我做整體解析與職涯建議。"
-      ];
-
-      outputEl.value = lines.join("\n");
-    }
-
-    // 一鍵複製
-    async function copyOutput() {
-      const outputEl = document.getElementById("output");
-      const statusEl = document.getElementById("status");
-      const text = outputEl.value;
-
-      if (!text.trim()) {
-        statusEl.textContent = "尚未產生內容，請先按「產生給 ChatGPT 的完整內容」。";
-        statusEl.className = "status error";
-        return;
-      }
-
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(text);
-        } else {
-          outputEl.focus();
-          outputEl.select();
-          document.execCommand("copy");
-        }
-        statusEl.textContent = "已複製到剪貼簿，可以貼到 ChatGPT 囉！";
-        statusEl.className = "status ok";
-      } catch (e) {
-        statusEl.textContent = "複製時發生問題，請手動選取文字後自行複製。";
-        statusEl.className = "status error";
-      }
-    }
-
-    // 監聽輸入更新進度
-    ["intro","flow","major","subjects","clubs","jobs","skills","certs","values","interest","intelligence"]
-      .forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.addEventListener("input", updateProgress);
-        }
-      });
-
-    // 初始進度
-    document.addEventListener("DOMContentLoaded", updateProgress);
-  </script>
+function resetAndPlay() {
+  synth.cancel(); cancelAnimationFrame(animFrame);
+  playing=false; currentLineIdx=-1; shownLine=-1; lineStartTimes=[];
+  const tb=document.getElementById('tbar');
+  tb.style.transition='none'; tb.style.width='0%';
+  document.getElementById('endcard').classList.remove('vis');
+  document.getElementById('sub').classList.remove('on');
+  document.getElementById('sub').textContent='　';
+  document.getElementById('spkrow').classList.remove('vis');
+  document.getElementById('pdots').classList.remove('vis');
+  document.getElementById('wave').classList.remove('on');
+  document.getElementById('sceneLabel').classList.remove('vis');
+  document.getElementById('chips').innerHTML='';
+  document.getElementById('ppbtn').textContent='⏸ 暫停';
+  document.getElementById('ts').textContent='00:30';
+  document.getElementById('charImg').classList.remove('visible');
+  for(let i=0;i<6;i++){const d=document.getElementById('pd'+i);if(d)d.classList.toggle('on',i===0);}
+  document.querySelectorAll('.scene').forEach((s,i)=>s.classList.toggle('active',i===0));
+  document.getElementById('povly').classList.remove('gone');
+}
+</script>
 </body>
 </html>
