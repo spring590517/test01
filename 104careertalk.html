@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>職涯工具箱</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #FF6B1A;
+  --orange-light: #FF8C42;
+  --orange-pale: #FFF0E8;
+  --pink: #E8416A;
+  --gray: #999;
+  --dark: #1A1A1A;
+  --radius-card: 20px;
+  --radius-btn: 14px;
+  --shadow-card: 0 6px 28px rgba(255,107,26,0.11);
+  --max-w: 680px;
+  --page-pad: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: #FFF5EE;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.header {
+  width: 100%; background: #fff;
+  border-bottom: 1px solid #FFE0CC;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 12px rgba(255,107,26,0.06);
+}
+.header-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 14px 20px 10px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+/* Row 1: brand line */
+.brand-line {
+  display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;
+}
+.brand-logo {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  letter-spacing: 2px; line-height: 1; white-space: nowrap;
+}
+.brand-sep { color: #DDD; font-size: 1rem; }
+.brand-sub {
+  font-size: 0.78rem; color: #bbb; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.teacher-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.68rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  color: #fff; border-radius: 50px; padding: 4px 10px;
+  letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0;
+}
+
+/* ── PAGE HEADLINE (row 2 below header) ── */
+.page-headline {
+  width: 100%;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  text-align: center;
+  padding: 14px 20px;
+}
+.page-headline-text {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1.45rem; font-weight: 900;
+  color: #fff; letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* ── PAGE WRAP ── */
+.page-wrap {
+  width: 100%; max-width: var(--max-w);
+  padding: 0 var(--page-pad);
+  flex: 1; display: flex; flex-direction: column;
+}
+
+/* ── TABS ── */
+.tabs {
+  display: flex; background: #fff;
+  border-radius: 16px; padding: 4px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  margin: 16px 0 0;
+}
+.tab {
+  flex: 1; padding: 11px 8px; border-radius: 12px; border: none;
+  font-size: 0.9rem; font-family: 'Noto Sans TC', sans-serif; font-weight: 700;
+  color: var(--gray); cursor: pointer; transition: all 0.2s; background: none;
+  white-space: nowrap;
+}
+.tab.active { background: var(--orange); color: #fff; box-shadow: 0 3px 10px rgba(255,107,26,0.35); }
+
+/* ── CARD ── */
+.card {
+  background: #fff; border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  margin: 16px 0 24px; padding: 24px;
+  flex: 1;
+}
+
+/* ── TOOL CARDS (display) ── */
+.tools-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 900px) { .tools-grid { grid-template-columns: 1fr 1fr; } }
+
+.tool-card {
+  background: #fff; border: 2px solid #FFE0CC;
+  border-radius: 18px; padding: 18px 18px 14px;
+  transition: all 0.22s; cursor: pointer;
+  text-decoration: none; display: flex; flex-direction: column;
+  position: relative; overflow: hidden; min-height: 80px;
+}
+.tool-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+.tool-card:hover, .tool-card:focus-visible {
+  border-color: var(--orange); transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255,107,26,0.15); outline: none;
+}
+@media (hover: none) { .tool-card:active { opacity: 0.85; transform: scale(0.98); } }
+
+.tool-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; padding-left: 10px; }
+.tool-card-index { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; min-width: 24px; }
+.tool-card-name { font-size: 1rem; font-weight: 900; color: var(--dark); flex: 1; line-height: 1.3; }
+.tool-card-arrow { font-size: 1.1rem; opacity: 0.6; transition: transform 0.2s; flex-shrink: 0; }
+.tool-card:hover .tool-card-arrow { transform: translateX(4px); opacity: 1; }
+.tool-card-desc { font-size: 0.82rem; color: var(--gray); line-height: 1.65; padding-left: 10px; margin-bottom: 10px; flex: 1; }
+.tool-card-url {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.72rem; color: var(--orange); background: var(--orange-pale);
+  border-radius: 50px; padding: 4px 12px; margin-left: 10px; font-weight: 700;
+  max-width: calc(100% - 10px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.empty-state { text-align: center; padding: 48px 0; color: #ccc; font-size: 0.9rem; grid-column: 1/-1; }
+.empty-state .emoji { font-size: 2.8rem; display: block; margin-bottom: 12px; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 0.8rem; font-weight: 900; color: var(--dark);
+  letter-spacing: 0.5px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, #FFD0B0, transparent); }
+
+/* ── BRANDING EDIT BLOCK ── */
+.branding-block {
+  background: linear-gradient(135deg, #FFF8F3, #FFF0E0);
+  border: 2px solid #FFD0B0; border-radius: 16px;
+  padding: 16px; margin-bottom: 16px;
+}
+.branding-block-title {
+  font-size: 0.75rem; font-weight: 900; color: var(--orange);
+  letter-spacing: 1px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.branding-block-title::after { content: ''; flex:1; height:1px; background: linear-gradient(90deg,#FFD0B0,transparent); }
+
+/* ── EDIT INPUT FIELDS ── */
+.tool-block {
+  background: linear-gradient(135deg, #FFF8F3, #FFF0E0);
+  border: 2px solid #FFD0B0; border-radius: 18px;
+  padding: 16px 16px 12px; margin-bottom: 14px;
+  animation: slideIn 0.2s ease;
+  transition: box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
+}
+.tool-block.dragging { opacity: 0.4; box-shadow: 0 10px 28px rgba(255,107,26,0.2); }
+.tool-block.drag-over { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,26,0.15); }
+@keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+.tool-block-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.drag-handle {
+  cursor: grab; color: #D0B8A8;
+  display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0;
+  padding: 4px 3px; border-radius: 6px; transition: color 0.2s, background 0.2s; touch-action: none;
+}
+.drag-handle:hover { color: var(--orange); background: var(--orange-pale); }
+.drag-handle:active { cursor: grabbing; }
+.drag-handle span { display: block; width: 15px; height: 2px; background: currentColor; border-radius: 2px; }
+.tool-num {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  min-width: 28px;
+}
+.tool-block-title { font-size: 0.76rem; font-weight: 900; color: var(--gray); flex: 1; }
+.order-btns { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.order-btn {
+  background: none; border: 1.5px solid #E8D0C0; cursor: pointer; color: #C0A898;
+  width: 24px; height: 24px; border-radius: 6px; font-size: 0.65rem;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.order-btn:hover:not(:disabled) { border-color: var(--orange); color: var(--orange); background: var(--orange-pale); }
+.order-btn:disabled { opacity: 0.2; cursor: default; }
+.del-btn {
+  background: none; border: none; cursor: pointer; color: #ddd; font-size: 0.9rem;
+  width: 30px; height: 30px; border-radius: 50%; transition: all 0.2s; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.del-btn:hover { color: var(--pink); background: #FFF0F3; }
+
+.tool-fields { display: grid; grid-template-columns: 1fr; gap: 0; }
+@media (min-width: 600px) {
+  .tool-fields { grid-template-columns: 1fr 1fr; column-gap: 12px; }
+  .tool-field-full { grid-column: 1/-1; }
+}
+.tool-field { margin-bottom: 8px; }
+.tool-field label { display: block; font-size: 0.73rem; font-weight: 700; color: var(--orange); margin-bottom: 4px; letter-spacing: 0.5px; }
+.tool-input {
+  width: 100%; border: 2px solid #EBEBEB; border-radius: 12px;
+  padding: 10px 12px; font-size: 16px;
+  font-family: 'Noto Sans TC', sans-serif; color: var(--dark);
+  outline: none; background: #fff; transition: border-color 0.2s;
+}
+.tool-input:focus { border-color: var(--orange); background: #FFFBF8; }
+.tool-input::placeholder { color: #ccc; }
+textarea.tool-input { resize: vertical; min-height: 72px; line-height: 1.55; }
+
+.add-btn {
+  width: 100%; padding: 11px; border: 2px dashed #FFB380; background: none;
+  border-radius: var(--radius-btn); color: var(--orange);
+  font-size: 0.9rem; font-family: 'Noto Sans TC', sans-serif; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 16px; min-height: 46px;
+}
+.add-btn:hover { background: var(--orange-pale); border-style: solid; }
+.save-btn {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  color: #fff; border: none; border-radius: var(--radius-btn);
+  font-size: 1.25rem; font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 3px; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255,107,26,0.38);
+  transition: all 0.2s; position: relative; overflow: hidden; min-height: 54px;
+}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255,107,26,0.42); }
+.save-btn:active { transform: scale(0.98); }
+.save-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.13)); }
+
+/* ── SHARE BOX ── */
+.share-box {
+  background: linear-gradient(135deg, #F0FFF4, #EAFFFA);
+  border: 2px solid #BBE5CC; border-radius: 16px; padding: 16px; margin-top: 20px;
+}
+.share-box-title { font-size: 0.78rem; font-weight: 900; color: #1A7A48; letter-spacing: 1px; margin-bottom: 10px; }
+.share-url-row { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+.share-url-input {
+  flex: 1; min-width: 0; border: 2px solid #C5E8D0; border-radius: 10px;
+  padding: 9px 12px; font-size: 0.72rem; font-family: monospace;
+  color: #1A5C38; background: #fff; outline: none; min-height: 40px;
+}
+.copy-btn {
+  background: #1E9E58; color: #fff; border: none; border-radius: 10px;
+  padding: 9px 16px; font-size: 0.82rem; font-weight: 700;
+  font-family: 'Noto Sans TC', sans-serif; cursor: pointer;
+  white-space: nowrap; transition: background 0.2s; min-height: 40px;
+}
+.copy-btn:hover { background: #177844; }
+.share-hint { font-size: 0.71rem; color: #4A886A; margin-top: 8px; line-height: 1.65; }
+
+/* ── FOOTER ── */
+.footer {
+  font-size: 0.82rem; letter-spacing: 1px;
+  color: #CCC; margin: 0 0 32px; text-align: center;
+  font-weight: 700;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--dark); color: #fff;
+  padding: 12px 24px; border-radius: 50px;
+  font-size: 0.88rem; font-weight: 700;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 9999; white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28); pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (min-width: 600px) {
+  :root { --page-pad: 24px; }
+  .header-inner { padding: 16px 32px 12px; }
+  .card { padding: 28px 32px; }
+  .page-headline-text { font-size: 1.65rem; }
+  .tool-card-name { font-size: 1.05rem; }
+}
+@media (min-width: 900px) {
+  :root { --page-pad: 32px; }
+  body { background: #FFF0E6; }
+  .card { border-radius: 28px; padding: 32px 36px; }
+  .tool-card { padding: 20px 20px 16px; }
+  .brand-logo { font-size: 1.9rem; }
+  .page-headline { padding: 16px 20px; }
+  .page-headline-text { font-size: 1.85rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ROW 1: brand ─────────────── -->
+<header class="header">
+  <div class="header-inner">
+    <div class="brand-line">
+      <div class="brand-logo" id="display-logo">104 AI+</div>
+      <div class="brand-sep" id="display-sep">·</div>
+      <div class="brand-sub" id="display-sub">職涯工具箱</div>
+    </div>
+    <div id="teacher-badge-wrap" style="display:none">
+      <span class="teacher-badge">✦ 講師編輯模式</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── HEADER ROW 2: headline ──────────── -->
+<div class="page-headline" id="display-headline-wrap">
+  <div class="page-headline-text" id="display-headline">敢出發，就有路！</div>
+</div>
+
+<!-- ── PAGE WRAP ──────────────────────── -->
+<div class="page-wrap">
+
+  <!-- TABS -->
+  <div class="tabs" id="tabs-bar">
+    <button class="tab active" id="tab-display-btn" onclick="switchView('display')">📋 工具總覽</button>
+    <button class="tab" id="tab-edit-btn" onclick="switchView('edit')" style="display:none">✏️ 編輯工具</button>
+  </div>
+
+  <!-- ── DISPLAY VIEW ── -->
+  <div class="card" id="view-display">
+    <div class="tools-grid" id="tools-grid"></div>
+  </div>
+
+  <!-- ── EDIT VIEW ── -->
+  <div class="card" id="view-edit" style="display:none">
+
+    <!-- BRANDING SETTINGS -->
+    <div class="section-label">🎨 版面文字設定</div>
+    <div class="branding-block">
+      <div class="branding-block-title">第一排顯示文字</div>
+      <div class="tool-fields">
+        <div class="tool-field">
+          <label>主標（左側大字）</label>
+          <input class="tool-input" id="edit-logo" type="text" placeholder="例：104 AI+" value="">
+        </div>
+        <div class="tool-field">
+          <label>副標（右側小字）</label>
+          <input class="tool-input" id="edit-sub" type="text" placeholder="例：職涯工具箱" value="">
+        </div>
+      </div>
+      <div class="tool-field" style="margin-top:4px">
+        <label>第二排標題</label>
+        <input class="tool-input" id="edit-headline" type="text" placeholder="例：敢出發，就有路！" value="">
+      </div>
+      <div class="tool-field" style="margin-top:4px">
+        <label>最下方頁尾文字</label>
+        <input class="tool-input" id="edit-footer" type="text" placeholder="例：POWERED BY 104 AI+" value="">
+      </div>
+    </div>
+
+    <!-- TOOLS LIST -->
+    <div class="section-label">🔧 職涯工具清單</div>
+    <div id="tools-edit-list"></div>
+    <button class="add-btn" onclick="addTool()">＋ 新增職涯工具或服務</button>
+    <button class="save-btn" onclick="saveAndSwitch()">✦ 儲存並預覽 ✦</button>
+
+    <!-- SHARE -->
+    <div class="share-box">
+      <div class="share-box-title">📲 學員掃碼網址（唯讀版）</div>
+      <div class="share-url-row">
+        <input class="share-url-input" id="student-url" readonly onclick="this.select()">
+        <button class="copy-btn" onclick="copyStudentUrl()">複製網址</button>
+      </div>
+      <div class="share-hint">
+        ✅ 此網址僅顯示「工具總覽」，學員無法看到或進入編輯功能。<br>
+        📌 將此網址轉成 QR Code，投影在講義或投影片上，學員掃描即可直接使用。
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer" id="display-footer">POWERED BY 104 AI+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS = ['#FF6B1A','#E8416A','#4F8EF7','#22C55E','#A855F7','#EAB308','#06B6D4','#F97316'];
+const IS_TEACHER = new URLSearchParams(window.location.search).get('mode') === 'edit';
+
+/* ── Defaults ────────────────────────────────────────────────────── */
+const DEFAULT_BRANDING = {
+  logo:     '104 AI+',
+  sub:      '職涯工具箱',
+  headline: '敢出發，就有路！',
+  footer:   'POWERED BY 104 AI+',
+};
+const DEFAULT_TOOLS = [
+  { name: '104升學就業地圖',
+    desc: '掌握各大學校系的畢業出路。',
+    url:  'https://guide.104.com.tw/career/' },
+  { name: '104落點分析',
+    desc: '根據學測成績、生涯興趣＆個人對校系的需求，評估適合申請的校系。',
+    url:  'https://student.104.com.tw/hs/apply/' },
+  { name: '104學習歷程',
+    desc: '提供範例與工具，協助你準備好備審資料。',
+    url:  'https://student.104.com.tw/epf/example_list/' },
+  { name: '104生涯興趣檢測',
+    desc: '掌握生涯興趣適合就讀科系＆職涯領域。',
+    url:  'https://guide.104.com.tw/interest/' },
+];
+
+let branding = Object.assign({}, DEFAULT_BRANDING,
+  JSON.parse(localStorage.getItem('career_branding') || 'null') || {});
+let tools = JSON.parse(localStorage.getItem('career_tools') || 'null') || DEFAULT_TOOLS;
+
+/* ── Boot UI ────────────────────────────────────────────────────── */
+applyBranding();
+if (IS_TEACHER) {
+  document.getElementById('teacher-badge-wrap').style.display = '';
+  document.getElementById('tab-edit-btn').style.display = '';
+  // pre-fill edit inputs
+  document.getElementById('edit-logo').value     = branding.logo;
+  document.getElementById('edit-sub').value      = branding.sub;
+  document.getElementById('edit-headline').value = branding.headline;
+  document.getElementById('edit-footer').value   = branding.footer;
+}
+
+function applyBranding() {
+  const sep = document.getElementById('display-sep');
+  document.getElementById('display-logo').textContent = branding.logo || '';
+  document.getElementById('display-sub').textContent  = branding.sub  || '';
+  sep.style.display = branding.logo && branding.sub ? '' : 'none';
+  document.getElementById('display-headline').textContent = branding.headline || '';
+  document.getElementById('display-headline-wrap').style.display = branding.headline ? '' : 'none';
+  document.getElementById('display-footer').textContent = branding.footer || '';
+  document.title = (branding.headline || branding.sub || '職涯工具箱');
+}
+
+/* ── View switching ─────────────────────────────────────────────── */
+function switchView(v) {
+  document.getElementById('view-display').style.display = v === 'display' ? '' : 'none';
+  document.getElementById('view-edit').style.display    = v === 'edit'    ? '' : 'none';
+  document.getElementById('tab-display-btn').classList.toggle('active', v === 'display');
+  document.getElementById('tab-edit-btn').classList.toggle('active',    v === 'edit');
+  if (v === 'display') renderDisplay();
+  if (v === 'edit')    { renderEdit(); refreshShareUrl(); }
+}
+
+/* ── Student URL ────────────────────────────────────────────────── */
+function refreshShareUrl() {
+  const u = new URL(window.location.href);
+  u.searchParams.delete('mode');
+  document.getElementById('student-url').value = u.toString();
+}
+function copyStudentUrl() {
+  const val = document.getElementById('student-url').value;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(val).then(() => showToast('✓ 學員網址已複製！'));
+  } else {
+    document.getElementById('student-url').select();
+    document.execCommand('copy');
+    showToast('✓ 學員網址已複製！');
+  }
+}
+
+/* ── Display view ───────────────────────────────────────────────── */
+function renderDisplay() {
+  const grid = document.getElementById('tools-grid');
+  document.querySelectorAll('style.dcs').forEach(s => s.remove());
+
+  if (!tools.length) {
+    grid.innerHTML = `<div class="empty-state"><span class="emoji">🔧</span><div>尚未新增任何職涯工具</div></div>`;
+    return;
+  }
+  grid.innerHTML = '';
+  tools.forEach((t, i) => {
+    const c1 = COLORS[i % COLORS.length], c2 = COLORS[(i+1) % COLORS.length];
+    const a = document.createElement('a');
+    a.className = 'tool-card';
+    a.href = ensureHttp(t.url); a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = `
+      <div class="tool-card-header">
+        <div class="tool-card-index" style="color:${c1}">${String(i+1).padStart(2,'0')}</div>
+        <div class="tool-card-name">${escHtml(t.name||'未命名工具')}</div>
+        <div class="tool-card-arrow" style="color:${c1}">→</div>
+      </div>
+      ${t.desc ? `<div class="tool-card-desc">${escHtml(t.desc)}</div>` : ''}
+      <div class="tool-card-url">🔗 ${escHtml(t.url||'尚未設定網址')}</div>`;
+    grid.appendChild(a);
+    const s = document.createElement('style');
+    s.className = 'dcs';
+    s.textContent = `#tools-grid a:nth-child(${i+1})::before{background:linear-gradient(180deg,${c1},${c2});}`;
+    document.head.appendChild(s);
+  });
+}
+
+/* ── Edit view ──────────────────────────────────────────────────── */
+function syncFromDom() {
+  document.querySelectorAll('.tool-block').forEach((b, i) => {
+    if (!tools[i]) return;
+    const ins = b.querySelectorAll('.tool-input');
+    tools[i].name = ins[0].value;
+    tools[i].desc = ins[1].value;
+    tools[i].url  = ins[2].value;
+  });
+}
+function addTool() {
+  syncFromDom(); tools.push({ name:'', desc:'', url:'' }); renderEdit();
+  setTimeout(() => { const ins = document.querySelectorAll('.tool-name-input'); ins[ins.length-1].focus(); }, 50);
+}
+function removeTool(i)   { syncFromDom(); tools.splice(i,1); renderEdit(); }
+function moveToolUp(i)   { if(i===0) return; syncFromDom(); [tools[i-1],tools[i]]=[tools[i],tools[i-1]]; renderEdit(); }
+function moveToolDown(i) { if(i===tools.length-1) return; syncFromDom(); [tools[i],tools[i+1]]=[tools[i+1],tools[i]]; renderEdit(); }
+
+let dragSrcIdx = null;
+
+function renderEdit() {
+  const list = document.getElementById('tools-edit-list');
+  list.innerHTML = '';
+  tools.forEach((t, i) => {
+    const b = document.createElement('div');
+    b.className = 'tool-block'; b.draggable = true; b.dataset.idx = i;
+    b.innerHTML = `
+      <div class="tool-block-header">
+        <div class="drag-handle" title="拖曳排序"><span></span><span></span><span></span></div>
+        <div class="tool-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="tool-block-title">職涯工具 / 服務</div>
+        <div class="order-btns">
+          <button class="order-btn" onclick="moveToolUp(${i})" ${i===0?'disabled':''} title="上移">▲</button>
+          <button class="order-btn" onclick="moveToolDown(${i})" ${i===tools.length-1?'disabled':''} title="下移">▼</button>
+        </div>
+        ${tools.length>1?`<button class="del-btn" onclick="removeTool(${i})" title="刪除">✕</button>`:'<div style="width:30px"></div>'}
+      </div>
+      <div class="tool-fields">
+        <div class="tool-field tool-field-full">
+          <label>📌 名稱</label>
+          <input class="tool-input tool-name-input" type="text" placeholder="例：104職涯健診" value="${escAttr(t.name)}">
+        </div>
+        <div class="tool-field tool-field-full">
+          <label>📝 簡介</label>
+          <textarea class="tool-input" rows="3" placeholder="一兩句話說明工具用途...">${escHtml(t.desc)}</textarea>
+        </div>
+        <div class="tool-field tool-field-full">
+          <label>🔗 網址</label>
+          <input class="tool-input" type="url" placeholder="https://..." value="${escAttr(t.url)}">
+        </div>
+      </div>`;
+    b.addEventListener('dragstart', e => { syncFromDom(); dragSrcIdx=i; b.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    b.addEventListener('dragend',   () => { b.classList.remove('dragging'); document.querySelectorAll('.tool-block').forEach(x=>x.classList.remove('drag-over')); });
+    b.addEventListener('dragover',  e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; document.querySelectorAll('.tool-block').forEach(x=>x.classList.remove('drag-over')); if(i!==dragSrcIdx) b.classList.add('drag-over'); });
+    b.addEventListener('dragleave', () => b.classList.remove('drag-over'));
+    b.addEventListener('drop', e => {
+      e.preventDefault(); b.classList.remove('drag-over');
+      if(dragSrcIdx===null||dragSrcIdx===i) return;
+      const moved=tools.splice(dragSrcIdx,1)[0]; tools.splice(i,0,moved); dragSrcIdx=null; renderEdit();
+    });
+    list.appendChild(b);
+  });
+}
+
+function saveAndSwitch() {
+  // Save branding
+  branding.logo     = document.getElementById('edit-logo').value.trim();
+  branding.sub      = document.getElementById('edit-sub').value.trim();
+  branding.headline = document.getElementById('edit-headline').value.trim();
+  branding.footer   = document.getElementById('edit-footer').value.trim();
+  localStorage.setItem('career_branding', JSON.stringify(branding));
+  applyBranding();
+
+  // Save tools
+  syncFromDom();
+  tools = tools.filter(t => t.name || t.url);
+  localStorage.setItem('career_tools', JSON.stringify(tools));
+
+  switchView('display');
+  showToast('✓ 已儲存！');
+}
+
+/* ── Helpers ─────────────────────────────────────────────────────── */
+function ensureHttp(u) { if(!u) return '#'; return /^https?:\/\//i.test(u)?u:'https://'+u; }
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(s) { return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+/* ── Boot ────────────────────────────────────────────────────────── */
+renderDisplay();
+if (IS_TEACHER) renderEdit();
+</script>
+</body>
+</html>
