@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英國旅遊導覽網站｜巴斯＋巨石陣＋南部海岸自駕</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>
+    :root{
+      --bg:#f5f8fc;
+      --card:#ffffff;
+      --ink:#1f2a37;
+      --sub:#526173;
+      --line:#d9e2ec;
+      --brand:#184e77;
+      --brand-2:#1d7874;
+      --gold:#f7b267;
+      --soft:#eaf4fb;
+      --shadow:0 14px 40px rgba(16,24,40,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"Noto Sans TC", system-ui, sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#eef5fb 0%, #f9fbfd 100%);
+    }
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1200px, calc(100% - 32px));margin:0 auto}
+    .topbar{
+      position:sticky;top:0;z-index:1000;
+      backdrop-filter:blur(14px);
+      background:rgba(255,255,255,.78);
+      border-bottom:1px solid rgba(217,226,236,.8);
+    }
+    .topbar-inner{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:14px 0;
+    }
+    .logo{
+      font-weight:800;letter-spacing:.5px;color:var(--brand);font-size:1rem;
+    }
+    .nav{display:flex;flex-wrap:wrap;gap:10px}
+    .nav a{
+      padding:8px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);
+      color:var(--sub);font-size:.92rem;
+    }
+    .hero{
+      padding:54px 0 30px;
+    }
+    .hero-grid{
+      display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:stretch;
+    }
+    .hero-card,.info-card,.section-card,.day-card,.tips-card,.map-card,.summary-card,.hotel-card{
+      background:var(--card);border:1px solid rgba(217,226,236,.9);border-radius:var(--radius);box-shadow:var(--shadow);
+    }
+    .hero-card{padding:32px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--soft);
+      color:var(--brand);font-weight:700;font-size:.88rem;margin-bottom:14px;
+    }
+    h1{
+      margin:0 0 14px;font-size:clamp(1.9rem,4vw,3.1rem);line-height:1.15;color:#12344d;
+    }
+    .lead{margin:0;color:var(--sub);font-size:1.03rem;line-height:1.9}
+    .hero-stats{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px;
+    }
+    .stat{
+      background:#f9fbff;border:1px solid var(--line);border-radius:16px;padding:16px;
+    }
+    .stat .k{font-size:1.35rem;font-weight:800;color:var(--brand)}
+    .stat .v{margin-top:6px;color:var(--sub);font-size:.92rem;line-height:1.5}
+    .info-card{padding:24px;display:flex;flex-direction:column;justify-content:space-between}
+    .info-card h3{margin:0 0 12px;color:#12344d}
+    .badge-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .badge{
+      padding:8px 12px;border-radius:999px;background:#f4f8fb;border:1px solid var(--line);font-size:.9rem;color:var(--sub)
+    }
+    section{padding:18px 0}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:16px}
+    .section-head h2{margin:0;color:#12344d;font-size:1.6rem}
+    .section-head p{margin:0;color:var(--sub)}
+    .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .summary-card{padding:22px}
+    .summary-card h3{margin:0 0 10px;font-size:1.05rem;color:var(--brand)}
+    .summary-card p{margin:0;color:var(--sub);line-height:1.8;font-size:.96rem}
+    .layout{
+      display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:start;
+    }
+    .days{display:grid;gap:16px}
+    .day-card{padding:22px;overflow:hidden}
+    .day-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:12px}
+    .date{font-size:1.05rem;font-weight:800;color:#12344d}
+    .phase{font-size:.82rem;color:var(--brand);font-weight:700;background:var(--soft);padding:6px 10px;border-radius:999px;display:inline-block;margin-bottom:10px}
+    .transport{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+    .tag{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:.82rem;color:var(--sub)}
+    .day-card h3{margin:0 0 8px;color:#16324f;font-size:1.2rem}
+    .day-card p, .day-card li{color:var(--sub);line-height:1.85}
+    .day-card ul{margin:8px 0 0 1.1rem;padding:0}
+    .map-wrap{position:sticky;top:92px;display:grid;gap:16px}
+    .map-card{padding:16px}
+    #map{height:620px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+    .legend{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+    .legend-item{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:.9rem}
+    .dot{width:12px;height:12px;border-radius:50%}
+    .dot.city{background:#184e77}.dot.train{background:#1d7874}.dot.drive{background:#f7b267}.dot.view{background:#8c5cf6}
+    .tips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .tips-card{padding:22px}
+    .tips-card h3{margin:0 0 10px;font-size:1.02rem;color:#12344d}
+    .tips-card p, .tips-card li{margin:0;color:var(--sub);line-height:1.8}
+    .tips-card ul{margin:.25rem 0 0 1.1rem;padding:0}
+    .footer{padding:34px 0 50px;color:var(--sub);font-size:.92rem}
+    .cta{
+      margin-top:18px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#184e77,#1d7874);color:#fff;line-height:1.8
+    }
+    .small{font-size:.88rem;color:#6b7b8d}
+    .divider{height:1px;background:var(--line);margin:14px 0}
+    @media (max-width: 980px){
+      .hero-grid,.layout,.summary-grid,.tips-grid{grid-template-columns:1fr}
+      .hero-stats{grid-template-columns:repeat(2,1fr)}
+      .map-wrap{position:relative;top:0}
+      #map{height:420px}
+    }
+    @media (max-width: 640px){
+      .container{width:min(100% - 20px, 1200px)}
+      .hero{padding-top:28px}
+      .hero-card,.info-card,.summary-card,.day-card,.tips-card,.map-card{border-radius:18px}
+      .hero-stats{grid-template-columns:1fr 1fr}
+      .topbar-inner{align-items:flex-start;flex-direction:column}
+      .nav{gap:8px}
+      .nav a{font-size:.86rem}
+      .legend{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="logo">英國旅遊導覽｜巴斯＋巨石陣＋南部海岸自駕</div>
+      <nav class="nav">
+        <a href="#overview">行程總覽</a>
+        <a href="#itinerary">每日行程</a>
+        <a href="#map-section">旅遊地圖</a>
+        <a href="#tips">旅遊提醒</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <article class="hero-card">
+          <div class="eyebrow">🚗 方案2｜倫敦 × 萊斯特 × 巴斯 × 英國南部海岸</div>
+          <h1>一趟結合城市經典、校園時光、古城巡禮與海岸自駕的英國旅程</h1>
+          <p class="lead">
+            這份網站版旅遊計畫，將原本的行程書整理成更容易閱讀與分享的導覽頁面。
+            前段以倫敦慢遊與調整時差為主，中段安排萊斯特校園與巴斯古城，後段展開巨石陣、索爾茲伯里、樸茨茅斯、阿倫德爾、布萊頓與七姊妹岩的南英格蘭經典自駕線。
+          </p>
+          <div class="hero-stats">
+            <div class="stat"><div class="k">12天</div><div class="v">6/22 抵達倫敦<br>7/3 返回台北</div></div>
+            <div class="stat"><div class="k">4階段</div><div class="v">城市、校園、古城、自駕海岸<br>節奏清楚不擁擠</div></div>
+            <div class="stat"><div class="k">2種交通</div><div class="v">前段火車移動<br>後段南部海岸自駕</div></div>
+            <div class="stat"><div class="k">9個重點地</div><div class="v">倫敦、萊斯特、巴斯、巨石陣等<br>拍照與文化兼具</div></div>
+          </div>
+        </article>
+        <aside class="info-card">
+          <div>
+            <h3>這趟旅程的亮點</h3>
+            <p class="lead" style="font-size:.98rem">
+              不是一路趕景點，而是把「經典必去」與「舒服體驗」放在一起。既能看見英國的歷史厚度，也保留散步、拍照、用餐與休息的節奏。
+            </p>
+            <div class="badge-row">
+              <span class="badge">🏛 倫敦經典地標</span>
+              <span class="badge">🎓 萊斯特校園時光</span>
+              <span class="badge">♨️ 巴斯世界遺產</span>
+              <span class="badge">🪨 巨石陣</span>
+              <span class="badge">⛪ 大憲章</span>
+              <span class="badge">⚓ 瑪麗玫瑰號</span>
+              <span class="badge">🏰 阿倫德爾城堡</span>
+              <span class="badge">🌊 七姊妹岩</span>
+            </div>
+          </div>
+          <div class="cta">
+            建議使用方式：<br>
+            先看「行程總覽」掌握節奏，再用右側地圖理解整體動線；出發前可用手機打開本頁，當成每日旅遊導覽卡使用。
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="overview">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>行程總覽</h2>
+            <p>四個階段，從城市慢遊到南部海岸經典公路線。</p>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <article class="summary-card">
+            <h3>第一階段｜倫敦經典探索與調時差</h3>
+            <p>6/22–6/24 以休息、散步、河岸漫遊與經典景點為主，讓旅程一開始就保有從容感。</p>
+          </article>
+          <article class="summary-card">
+            <h3>第二階段｜萊斯特校園時光</h3>
+            <p>6/25–6/27 轉往萊斯特，結合校園參訪、博物館與舒適的火車移動，過渡到巴斯。</p>
+          </article>
+          <article class="summary-card">
+            <h3>第三階段｜南部海岸與古城自駕</h3>
+            <p>6/28–7/1 在巴斯散步、租車出發，串連巨石陣、索爾茲伯里、樸茨茅斯、布萊頓與七姊妹岩。</p>
+          </article>
+          <article class="summary-card">
+            <h3>第四階段｜倫敦自由採買與返程</h3>
+            <p>7/2–7/3 最後把時間留給伴手禮、英國茶與悠閒早餐，帶著好心情回家。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="itinerary">
+      <div class="container layout">
+        <div>
+          <div class="section-head">
+            <div>
+              <h2>每日行程</h2>
+              <p>可作為每日導覽頁，也可作為家人同行時的共同閱讀版本。</p>
+            </div>
+          </div>
+          <div class="days">
+            <article class="day-card" data-lat="51.5072" data-lng="-0.1276" data-zoom="11">
+              <span class="phase">第一階段</span>
+              <div class="day-top"><div class="date">6/22（一）</div><div class="tag">抵達日</div></div>
+              <h3>抵達倫敦，好好休息</h3>
+              <div class="transport"><span class="tag">✈️ 國際航班</span><span class="tag">🏨 飯店入住</span></div>
+              <ul>
+                <li>下午抵達倫敦，出關後直接前往飯店放行李。</li>
+                <li>晚上在飯店附近吃頓好晚餐，避免排太滿，早點休息調時差。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="51.5078" data-lng="-0.1142" data-zoom="12">
+              <span class="phase">第一階段</span>
+              <div class="day-top"><div class="date">6/23–6/24（二–三）</div><div class="tag">慢遊日</div></div>
+              <h3>倫敦市區慢遊</h3>
+              <div class="transport"><span class="tag">🚇 地鐵／步行</span><span class="tag">🎭 音樂劇可選</span></div>
+              <ul>
+                <li>挑選幾個倫敦必訪地標：西敏寺、倫敦眼、大英博物館。</li>
+                <li>可特別安排大英博物館中東館，欣賞精彩文物陳列。</li>
+                <li>以悠閒步伐漫步泰晤士河畔，晚上可選擇前往西區看音樂劇。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="52.6369" data-lng="-1.1398" data-zoom="11">
+              <span class="phase">第二階段</span>
+              <div class="day-top"><div class="date">6/25（四）</div><div class="tag">移動日</div></div>
+              <h3>前往萊斯特</h3>
+              <div class="transport"><span class="tag">🚆 倫敦→萊斯特</span><span class="tag">約1小時</span></div>
+              <ul>
+                <li>早上可在倫敦做最後巡禮，下午搭火車前往萊斯特。</li>
+                <li>行程節奏不趕，留給自己一點整理照片與休息的時間。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="52.6212" data-lng="-1.1246" data-zoom="13">
+              <span class="phase">第二階段</span>
+              <div class="day-top"><div class="date">6/26（五）</div><div class="tag">校園日</div></div>
+              <h3>萊斯特溫馨一日遊</h3>
+              <div class="transport"><span class="tag">🎓 校園散步</span><span class="tag">🖼 博物館</span></div>
+              <ul>
+                <li>參觀萊斯特大學，感受平常上課與研究的校園環境。</li>
+                <li>下午走訪 Leicester Museum &amp; Art Gallery，分享展覽與策展觀察。</li>
+                <li>晚上在市區選一間氣氛好的餐廳慶祝。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="51.3811" data-lng="-2.3590" data-zoom="12">
+              <span class="phase">第二階段</span>
+              <div class="day-top"><div class="date">6/27（六）</div><div class="tag">轉往古城</div></div>
+              <h3>前進羅馬古城巴斯</h3>
+              <div class="transport"><span class="tag">🚆 萊斯特→巴斯</span><span class="tag">傍晚入住</span></div>
+              <ul>
+                <li>下午搭火車前往世界文化遺產城市巴斯。</li>
+                <li>這天不開車，讓移動變得輕鬆，傍晚抵達後吃晚餐、入住。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="51.3814" data-lng="-2.3592" data-zoom="14">
+              <span class="phase">第三階段</span>
+              <div class="day-top"><div class="date">6/28（日）</div><div class="tag">全步行</div></div>
+              <h3>巴斯古城全日觀光</h3>
+              <div class="transport"><span class="tag">🚶 無車日</span><span class="tag">♨️ 羅馬浴場</span><span class="tag">🏛 皇家新月樓</span></div>
+              <ul>
+                <li>參觀羅馬浴場，欣賞保存完整的遺址與沈浸式語音導覽。</li>
+                <li>下午散步前往皇家新月樓，捕捉午後光影下最有質感的建築照片。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="51.1789" data-lng="-1.8262" data-zoom="10">
+              <span class="phase">第三階段</span>
+              <div class="day-top"><div class="date">6/29（一）</div><div class="tag">自駕啟程</div></div>
+              <h3>拜訪神秘巨石陣，順遊索爾茲伯里</h3>
+              <div class="transport"><span class="tag">🚗 巴斯租車</span><span class="tag">🪨 巨石陣</span><span class="tag">⛪ 大教堂</span></div>
+              <ul>
+                <li>早上在巴斯租車，正式展開南部海岸自駕。</li>
+                <li>第一站前往巨石陣，感受史前遺跡的神秘氛圍。</li>
+                <li>下午順路走訪索爾茲伯里大教堂，親眼看見與《大憲章》相關的歷史展陳。</li>
+                <li>傍晚抵達南部港口城市入住。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="50.8225" data-lng="-0.1372" data-zoom="10">
+              <span class="phase">第三階段</span>
+              <div class="day-top"><div class="date">6/30（二）</div><div class="tag">海岸公路</div></div>
+              <h3>沈船博物館與童話城堡</h3>
+              <div class="transport"><span class="tag">⚓ 樸茨茅斯</span><span class="tag">🏰 阿倫德爾</span><span class="tag">🌆 布萊頓入住</span></div>
+              <ul>
+                <li>早上參觀樸茨茅斯歷史船塢與瑪麗玫瑰號博物館，體驗震撼的文物保存技術。</li>
+                <li>下午沿海岸線往東，途經阿倫德爾城堡拍照留念。</li>
+                <li>傍晚抵達活力十足的海濱度假城市布萊頓。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="50.7365" data-lng="0.2455" data-zoom="10">
+              <span class="phase">第三階段</span>
+              <div class="day-top"><div class="date">7/1（三）</div><div class="tag">還車日</div></div>
+              <h3>絕美七姊妹岩，輕鬆還車回倫敦</h3>
+              <div class="transport"><span class="tag">🌊 白崖景觀</span><span class="tag">🚗 Gatwick還車</span><span class="tag">🚆 回倫敦</span></div>
+              <ul>
+                <li>早上前往七姊妹岩，欣賞白色斷崖與蔚藍海峽的強烈對比。</li>
+                <li>下午北上約 50 分鐘，在 Gatwick 機場還車，避開倫敦市區壅塞。</li>
+                <li>之後直接從機場搭火車返回倫敦市區飯店。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="51.5104" data-lng="-0.1310" data-zoom="12">
+              <span class="phase">第四階段</span>
+              <div class="day-top"><div class="date">7/2（四）</div><div class="tag">自由活動</div></div>
+              <h3>倫敦自由採買日</h3>
+              <div class="transport"><span class="tag">🛍 自由購物</span><span class="tag">🍵 英國茶伴手禮</span></div>
+              <ul>
+                <li>睡到自然醒，不排固定景點，讓旅程有一個柔軟的結尾。</li>
+                <li>在倫敦市區逛街、採買伴手禮與英國茶，慢慢整理一路上的回憶。</li>
+              </ul>
+            </article>
+
+            <article class="day-card" data-lat="51.4700" data-lng="-0.4543" data-zoom="10">
+              <span class="phase">第四階段</span>
+              <div class="day-top"><div class="date">7/3（五）</div><div class="tag">返程日</div></div>
+              <h3>平安返家</h3>
+              <div class="transport"><span class="tag">🍽 悠閒早餐</span><span class="tag">✈️ 倫敦→台北</span></div>
+              <ul>
+                <li>早上從容吃頓早餐，整理行李與照片。</li>
+                <li>帶著滿滿的風景、故事與回憶前往機場，搭機返台。</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <aside class="map-wrap" id="map-section">
+          <div class="section-head" style="margin-bottom:0">
+            <div>
+              <h2>旅遊地圖</h2>
+              <p>點擊地標可查看每日重點；點選左側行程卡片，地圖會自動跳轉。</p>
+            </div>
+          </div>
+          <div class="map-card">
+            <div id="map"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="dot city"></span>主要停留城市</div>
+              <div class="legend-item"><span class="dot train"></span>火車移動段</div>
+              <div class="legend-item"><span class="dot drive"></span>自駕路線段</div>
+              <div class="legend-item"><span class="dot view"></span>景點停靠點</div>
+            </div>
+            <div class="divider"></div>
+            <div class="small">地圖若未顯示，通常是網路環境阻擋外部地圖圖磚。改以瀏覽器開啟此 HTML 檔即可正常使用。</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="tips">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>旅遊提醒</h2>
+            <p>把這頁當作出發前的簡短備忘錄。</p>
+          </div>
+        </div>
+        <div class="tips-grid">
+          <article class="tips-card">
+            <h3>交通安排建議</h3>
+            <ul>
+              <li>倫敦、萊斯特、巴斯前段可全程以火車與步行完成。</li>
+              <li>自駕安排從巴斯開始，到 Gatwick 還車，動線相對順。</li>
+              <li>在英國自駕請特別留意右駕與鄉間環島路口。</li>
+            </ul>
+          </article>
+          <article class="tips-card">
+            <h3>行程節奏建議</h3>
+            <ul>
+              <li>抵達倫敦第一晚不要硬排夜景，睡眠品質最重要。</li>
+              <li>巴斯與七姊妹岩都適合保留充足拍照與散步時間。</li>
+              <li>7/2 留白非常好，能讓整趟旅行不會以疲累收尾。</li>
+            </ul>
+          </article>
+          <article class="tips-card">
+            <h3>拍照亮點</h3>
+            <ul>
+              <li>皇家新月樓最適合午後光線。</li>
+              <li>七姊妹岩上午天氣穩定時，海天對比通常很漂亮。</li>
+              <li>布萊頓適合拍海濱、街景與輕鬆的度假氛圍。</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      旅遊網站版面已整理完成。可直接作為旅伴共用版本，也可再進一步升級成：加入飯店資訊、餐廳推薦、每日預算、可點擊 Google Maps 導航按鈕。
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const map = L.map('map', { scrollWheelZoom: true }).setView([51.25, -1.2], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const locations = [
+      { name:'倫敦', coords:[51.5072,-0.1276], type:'city', note:'抵達、慢遊、採買與返程城市' },
+      { name:'萊斯特', coords:[52.6369,-1.1398], type:'city', note:'校園與博物館時光' },
+      { name:'巴斯', coords:[51.3811,-2.3590], type:'city', note:'古城散步與租車起點' },
+      { name:'巨石陣', coords:[51.1789,-1.8262], type:'view', note:'史前遺跡' },
+      { name:'索爾茲伯里', coords:[51.0688,-1.7945], type:'view', note:'大教堂與歷史文件展陳' },
+      { name:'樸茨茅斯', coords:[50.8198,-1.0880], type:'city', note:'歷史船塢與瑪麗玫瑰號博物館' },
+      { name:'阿倫德爾城堡', coords:[50.8546,-0.5531], type:'view', note:'童話感古堡' },
+      { name:'布萊頓', coords:[50.8225,-0.1372], type:'city', note:'海濱度假城市' },
+      { name:'七姊妹岩', coords:[50.7365,0.2455], type:'view', note:'白崖海岸代表景點' },
+      { name:'Gatwick 機場', coords:[51.1537,-0.1821], type:'city', note:'還車後搭火車回倫敦' },
+      { name:'Heathrow 機場', coords:[51.4700,-0.4543], type:'city', note:'返台起點（依實際航班調整）' },
+    ];
+
+    const colorMap = { city:'#184e77', view:'#8c5cf6' };
+    const markers = [];
+
+    locations.forEach(loc => {
+      const marker = L.circleMarker(loc.coords, {
+        radius: 8,
+        weight: 2,
+        color: '#fff',
+        fillColor: colorMap[loc.type] || '#184e77',
+        fillOpacity: 1
+      }).addTo(map).bindPopup(`<strong>${loc.name}</strong><br>${loc.note}`);
+      markers.push(marker);
+    });
+
+    const trainSegments = [
+      [[51.5072,-0.1276],[52.6369,-1.1398]],
+      [[52.6369,-1.1398],[51.3811,-2.3590]],
+      [[51.1537,-0.1821],[51.5072,-0.1276]]
+    ];
+    trainSegments.forEach(seg => L.polyline(seg, {
+      color:'#1d7874', weight:4, opacity:.9, dashArray:'8, 10'
+    }).addTo(map));
+
+    const drivePath = [
+      [51.3811,-2.3590],
+      [51.1789,-1.8262],
+      [51.0688,-1.7945],
+      [50.8198,-1.0880],
+      [50.8546,-0.5531],
+      [50.8225,-0.1372],
+      [50.7365,0.2455],
+      [51.1537,-0.1821]
+    ];
+    L.polyline(drivePath, {
+      color:'#f7b267', weight:5, opacity:.95
+    }).addTo(map);
+
+    document.querySelectorAll('.day-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.day-card').forEach(c => c.style.outline = 'none');
+        card.style.outline = '3px solid rgba(24,78,119,.18)';
+        const lat = parseFloat(card.dataset.lat);
+        const lng = parseFloat(card.dataset.lng);
+        const zoom = parseInt(card.dataset.zoom || '12', 10);
+        map.flyTo([lat, lng], zoom, { duration: 1.4 });
+      });
+    });
+  </script>
+</body>
+</html>
