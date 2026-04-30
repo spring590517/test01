@@ -1,410 +1,1514 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>10分鐘打造你的AI生涯教練</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>履歷自傳性格解析</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  /* ---------- CSS Reset (lightweight) ---------- */
-  *,*::before,*::after{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC",sans-serif;line-height:1.5;background:#f6f7fb;color:#1f2328;-webkit-font-smoothing:antialiased}
-  img,svg{display:block;max-width:100%}
-  button,input,textarea{font:inherit}
-  :root{
-    --brand:#ff6600;--brand-600:#e65a00;--ink:#1f2328;--muted:#5b616e;--ring:#e6e8ef;--card:#fff;--bg:#f6f7fb;
-    --radius:14px;--shadow:0 6px 18px rgba(23,26,31,.06);
-    /* Responsive type scale */
-    --fs-12:clamp(12px, 0.75rem, 0.75rem);
-    --fs-14:clamp(13px, 0.9vw + 10px, 14px);
-    --fs-16:clamp(15px, 1.2vw + 10px, 16px);
-    --fs-18:clamp(16px, 1.4vw + 10px, 18px);
-    --fs-22:clamp(18px, 1.2rem + 0.8vw, 22px);
-    --fs-28:clamp(22px, 1.2rem + 1.6vw, 28px);
-  }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
-  @media (prefers-color-scheme: dark){
-    :root{--ink:#e7e9ee;--muted:#aeb4c0;--ring:#2c3340;--card:#0e1116;--bg:#0a0d12}
-    body{background:var(--bg);color:var(--ink)}
-  }
+/* ── PRINT / PDF STYLES ── */
+@media print {
+  @page { size: A4; margin: 14mm 14mm 14mm 14mm; }
+  body { background: white !important; }
+  .app-shell, .no-print { display: none !important; }
+  .print-area { display: block !important; }
+  .report-page { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+  .pdf-page-break { page-break-before: always; }
+}
 
-  header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(160%) blur(8px);
-    background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
-    border-bottom:1px solid var(--ring);}
-  @media (prefers-color-scheme: dark){
-    header{background:linear-gradient(180deg, rgba(14,17,22,.85), rgba(14,17,22,.55));}
-  }
-  .header-inner{max-width:min(1000px, 92vw);margin:0 auto;padding:18px 8px 10px;}
-  .title{font-weight:800;font-size:var(--fs-28);letter-spacing:.01em}
-  .sub{color:var(--muted);font-size:var(--fs-14);margin-top:2px}
+:root {
+  --ink: #1a1a2e;
+  --ink-light: #4a4a6a;
+  --paper: #faf8f4;
+  --rule: #e8e4dc;
+  --accent: #c0392b;
+  --accent-soft: #f9e8e7;
+  --gold: #b8860b;
+  --gold-soft: #fdf8ec;
+  --green: #1a7a4a;
+  --green-soft: #e8f5ee;
+  --amber: #d4700a;
+  --amber-soft: #fef3e2;
+  --gray-soft: #f0eee9;
+  --blue: #1a4a8a;
+  --blue-soft: #eaf0fb;
+}
 
-  .wrap{max-width:min(1000px, 92vw);margin:16px auto 40px;padding:0 4px}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .card{background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);}
-  .landing{padding:16px;display:grid;gap:12px}
+body {
+  background: #f0ede8;
+  color: var(--ink);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
 
-  .muted{color:var(--muted);font-size:var(--fs-14)}
-  .hint{color:var(--muted);font-size:var(--fs-12)}
-  .qtitle{font-size:var(--fs-22);font-weight:800;margin:4px 0}
+/* ══════════════════════════════
+   APP SHELL (input area)
+══════════════════════════════ */
+.app-shell {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 20px 0;
+}
 
-  .btn{appearance:none;border:1px solid transparent;background:var(--brand);color:#fff;border-radius:10px;padding:.8em 1.1em;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.5em;box-shadow:0 1px 0 rgba(0,0,0,.05);transition:transform .06s ease, background .2s ease, box-shadow .2s ease}
-  .btn:hover{background:var(--brand-600)}
-  .btn:active{transform:translateY(1px)}
-  .btn.secondary{background:#444e60}
-  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--ring)}
-  .btn.block{width:100%;justify-content:center}
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 28px;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 14px;
+}
 
-  .toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
+.app-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
 
-  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .field{width:100%;padding:.8em .9em;border:1px solid var(--ring);border-radius:10px;font-size:var(--fs-16);background:var(--card);color:inherit}
-  .field:focus{outline:2px solid transparent;box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+.app-subtitle {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink-light);
+  line-height: 1.5;
+}
 
-  .grid{display:grid;gap:10px}
-  .cols-2{grid-template-columns:1fr}
-  @media(min-width:640px){.cols-2{grid-template-columns:1fr 1fr}}
-  @media(min-width:900px){.cols-3{grid-template-columns:repeat(3,1fr)}}
+.app-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
 
-  .chip{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--ring);border-radius:999px;background:#fafbff;color:inherit;cursor:pointer;user-select:none;outline:none}
-  .chip b{font-variant-numeric:tabular-nums}
-  .chip.sel{background:#ffe9da;border-color:#ffd0ae}
-  .chip:focus-visible{box-shadow:0 0 0 3px rgba(255,102,0,.25)}
+.step-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
 
-  .progress{position:sticky;top:58px;height:10px;background:#e9ebf3;border-radius:999px;overflow:hidden;margin:0 0 14px}
-  .bar{height:100%;background:var(--brand);width:0;transition:width .25s ease}
+.step-block { }
+.step-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.step-label::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--accent);
+}
 
-  textarea{width:100%;min-height:50vh;resize:vertical}
+textarea {
+  width: 100%;
+  border: 1.5px solid var(--rule);
+  border-radius: 4px;
+  background: white;
+  padding: 12px 14px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 160px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+textarea:focus { border-color: var(--ink); }
+textarea::placeholder { color: #bbb; }
+.sample-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 6px; padding: 4px 12px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  color: var(--accent); background: white;
+  border: 1.5px solid var(--accent); border-radius: 20px;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.sample-btn:hover { background: var(--accent); color: white; }
 
-  /* Mobile-safe spacing for bottom actions */
-  .safe-bottom{padding-bottom:calc(env(safe-area-inset-bottom, 0) + 6px)}
+.action-row {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 28px;
+}
 
-  /* Compact layout on very small screens */
-  @media (max-width:360px){
-    .btn{padding:.7em .9em}
-    .chip{padding:10px 12px}
-  }
+.btn-analyze {
+  background: var(--ink);
+  color: white;
+  border: none;
+  padding: 13px 40px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-analyze:hover { background: #2a2a4e; transform: translateY(-1px); }
+.btn-analyze:disabled { background: #aaa; cursor: not-allowed; transform: none; }
 
-  .btn.ghost.inline-link{padding:2px 6px;font-size:var(--fs-12);line-height:1.4;
-    display:inline-flex;align-items:center;margin-left:4px;text-decoration:none}
-  .btn.ghost.inline-link:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.loading-bar {
+  display: none;
+  text-align: center;
+  padding: 16px;
+  color: var(--ink-light);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+.loading-bar.active { display: block; }
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s infinite;
+}
+@keyframes dots {
+  0%   { content: ''; }
+  33%  { content: '．'; }
+  66%  { content: '．．'; }
+  100% { content: '．．．'; }
+}
+
+/* ══════════════════════════════
+   REPORT TOOLBAR
+══════════════════════════════ */
+.report-toolbar {
+  display: none;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  background: var(--ink);
+  border-radius: 4px 4px 0 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.report-toolbar.visible { display: flex; }
+
+.toolbar-label {
+  color: rgba(255,255,255,0.7);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.toolbar-btns { display: flex; gap: 10px; }
+
+.btn-tool {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 7px 18px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-tool:hover { background: rgba(255,255,255,0.22); }
+.btn-tool svg { width: 14px; height: 14px; fill: white; }
+
+/* ══════════════════════════════
+   REPORT AREA
+══════════════════════════════ */
+.report-wrapper {
+  display: none;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+.report-wrapper.visible { display: block; }
+
+/* printable A4 container */
+.report-page {
+  background: var(--paper);
+  padding: 36px 40px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+/* ── HEADER ── */
+.rpt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2.5px solid var(--ink);
+  padding-bottom: 14px;
+  margin-bottom: 22px;
+}
+.rpt-meta-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.rpt-name {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin-top: 3px;
+}
+.rpt-jobtitle {
+  font-size: 12.5px;
+  color: var(--ink-light);
+  margin-top: 4px;
+}
+.rpt-meta-row {
+  font-size: 11px;
+  color: var(--ink-light);
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.verdict-pill {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 6px 16px;
+  border-radius: 3px;
+  white-space: nowrap;
+  margin-top: 4px;
+  text-align: center;
+}
+.verdict-high   { background: var(--green); color: white; }
+.verdict-mid    { background: var(--amber); color: white; }
+.verdict-low    { background: var(--accent); color: white; }
+
+/* ── SECTION TITLE ── */
+.sec-title {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-left: 3px solid var(--accent);
+  padding-left: 9px;
+  margin-bottom: 14px;
+  margin-top: 24px;
+}
+
+/* ── VERDICT BLOCK ── */
+.verdict-block {
+  border-radius: 4px;
+  padding: 15px 18px;
+  margin-bottom: 4px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.verdict-block.amber { background: var(--amber-soft); border: 1.5px solid var(--amber); }
+.verdict-block.green { background: var(--green-soft); border: 1.5px solid var(--green); }
+.verdict-block.red   { background: var(--accent-soft); border: 1.5px solid var(--accent); }
+
+.verdict-icon { font-size: 24px; line-height: 1; margin-top: 2px; }
+.verdict-text { flex: 1; }
+.verdict-headline {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.verdict-block.amber .verdict-headline { color: var(--amber); }
+.verdict-block.green .verdict-headline { color: var(--green); }
+.verdict-block.red   .verdict-headline { color: var(--accent); }
+.verdict-desc { font-size: 12.5px; line-height: 1.8; color: var(--ink); }
+
+/* ── SKILL GRID ── */
+.skill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.skill-card {
+  border-radius: 4px;
+  padding: 11px 14px;
+  border: 1.5px solid transparent;
+}
+.skill-card.fit-high { background: var(--green-soft); border-color: var(--green); }
+.skill-card.fit-mid  { background: var(--gold-soft);  border-color: var(--gold); }
+.skill-card.fit-low  { background: var(--accent-soft); border-color: var(--accent); }
+
+.skill-name {
+  font-weight: 700;
+  font-size: 12.5px;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.fit-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 2px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fit-high .fit-tag { background: var(--green); color: white; }
+.fit-mid  .fit-tag { background: var(--gold); color: white; }
+.fit-low  .fit-tag { background: var(--accent); color: white; }
+.skill-note { font-size: 11.5px; color: var(--ink-light); line-height: 1.65; }
+
+/* ── INTERVIEW QUESTIONS ── */
+.q-block {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.q-header {
+  background: var(--gray-soft);
+  padding: 9px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  border-bottom: 1px solid var(--rule);
+}
+.q-num {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-light);
+  white-space: nowrap;
+}
+.q-text {
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.q-body {
+  padding: 11px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.score-col-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink-light);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.score-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 5px;
+  align-items: flex-start;
+}
+.score-dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.dot-1 { background: #fde8e8; color: var(--accent); border: 1.5px solid var(--accent); }
+.dot-2 { background: var(--gold-soft); color: var(--gold); border: 1.5px solid var(--gold); }
+.dot-3 { background: var(--green-soft); color: var(--green); border: 1.5px solid var(--green); }
+.score-desc { font-size: 11.5px; color: var(--ink); line-height: 1.65; }
+
+.focus-tag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 2px;
+  margin-bottom: 7px;
+}
+.focus-tag.warn { background: var(--accent); color: white; }
+.focus-tag.ok   { background: var(--green);  color: white; }
+.focus-tag.note { background: var(--ink);    color: white; }
+
+/* ── FOOTER SUMMARY ── */
+.summary-footer {
+  background: var(--ink);
+  color: white;
+  border-radius: 4px;
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-top: 6px;
+}
+.footer-col-title {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.s-item, .r-item {
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 5px;
+  line-height: 1.6;
+}
+.s-item::before { content: '＋'; color: #5dbb8a; font-weight: 700; flex-shrink: 0; }
+.r-item::before { content: '！'; color: #e88080; font-weight: 700; flex-shrink: 0; }
+
+.divider { border: none; border-top: 1px solid var(--rule); margin: 20px 0; }
+
+/* PDF generating overlay */
+.pdf-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: white;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+.pdf-overlay.active { display: flex; }
+.pdf-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── OVERALL SCORE ── */
+.score-banner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: white;
+  border: 1.5px solid var(--rule);
+  border-radius: 4px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+}
+.score-circle-wrap { flex-shrink: 0; text-align: center; }
+.score-circle {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid;
+  margin: 0 auto 4px;
+}
+.score-circle .sc-num {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+.score-circle .sc-denom { font-size: 11px; font-weight: 500; opacity: 0.6; }
+.score-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
+
+.score-circle.s5 { border-color: var(--green); color: var(--green); }
+.score-circle.s4 { border-color: #3a9a5c; color: #3a9a5c; }
+.score-circle.s3 { border-color: var(--amber); color: var(--amber); }
+.score-circle.s2 { border-color: #c07820; color: #c07820; }
+.score-circle.s1 { border-color: var(--accent); color: var(--accent); }
+.sl5 { color: var(--green); }
+.sl4 { color: #3a9a5c; }
+.sl3 { color: var(--amber); }
+.sl2 { color: #c07820; }
+.sl1 { color: var(--accent); }
+
+.score-stars { display: flex; gap: 4px; margin-top: 6px; }
+.score-star { width: 14px; height: 14px; }
+.score-star.filled path { fill: currentColor; }
+.score-star.empty path { fill: #ddd; }
+
+.score-commentary { flex: 1; }
+.commentary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.commentary-block { }
+.commentary-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.commentary-label::before {
+  content: '';
+  width: 10px; height: 2px;
+  background: currentColor;
+  display: inline-block;
+}
+.commentary-text {
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.advice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+}
+.advice-block { }
+.advice-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--blue);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+.advice-text {
+  font-size: 11.5px;
+  line-height: 1.75;
+  color: var(--ink);
+}
 
 
-  .sel-strip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-  .sel-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px dashed var(--brand);
-    background:#fff7f0;border-radius:999px;font-size:var(--fs-12)}
-  .sel-pill b{font-variant-numeric:tabular-nums}
-  .sel-pill button{all:unset;cursor:pointer;padding:2px 4px;border-radius:6px}
-  .sel-pill button:focus-visible{outline:2px solid var(--brand)}
-  .sel-pill button:hover{background:rgba(0,0,0,.06)}
+/* ── COMPETENCY GRID ── */
+.comp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.comp-card {
+  border-radius: 4px;
+  padding: 11px 14px;
+  border: 1.5px solid transparent;
+}
+.comp-card.fit-high { background: var(--green-soft); border-color: var(--green); }
+.comp-card.fit-mid  { background: var(--gold-soft);  border-color: var(--gold); }
+.comp-card.fit-low  { background: var(--accent-soft); border-color: var(--accent); }
+.comp-name {
+  font-weight: 700;
+  font-size: 12.5px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.comp-rows { display: flex; flex-direction: column; gap: 3px; }
+.comp-row {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.comp-row-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  padding-top: 1px;
+  opacity: 0.6;
+  flex-shrink: 0;
+  min-width: 42px;
+}
+.comp-row-text { color: var(--ink-light); }
 
+/* ── AI WRITING RATIO ── */
+.ai-block {
+  background: var(--ink);
+  color: white;
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin-top: 6px;
+}
+.ai-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+.ai-gauge-wrap { flex-shrink: 0; text-align: center; }
+.ai-gauge {
+  width: 70px; height: 70px;
+  position: relative;
+}
+.ai-gauge svg { width: 70px; height: 70px; transform: rotate(-90deg); }
+.ai-gauge-bg { fill: none; stroke: rgba(255,255,255,0.12); stroke-width: 7; }
+.ai-gauge-fill { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+.ai-gauge-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ai-pct {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  color: white;
+}
+.ai-pct-sign { font-size: 11px; font-weight: 400; opacity: 0.7; }
+.ai-level-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  margin-top: 4px;
+  color: rgba(255,255,255,0.7);
+}
 
-  .chip.sel{position:relative;border-color:#ffd0ae;background:#fff}
-  .chip.sel::before{content:'';position:absolute;inset:0;border-radius:999px;background:rgba(255,102,0,.12);pointer-events:none}
-  .chip.sel::after{content:attr(data-order);position:absolute;inset:0;
-    display:flex;align-items:center;justify-content:center;
-    color:#a04300;font-weight:800;font-size:20px;line-height:1;pointer-events:none;
-    width:32px;height:32px;margin:auto;border-radius:50%;background:#fff}
+.ai-info { flex: 1; }
+.ai-title {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.ai-signals { }
+.ai-signal-item {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+  display: flex;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+.ai-signal-item::before { content: '·'; color: rgba(255,255,255,0.4); font-size: 16px; line-height: 1.2; flex-shrink: 0; }
 
+.ai-note {
+  background: rgba(255,255,255,0.08);
+  border-left: 3px solid rgba(255,255,255,0.3);
+  padding: 8px 12px;
+  border-radius: 0 3px 3px 0;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.65;
+}
+.ai-note-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
 
-  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-  @keyframes popIn { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.05); opacity: 1 } 100% { transform: scale(1) } }
-  .chip.sel::before{animation: fadeIn .18s ease-out}
-  .chip.sel::after{animation: popIn .22s ease-out}
-
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 </style>
 </head>
 <body>
-  <header>
-    <div class="header-inner">
-      <div class="title">10分鐘打造你的AI生涯教練</div>
-      <div class="sub">盤點你的生涯經歷，打造你專屬的AI職涯教練</div>
+
+<!-- PDF generating overlay -->
+<div class="pdf-overlay" id="pdfOverlay">
+  <div class="pdf-spinner"></div>
+  <span>正在產生 PDF，請稍候</span>
+</div>
+
+<!-- ═══════════ APP SHELL ═══════════ -->
+<div class="app-shell" id="appShell">
+  <div class="app-header">
+    <div class="app-title">履歷自傳性格解析</div>
+    <div class="app-subtitle">從履歷自傳解析應徵者的性格，提供用人主管面試問題＆評分建議</div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-block">
+      <div class="step-label">STEP 01　貼入公司頁＆職缺頁內容</div>
+      <textarea id="jobInput" placeholder="請直接將公司刊登在104的公司頁＆職缺頁內容，複製貼上到這裡。"></textarea>
+      <button class="sample-btn" onclick="loadSample('job')">📋 帶入範例</button>
     </div>
-  </header>
+    <div class="step-block">
+      <div class="step-label">STEP 02　貼上公開的履歷範本</div>
+      <textarea id="resumeInput" placeholder="請將一份公開的104履歷範本內容，複製貼上到這裡。"></textarea>
+      <button class="sample-btn" onclick="loadSample('resume')">📋 帶入範例</button>
+    </div>
+  </div>
 
-  <main class="wrap">
-    <section class="card landing" id="landing" aria-label="起始畫面">
-      <p class="muted">直接點選「啟動我的AI職涯教練」，或先點選「載入範例快速體驗」。</p>
-      <div class="grid">
-        <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 啟動我的AI職涯教練</button>
-        <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例快速體驗</button>
-      </div>
-      <p class="hint">Keep Going !!。</p>
-    </section>
+  <div class="action-row">
+    <button class="btn-analyze" id="analyzeBtn" onclick="startAnalysis()">開始 AI 解析</button>
+  </div>
 
-    <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
-  </main>
+  <div class="loading-bar" id="loadingBar">
+    AI 分析中，請稍候<span class="loading-dots"></span>
+  </div>
+</div>
+
+<!-- ═══════════ REPORT TOOLBAR ═══════════ -->
+<div class="report-toolbar" id="reportToolbar">
+  <div class="toolbar-label">分析報告已產生</div>
+  <div class="toolbar-btns">
+    <button class="btn-tool" onclick="printReport()">
+      <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+      列印報告（A4）
+    </button>
+    <button class="btn-tool" onclick="exportPDF()">
+      <svg viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>
+      下載 PDF
+    </button>
+    <button class="btn-tool" onclick="resetAnalysis()" style="border-color:rgba(255,255,255,0.15);">
+      <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      重新解析
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════ REPORT AREA ═══════════ -->
+<div class="report-wrapper" id="reportWrapper">
+  <div class="report-page" id="reportPage">
+    <!-- dynamically injected -->
+  </div>
+</div>
 
 <script>
-(function(){
-  const stage = document.getElementById('stage');
-  const landing = document.getElementById('landing');
+// ═══ SAFE JSON PARSER ═══
+function safeParseJSON(raw) {
+  // Step 1: strip markdown fences
+  let s = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/,'').trim();
 
-  const S = { step:0, total:14,
-    years:'', yearsNone:false,
-    workStatus:null,
-    careerStage:null,
-    jobNow:'', jobNowNone:false,
-    jobPrev:'', jobPrevNone:false,
-    jobOther:'', jobOtherNone:false,
-    manageYears:'', manageNone:false,
-    licenses:'', licensesNone:false,
-    flow1:'', flow1None:false,
-    flow2:'', flow2None:false,
-    flow3:'', flow3None:false,
-    valuesSel:[], interestsSel:[], miSel:[]
-  };
+  // Step 2: try direct parse
+  try { return JSON.parse(s); } catch(e) {}
 
-  const sample = {
-    years:20, workStatus:1, careerStage:2,
-    jobNow:'人力銀行/職涯教育長/15年。',
-    jobPrev:'資訊科技製造公司/員工發展室專案顧問/3年。',
-    jobOther:'國立大學/心理系助理教授/5年。',
-    manageYears:5,
-    licenses:'乙級就業服務士,PMP證照。',
-    flow1:'大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',
-    flow2:'在104人力銀行服務期間，負責培訓150位職涯引導師。',
-    flow3:'在服役期間擔任巡迴教官，負責官兵情緒管理及職涯規劃的教育訓練。',
-    values:[14,1,2], interests:[4,5], mi:[8,7,2]
-  };
-
-  const workStatusOpts=[[1,'目前有正職的工作。'],[2,'目前有兼職的工作。'],[3,'目前有志工的工作。'],[4,'目前沒有任何工作。'],[5,'其他']];
-  const careerStageOpts=[[1,'離退休還有二年以上。'],[2,'二年內會退休。'],[3,'一年內會退休。'],[4,'目前剛退休（一年內）。'],[5,'已經退休一年以上。']];
-  const valuesOpts=[[1,'具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。'],[2,'理念要有共鳴：工作或公司文化能符合我的核心價值。'],[3,'樂於接受挑戰：工作有挑戰性，使我能從工作中持續獲得成就感。'],[4,'終身學習最幸福：工作能提供學習成長機會，有利未來的專業發展或升遷。'],[5,'公平最重要：工作的分派、管理、賞罰、薪酬分配都公平合理。'],[6,'穩定生產力：工作是在安全舒適的環境中進行，不擔心被任意調動職務或失業。'],[7,'重視薪水福利：工作提供的薪資福利，可讓我維持良好生活品質。'],[8,'目標流程清楚：工作有清楚的流程及規範可依循，可以具體地評估工作成果。'],[9,'工作符合興趣：工作內容符合我的興趣，讓我能樂在工作。'],[10,'熱愛多樣化任務：工作內容豐富多元，不會一成不變。'],[11,'自由不受限：工作時我能自行規劃工作方式，不受別人的阻礙或控制。'],[12,'創意獨特：工作能發揮自己的長才與優勢，創造獨特的價值。'],[13,'工作生活平衡：工作能讓我兼顧家庭和休閒生活。'],[14,'服務他人：工作讓我能幫助他人，為社會大眾服務。'],[15,'鼓勵起手式：主管能重視並肯定我，在工作中提供我指導、支持與鼓勵。'],[16,'歡樂工作氣氛：同事間能互助合作，有良好工作氛圍，讓人有歸屬感。']];
-  const interestOpts=[[1,'R.實作型：喜歡動手解決問題，並按照訂定的規則逐步製造出成品。'],[2,'I.研究型：個性獨立自主，對事物充滿好奇心喜歡觀察並追根究底。'],[3,'A.藝術型：追求自由奔放的靈魂，直覺敏銳，充滿創意與想像力。'],[4,'S.社會型：喜歡與人群互動，重視人的需求感受及人際間的和諧。'],[5,'E.企業型：樂觀積極，處事果決且充滿信心，有影響與說服他人的能力。'],[6,'C.事務型：做事精準追求完美，重視細節，有效率且踏實地完成目標。']];
-  const miOpts=[[1,'邏輯數學：擅長推理思考，喜歡提問尋找答案，對益智遊戲、推理解題活動很感興趣。'],[2,'語言文字：口齒伶俐，善於表達。用詞豐富，具說服力。能言善道，喜歡發問、閱讀、撰寫創作。'],[3,'自然觀察：喜歡觀察大自然生態，對飼養動物、栽種植物有濃厚興趣，對周圍環境充滿好奇心。'],[4,'肢體動覺：擅長運用身體表達想法和感受，喜歡動手操作，偏好以活動為主的工作與學習型態。'],[5,'空間藝術：習慣用意象及圖像來思考，喜歡拼圖、迷宮、愛繪畫、設計及空間規劃。'],[6,'音樂旋律：能輕易記住歌曲、旋律及辨別音調，可以輕鬆學會樂器，工作學習偏好搭配音樂旋律。'],[7,'人際互動：擅長觀察人的情緒，喜歡參與團體活動。善於激勵他人，喜歡扮演團體領導者的角色。'],[8,'內省同理：擅長探索自己及同理他人，能意識到自己情緒與想法，能安靜獨處，清楚自己的優缺點。']];
-
-  function start(){ S.step=1; landing.hidden = true; render(); }
-  function loadSample(){ Object.assign(S, {
-    step:1,
-    years:sample.years, workStatus:sample.workStatus, careerStage:sample.careerStage,
-    jobNow:sample.jobNow, jobPrev:sample.jobPrev, jobOther:sample.jobOther,
-    manageYears:sample.manageYears, licenses:sample.licenses,
-    flow1:sample.flow1, flow2:sample.flow2, flow3:sample.flow3,
-    valuesSel:sample.values.slice(), interestsSel:sample.interests.slice(), miSel:sample.mi.slice()
-  }); landing.hidden = true; render(); }
-
-  document.getElementById('startBtn').addEventListener('click', start);
-  document.getElementById('sampleBtn').addEventListener('click', loadSample);
-
-  function progress(){
-    const pct=Math.round(Math.min(S.step,S.total)/S.total*100);
-    return '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><div class="bar" style="width:'+pct+'%"></div></div>';
+  // Step 3: extract outermost { ... }
+  const start = s.indexOf('{');
+  let end = s.lastIndexOf('}');
+  if (start === -1) return null;
+  if (end === -1) {
+    // JSON was truncated — attempt to close open structures
+    s = s.slice(start);
+    s = repairTruncatedJSON(s);
+  } else {
+    s = s.slice(start, end + 1);
   }
-  function nav(){
-    return '<div class="toolbar" role="toolbar" aria-label="導覽按鈕">'
-      +(S.step>1&&S.step<=S.total?'<button class="btn ghost" id="prev" aria-label="上一題">← 上一題</button>':'')
-      +(S.step<S.total?'<button class="btn" id="next" aria-label="下一題">下一題 →</button>':'<button class="btn" id="gen" aria-label="產生咒語">生成召喚ChatGPT成為我AI生涯教練的咒語 →</button>')
-      +'</div>';
+  try { return JSON.parse(s); } catch(e) {}
+
+  // Step 4: aggressive repair
+  s = repairTruncatedJSON(raw.slice(raw.indexOf('{')));
+  try { return JSON.parse(s); } catch(e) {
+    console.error('JSON repair failed:', e, s.slice(-200));
+    return null;
   }
-  function chips(opts, selected, multi){
-    let html='<div class="grid cols-2">';
-    for(const [id, text] of opts){
-      const isSel = multi ? selected.includes(id) : selected===id;
-      const order = multi && isSel ? (selected.indexOf(id)+1) : '';
-      const state = isSel? ' sel' : '';
-      html += '<button type="button" class="chip'+state+'" data-id="'+id+'" '+(order?('data-order="'+order+'"'):'')+' aria-pressed="'+isSel+'" aria-label="'+(isSel?('已選第'+order+'個：'):'')+text.replace(/<[^>]+>/g,'')+'"><b>(' + id + ')</b><span>'+text+'</span></button>';
+}
+
+function repairTruncatedJSON(s) {
+  // Remove trailing incomplete key/value and close open arrays/objects
+  // Strip trailing comma, incomplete string, or partial key
+  s = s.replace(/,\s*$/, '');
+  s = s.replace(/,\s*"[^"]*$/, '');   // partial key at end
+  s = s.replace(/"[^"]*$/, '"..."');   // unterminated string → close it
+
+  // Count open braces and brackets
+  let braces = 0, brackets = 0, inStr = false, escape = false;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (escape) { escape = false; continue; }
+    if (c === '\\' && inStr) { escape = true; continue; }
+    if (c === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (c === '{') braces++;
+    else if (c === '}') braces--;
+    else if (c === '[') brackets++;
+    else if (c === ']') brackets--;
+  }
+  // Close any open strings first
+  if (inStr) s += '"';
+  // Close brackets then braces
+  for (let i = 0; i < brackets; i++) s += ']';
+  for (let i = 0; i < braces; i++) s += '}';
+  return s;
+}
+
+// ═══ SAMPLE DATA ═══
+const SAMPLE_JOB = `第一部份：公司介紹
+
+公司名稱：104人力銀行
+
+公司介紹
+產業類別：網際網路相關業
+資本額：3億3123萬元
+員工人數：1000人
+地址：新北市新店區寶中路119號之一10樓(231)
+
+公司簡介
+【品牌故事】
+我們在乎的，不只當下，還有對時代的深遠意義。
+
+1996年，104誕生，如同美麗的珍珠，來自一粒蚌殼無法忍受的砂粒。
+
+創辦人楊基寬早年曾外派德國和英國，對於歐美重視人與人的尊重、提升人文水平深植於心，返台後，與朋友成功創業，原已是科技新貴的創業家，卻因無法忍受產品品質被忽略的刺心感而主動辭職。人生重新歸零，當時網路還不普及，人力招募處於報紙人事廣告和店家貼紅字條的傳統年代。在事業巔峰拒絕因循定規，楊基寬尋找醉心感動的人生續曲，眼見人們總是習慣沒有效率的求職求才管道，他再次啟動勇敢挑戰的創業魂，歷經兩年拼搏，在三十多坪的舊公寓住家，僅用一部電腦架設網站，創立104人力銀行，並以人性化的網路媒合，開啟國內人力資源市場新頁。
+
+我們在乎人的價值，讓人力變人才的有機環境。身為市場典範，我們追求工作、生活與生命的質感，對求職者「不只找工作，幫你找方向」，對徵才企業「不只找人才，為你管理人才」。
+
+104的三大使命：
+1.【職涯使命，壯有所用】
+2.【銀髮使命，老有所終】
+3.【孩子使命，幼有所長】
+
+-----------------------
+
+第二部份：職缺介紹
+
+職缺名稱：人資專員
+
+工作內容
+歡迎加入104人資團隊，共同成長!
+【Giver 團隊文化】不擔心單打獨鬥，我們擁有一群樂於分享、鼓勵創新、彼此支援的夥伴，讓你工作不孤單。
+【千人級實戰場景】服務 1,000+ 名員工，透過 eHRMS 系統深度掌握「新進、離職、假勤、福利」的全核心流程。
+【清晰的職涯路徑】鼓勵內部輪調與跨域學習，從這裡紮穩馬步，未來可往其他 HR 專業領域發展。
+
+職務內容:
+1. 打造溫暖的入職體驗
+   負責新進同仁接待與制度導覽，成為新人加入104的首位專業嚮導。
+   辦理聘僱合約、資料建檔及勞健保加退保作業，確保法規合規性。
+2. 專業的假勤管理與諮詢
+   運用104 eHRMS執行班別管理、調班與排班作業、假勤設定、假勤審核、及每月假勤結算與報表彙整。
+   擔任「進階假勤專家」：針對HR客服機器人無法處理的複雜個案，提供具溫度的專業建議與回覆。
+   隨時關注勞動法令中關於各項假別之調整，具備專業分析能力並適時調整公司制度以符合合規性。
+3. 全方位團保服務與規劃
+   辦理員工及眷屬團保加保，負責每月保費核對與請款。
+   參與年度團保續約/換約評估，定期檢視理賠概況與保障內容。
+4. 離職、留停與福利審核
+   辦理員工離職/留停作業，並審核與發放各項生育、喪葬、結婚津貼與生日禮金。
+5. AI 流程優化
+   運用AI工具優化報到、假勤及團保行政流程，將重複性作業自動化，提升工作效率與品質。
+
+條件要求
+工作經歷：1年以上
+學歷要求：大學、碩士
+其他條件：具備1年以上人資假勤、保險相關實務經驗者尤佳。細心度高、具服務熱忱，且對「運用AI提升效率」充滿好奇心與學習動力。認同Giver精神，喜歡分享與互助，願意在團隊中貢獻新想法。`;
+
+const SAMPLE_RESUME = `吳OO先生
+
+簡介
+▶ 曾任HR招募部門及員工關係部門，專精其人資管理領域
+▶ 5年以上半導體相關工作經驗，了解產業結構鏈、生產線運作與管理
+▶ 擁有舉辦萬人年終晚會、千人家庭日大型活動經驗
+▶ 擅長跨部門、廠商溝通協商，親和力強、主動積極
+▶ 擅長Adobe Photoshop、Illustrator平面設計
+
+學歷
+明新科技大學 企業管理學系二技畢業 2018/6~2020/6
+明新科技大學 工業工程與管理科系二專畢業 2015/6~2017/6
+國立新竹高工 製圖科高職畢業 2013/6~2015/6
+
+工作經驗
+總年資：5~6年工作經驗
+
+人力資源招募管理師
+力成科技股份有限公司（半導體製造業 500人以上）
+2022/4~仍在職
+
+人力資源員工關係助理管理師
+力成科技股份有限公司（半導體製造業）
+2018/12~2020/6（1年7個月）
+
+負責【員工關係】業務工作內容：
+◆ 大型活動規劃
+   舉辦萬人年終晚會、千人家庭日、百人社團活動等大小活動超過50場
+   與活動公司洽談設計活動內容、交通動線、宣傳文宣、保險、場地租借等
+   接待貴賓、藝人安排休息區域與保安接送
+
+◆ 特約商店管理
+   特約商店洽談、合約簽訂、續約改約
+   承辦期間進行活動規則改動並優化公平透明性
+   相較往年簽約率成長增加5倍
+
+◆ Let's Camp 新人關懷計畫
+   透過與專案人員，從無到有將課程設計出來，指定為新人必修課程
+   協助編輯課程教材、製作課程道具
+   協助講師執行指令、現場控管、帶動活動氣氛，執行舉辦10+場
+
+◆ 員工網站管理維護及每週員工電子報
+   連續3季指定為公司季刊保險專欄作者
+
+◆ 海報文宣製作
+   設計製作公司內部海報，配合社群媒體整合傳播，各活動相較以往員工增加參與人數增加5%～8%
+
+負責【其他】業務工作內容：
+◆ 團保勞保文件審核
+   熟悉保險理賠內容核對員工理賠資格
+   在職期間處理理賠事件300+件
+
+◆ 行政事務
+   新進人員資料建立
+   承辦期間修改公司員工福利金審核條件，Excel函數製作報表優化作業內容
+
+◆ 業務支援
+   校園徵才、廠內外徵才、就業博覽會徵才
+   於2019年2月協助桃竹苗地區就業博覽會
+   於2019年3月協助企業博覽會全台校園徵才活動
+
+生產技術師
+力成科技股份有限公司（半導體製造業）
+2015/9~2018/8（3年）
+
+負責【DB\WB物料管理】業務工作內容：
+◆ 直、間材庫存管控（掌握庫存存備、製作庫存表單、建立材料編碼）
+◆ 107年因即時掌握產線材料存備，即時發現產線金線被偷竊並阻止銷毀
+◆ 建立判斷金線修復報廢流程，成功減少80%報廢率
+◆ 指派為QAU稽核6S標準檢查員
+
+自傳
+「Spread your dreams under your feet.」這是我對人生的態度！
+您好！我是OO，生於1995年，現居新竹市，個性獨立自主。
+
+· 過去 - 主動積極，面對挑戰 -
+因家庭狀況的關係更早踏入職場生活，高中開始半工半讀，二專開始進入半導體公司工作，從原本技術員經過努力轉為物料專員並培訓儲備主任，二技轉換科系後，進入公司HR員工關係課擔任助理管理師。另外，我熱愛音樂在教會福音樂團擔任木吉他手，喜愛大自然假日勢必都會在森林裡住上一晚，夏天就會投入到大海擁抱當中。
+
+· 現在 - 挑戰自我，承受壓力 -
+於力成科技主要負責員工關係，這份工作需要有良好的時程掌握能力，還需要學會主動發現問題與有效率解決，與廠商溝通協調也相當重要。除了員工關係外也積極的參與其他部門業務，讓我不單單只是了解員工關係，而是了解整個人力資源各部門業務範圍。
+
+· 未來 - 當責 -
+2020決定給自己一點時間思考挑戰自我，選擇結束工作開始徒步環島的旅行，持續40天的挑戰。看似遙不可及的夢想，只要勇敢的跨出第一步，朝著設定好的目標前進，總有一天會到達目的地。面對自己的不足，未來將持續進修精進，希望在職場生涯上，能繼續挑戰自我，用熱誠的心面對每項工作！`;
+
+function loadSample(type) {
+  if (type === 'job') {
+    document.getElementById('jobInput').value = SAMPLE_JOB;
+  } else {
+    document.getElementById('resumeInput').value = SAMPLE_RESUME;
+  }
+}
+
+// ═══ MAIN ANALYSIS ═══
+async function startAnalysis() {
+  const job = document.getElementById('jobInput').value.trim();
+  const resume = document.getElementById('resumeInput').value.trim();
+  if (!job || !resume) {
+    alert('請填入職缺內容與應徵者履歷後再進行解析。');
+    return;
+  }
+
+  const btn = document.getElementById('analyzeBtn');
+  const loading = document.getElementById('loadingBar');
+  btn.disabled = true;
+  loading.classList.add('active');
+
+  const prompt = `你是一位資深人資顧問，專精大五人格評估。請根據以下職缺描述與應徵者履歷自傳，產生一份性格導向的面試決策報告。
+請以JSON格式回應，格式如下（確保所有字串不含換行，使用\\n表示換行）：
+
+{
+  "candidateName": "候選人姓名（從履歷中萃取，若無則用「應徵者」）",
+  "jobTitle": "職位名稱（從職缺中萃取）",
+
+  "personalityComment": "以六大關鍵性格向度為架構，條列3至6點，每點格式為「▸ 【向度名稱】說明（25字內）」，每點以\\n分隔",
+  "interviewFocus": "條列3至6個面試重點，每點格式為「▸ 說明（30字內）」，聚焦在六大關鍵性格向度的評估，不涉及技能或工作經驗，每點以\\n分隔",
+  "onboardingAdvice": "條列3至6個入職管理建議，每點格式為「▸ 說明（30字內）」，針對應徵者性格特質說明管理上可提供的協助，每點以\\n分隔",
+
+  "aiWritingRatio": 0~100的整數（估計這份履歷自傳中AI輔助撰寫的比重百分比）,
+  "aiWritingLevel": "極高 | 偏高 | 中等 | 偏低 | 極低",
+  "aiWritingSignals": ["判斷依據1（具體說明某段文字或特徵）", "判斷依據2", "判斷依據3"],
+  "aiWritingNote": "給HR的提醒（50字內，說明此比重對履歷可信度的影響與面試建議）",
+
+  "personalities": [
+    {
+      "trait": "性格向度名稱（從27項中選取）",
+      "factor": "所屬因素（情緒穩定 | 親和樂群 | 勤勉審慎 | 外向實踐 | 經驗開放）",
+      "definition": "此向度定義（直接引用定義，20字內）",
+      "level": "high | mid | low",
+      "levelLabel": "明顯展現 | 部分可見 | 未見佐證",
+      "jobNeed": "職缺為何需要此性格特質（25字內）",
+      "evidence": "從履歷自傳中找到的具體行為事例（關鍵事件法，描述應徵者做了什麼具體行動或面對什麼具體情境，25字內。若無具體行為事例則寫：履歷中未見具體行為佐證）",
+      "question": "針對此向度設計的STAR行為事例面試問題（引導應徵者說出真實情境與具體行動）",
+      "focusType": "warn | ok | note",
+      "focusLabel": "標籤文字（如：⚠ 需深入確認 | ✓ 預期強項 | ▸ 進一步觀察）",
+      "score1": "1分行為描述（25字內，描述不佳表現）",
+      "score2": "2分行為描述（25字內，描述普通表現）",
+      "score3": "3分行為描述（25字內，描述優秀表現）",
+      "tips": "面試官觀察重點（40字內）"
     }
-    html+='</div>'; return html;
-  }
-  function bindChips(set){
-    stage.querySelectorAll('.chip').forEach(el=>{
-      el.addEventListener('click',()=>{ const id=+el.getAttribute('data-id'); set(id); render(); });
-      el.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }});
+  ],
+
+  "allTraits": [
+    {
+      "trait": "向度名稱（27項中的每一項，全部都要填）",
+      "factor": "所屬因素",
+      "level": "high | mid | low",
+      "levelLabel": "明顯展現 | 部分可見 | 未見佐證",
+      "evidence": "具體行為事例（關鍵事件法，25字內；若無具體行為事例則寫：未見具體行為佐證）"
+    }
+  ],
+
+  "strengths": ["優勢1（聚焦於性格優勢）", "優勢2", "優勢3", "優勢4"],
+  "risks": ["風險1（聚焦於性格風險）", "風險2", "風險3"]
+}
+
+規則：
+【表現等級定義 — 嚴格依此判斷，不得寬鬆】
+- 明顯展現（high）：履歷自傳中可找到「二則或二則以上」與該向度直接相關的具體行為事例（關鍵事件）。
+- 部分可見（mid）：履歷自傳中「僅能找到一則」與該向度相關的具體行為事例。
+- 未見佐證（low）：履歷自傳中「完全找不到」任何具體行為事例可佐證此向度。
+
+【佐證的判斷標準 — 嚴格遵守】
+- 佐證必須是「具體行為事例（關鍵事件）」，即應徵者做了什麼具體行動、面對什麼具體情境、達成什麼具體結果。
+- 嚴格禁止使用應徵者的自我主觀描述或自我評價（如「我是一個有責任感的人」、「我擅長團隊合作」）作為佐證。
+- 嚴格禁止使用泛泛的陳述（如「多年工作經驗」、「曾在多家公司任職」）作為佐證。
+- 只有具體可驗證的事件、行動或成果才能視為佐證。
+
+【personalities 欄位規則】
+- 必須從27項大五人格向度中，選取與該職缺最相關的「6項」關鍵向度。
+- 每項都需同時包含性格分析結果與面試題目設計。
+
+【allTraits 欄位規則】
+- 必須包含全部27項向度，一項都不能遺漏。
+- 這27項分別是：抗壓性、情緒調適、樂觀性、適應性、取悅性、社交性、合作性、互賴性、順從性、循規性、秩序性、謹慎性、負責任、堅毅性、活力、企圖心、表現性、領導性、影響性、直率性、文化開放、冒險性、求變性、思辨性、創造性、同理心、敏覺性。
+- 每一項都依照「表現等級定義」嚴格判斷，並提供具體行為事例佐證。
+
+【因素對應】
+【情緒穩定】抗壓性、情緒調適、樂觀性、適應性
+【親和樂群】取悅性、社交性、合作性、互賴性、順從性
+【勤勉審慎】循規性、秩序性、謹慎性、負責任、堅毅性
+【外向實踐】活力、企圖心、表現性、領導性、影響性、直率性
+【經驗開放】文化開放、冒險性、求變性、思辨性、創造性、同理心、敏覺性
+
+- aiWritingRatio 判斷依據：用語是否過度工整、段落結構是否模板化、是否使用典型AI用語（如「秉持」「致力於」「具備X年以上」格式）、缺乏個人具體細節、情感描述過於完美等。
+- aiWritingLevel: 70%以上=極高, 50-69%=偏高, 30-49%=中等, 10-29%=偏低, 10%以下=極低
+- 以繁體中文回答
+- 所有字串值禁止使用雙引號，改用「」或『』
+- 字串中禁止出現換行符號，使用\\n代替
+- 只回傳JSON，不要加任何其他文字或markdown
+
+職缺內容：
+${job}
+
+應徵者履歷：
+${resume}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
+        messages: [{ role: 'user', content: prompt }]
+      })
     });
-  }
-  function toggleMulti(arr,id,cap){ const i=arr.indexOf(id); if(i>=0){arr.splice(i,1);return;} if(arr.length<cap){arr.push(id);} }
 
-function selView(opts, selected){
-  if(!selected || !selected.length) return '<div class="hint">尚未選擇。</div>';
-  let html='<div class="sel-strip" id="selStrip">';
-  for(const id of selected){
-    const o = opts.find(o=>o[0]===id);
-    if(!o) continue;
-    html += '<span class="sel-pill"><b>(' + id + ')</b><span>'+o[1].replace(/<[^>]+>/g,'')+'</span><button class="sel-remove" aria-label="移除" data-id="'+id+'">×</button></span>';
+    const data = await response.json();
+    const raw = data.content.map(i => i.text || '').join('');
+    const result = safeParseJSON(raw);
+    if (!result) throw new Error('JSON 解析失敗');
+    renderReport(result);
+  } catch (err) {
+    console.error(err);
+    alert('解析時發生錯誤，請檢查網路連線後重試。');
+    btn.disabled = false;
+    loading.classList.remove('active');
   }
-  html+='</div>'; return html;
-}
-function bindSelRemove(arr, cap){
-  (stage.querySelectorAll('.sel-remove')||[]).forEach(btn=>{
-    btn.addEventListener('click',()=>{ const id=+btn.getAttribute('data-id'); const i=arr.indexOf(id); if(i>=0){arr.splice(i,1);} render(); });
-  });
 }
 
-  function qWrap(title, hint, inner){
-    stage.innerHTML = progress()+`<section class="card" style="padding:16px" aria-live="polite"><div class="qtitle">${title}</div>${hint?`<div class="hint">${hint}</div>`:''}<div class="grid" style="margin-top:10px">${inner}</div>${nav()}</section>`;
-    const p=stage.querySelector('#prev'); if(p) p.onclick=()=>{S.step--; render();};
-    const n=stage.querySelector('#next'); if(n) n.onclick=()=>{S.step++; render();};
-    const g=stage.querySelector('#gen'); if(g) g.onclick=()=>{S.step=15; render();};
-    // Move focus to first focusable element for better a11y
-    const firstFocusable = stage.querySelector('input, textarea, .chip, .btn');
-    if(firstFocusable) firstFocusable.focus({preventScroll:true});
-  }
+// ═══ RENDER REPORT ═══
+function renderReport(d) {
+  const FACTOR_COLOR = {
+    '情緒穩定': '#2e7d9e', '親和樂群': '#5a7a2e',
+    '勤勉審慎': '#7a5a2e', '外向實踐': '#7a2e2e', '經驗開放': '#4a2e7a'
+  };
 
-  function render(){
-    switch(S.step){
-      case 1:
-        qWrap('1. 我目前累積的工作年資有幾年？','例如：20年。請直接輸入幾年數字；若不適用可勾選「無」。',`
-          <div class="row">
-            <input class="field" id="years" inputmode="numeric" placeholder="例如：20" ${S.yearsNone?'disabled':''} value="${escape(S.years)}" aria-label="工作年資（年）">
-            <label class="hint"><input type="checkbox" id="yearsNone" ${S.yearsNone?'checked':''}> 無</label>
-          </div>`);
-        stage.querySelector('#years').oninput=e=>S.years=e.target.value;
-        stage.querySelector('#yearsNone').onchange=e=>{S.yearsNone=e.target.checked; render();};
-        break;
-      case 2:
-        qWrap('2. 我目前的工作狀態是？','請從以下五個選項中選一個。', chips(workStatusOpts,S.workStatus,false));
-        bindChips(id=>S.workStatus=id);
-        break;
-      case 3:
-        qWrap('3. 我目前的生涯發展現況是？','請從以下五個選項中選一個。', chips(careerStageOpts,S.careerStage,false));
-        bindChips(id=>S.careerStage=id);
-        break;
-      case 4:
-        qWrap('4. 我最近或目前從事的工作是？','例如：人力銀行/職涯教育長/15年。',`
-          <div class="row">
-            <input class="field" id="jobNow" placeholder="請輸入：產業/職務/累積年資。例：人力銀行/職涯教育長/15年。" ${S.jobNowNone?'disabled':''} value="${escape(S.jobNow)}" aria-label="目前工作">
-            <label class="hint"><input type="checkbox" id="jobNowNone" ${S.jobNowNone?'checked':''}> 無</label>
-          </div>`);
-        stage.querySelector('#jobNow').oninput=e=>S.jobNow=e.target.value;
-        stage.querySelector('#jobNowNone').onchange=e=>{S.jobNowNone=e.target.checked; render();};
-        break;
-      case 5:
-        qWrap('5. 我更早之前從事的工作是？','例如：資訊科技製造公司/員工發展室專案顧問/3年。',`
-          <div class="row">
-            <input class="field" id="jobPrev" placeholder="請輸入：產業/職務/累積年資。例：資訊科技製造公司/員工發展室專案顧問/3年。" ${S.jobPrevNone?'disabled':''} value="${escape(S.jobPrev)}" aria-label="過去工作">
-            <label class="hint"><input type="checkbox" id="jobPrevNone" ${S.jobPrevNone?'checked':''}> 無</label>
-          </div>`);
-        stage.querySelector('#jobPrev').oninput=e=>S.jobPrev=e.target.value;
-        stage.querySelector('#jobPrevNone').onchange=e=>{S.jobPrevNone=e.target.checked; render();};
-        break;
-      case 6:
-        qWrap('6. 另一個比較有成就感的工作是？','例如：國立大學/心理系助理教授/5年。',`
-          <div class="row">
-            <input class="field" id="jobOther" placeholder="請輸入：產業/職務/累積年資。例：國立大學/心理系助理教授/5年。" ${S.jobOtherNone?'disabled':''} value="${escape(S.jobOther)}" aria-label="其他成就工作">
-            <label class="hint"><input type="checkbox" id="jobOtherNone" ${S.jobOtherNone?'checked':''}> 無</label>
-          </div>`);
-        stage.querySelector('#jobOther').oninput=e=>S.jobOther=e.target.value;
-        stage.querySelector('#jobOtherNone').onchange=e=>{S.jobOtherNone=e.target.checked; render();};
-        break;
-      case 7:
-        qWrap('7. 我的管理經驗？','例如：5年。請直接輸入幾年；若不適用可勾選「無」。',`
-          <div class="row">
-            <input class="field" id="manageYears" inputmode="numeric" placeholder="例如：5" ${S.manageNone?'disabled':''} value="${escape(S.manageYears)}" aria-label="管理年資（年）">
-            <label class="hint"><input type="checkbox" id="manageNone" ${S.manageNone?'checked':''}> 無</label>
-          </div>`);
-        stage.querySelector('#manageYears').oninput=e=>S.manageYears=e.target.value;
-        stage.querySelector('#manageNone').onchange=e=>{S.manageNone=e.target.checked; render();};
-        break;
-      case 8:
-        qWrap('8. 我擁有的證照？','例如：乙級就業服務士,PMP證照。多張證照請用逗號（,）分開。',`
-          <div class="row">
-            <input class="field" id="licenses" placeholder="例：乙級就業服務士,PMP證照。" ${S.licensesNone?'disabled':''} value="${escape(S.licenses)}" aria-label="證照清單">
-            <label class="hint"><input type="checkbox" id="licensesNone" ${S.licensesNone?'checked':''}> 無</label>
-          </div>`);
-        stage.querySelector('#licenses').oninput=e=>S.licenses=e.target.value;
-        stage.querySelector('#licensesNone').onchange=e=>{S.licensesNone=e.target.checked; render();};
-        break;
-      case 9:
-        qWrap('9. 我最有心流時光的一次生命事件是？','所謂「心流時光」，是讓人覺得比較來勁忘我、如魚得水、心想事成、欲罷不能的生命事件。每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊陪伴偏鄉國小兒童探索工作世界。',`
-          <textarea class="field" id="flow1" placeholder="請用 1~2 句寫下 Time 與 Flow 的重點。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1)}</textarea>
-          <label class="hint"><input type="checkbox" id="flow1None" ${S.flow1None?'checked':''}> 無</label>`);
-        stage.querySelector('#flow1').oninput=e=>S.flow1=e.target.value;
-        stage.querySelector('#flow1None').onchange=e=>{S.flow1None=e.target.checked; render();};
-        break;
-      case 10:
-        qWrap('10. 另一個比較有心流時光感覺的生命經歷是？','例如：在人力銀行服務期間，負責培訓150位職涯引導師。',`
-          <textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二">${escape(S.flow2)}</textarea>
-          <label class="hint"><input type="checkbox" id="flow2None" ${S.flow2None?'checked':''}> 無</label>`);
-        stage.querySelector('#flow2').oninput=e=>S.flow2=e.target.value;
-        stage.querySelector('#flow2None').onchange=e=>{S.flow2None=e.target.checked; render();};
-        break;
-      case 11:
-        qWrap('11. 另一個比較有心流時光感覺的生命經歷是？','例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',`
-          <textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三">${escape(S.flow3)}</textarea>
-          <label class="hint"><input type="checkbox" id="flow3None" ${S.flow3None?'checked':''}> 無</label>`);
-        stage.querySelector('#flow3').oninput=e=>S.flow3=e.target.value;
-        stage.querySelector('#flow3None').onchange=e=>{S.flow3None=e.target.checked; render();};
-        break;
-      case 12:
-        qWrap('12. 我比較在乎的三個職業價值觀是？',
-             '請依序選出三個比較在乎的職業價值觀。探索職業價值觀，可以試試→ <a href="https://guide.104.com.tw/value/" target="_blank" rel="noopener">【104職業價值觀測驗】</a>',
-             chips(valuesOpts,S.valuesSel,true)+`<div class="hint">已選 ${S.valuesSel.length} / 3</div>`);
-        bindChips(id=>{toggleMulti(S.valuesSel,id,3)});
-        break;
-      case 13:
-        qWrap('13. 我比較來勁的二個生涯興趣？',
-             '請依序選出二個比較來勁的生涯興趣。探索職業價值觀，可以試試→ <a href="https://guide.104.com.tw/interest/" target="_blank" rel="noopener">【104生涯興趣測驗】</a>',
-             chips(interestOpts,S.interestsSel,true)+`<div class="hint">已選 ${S.interestsSel.length} / 2</div>`);
-        bindChips(id=>{toggleMulti(S.interestsSel,id,2)});
-        break;
-      case 14:
-        qWrap('14. 我比較擅長的三個多元智能？','請依序選出三個比較擅長的多元智能。',
-          chips(miOpts,S.miSel,true)+`<div class="hint">已選 ${S.miSel.length} / 3</div>`);
-        bindChips(id=>{toggleMulti(S.miSel,id,3)});
-        break;
-      case 15:
-        const text = compiledText();
-        stage.innerHTML = progress()+`<section class="card" style="padding:16px">
-          <div class="qtitle">彙整完成</div>
-          <div class="hint">下方文字已包含 14 項彙整與後續 7 題請求。點「一鍵複製」即可貼上使用。</div>
-          <textarea id="out" aria-label="彙整文字">${escape(text)}</textarea>
-          <div class="toolbar">
-            <button class="btn" id="copy">Step 1：一鍵複製咒語到 ChatGPT</button>
-            <a class="btn secondary" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Step 2：開啟 ChatGPT 並貼上</a>
-            <button class="btn ghost" id="restart">我要重新再試一次</button>
+  const LEVEL_STYLE = {
+    high: { bg: '#e8f5ee', border: '#1a7a4a', label: '明顯展現' },
+    mid:  { bg: '#fdf8ec', border: '#b8860b', label: '部分可見' },
+    low:  { bg: '#f9e8e7', border: '#c0392b', label: '未見佐證' },
+  };
+
+  // ── 計算六大關鍵性格符合度分數 ──
+  const personalities = d.personalities || [];
+  const levelScore = { high: 3, mid: 2, low: 1 };
+  const totalScore = personalities.reduce((sum, p) => sum + (levelScore[p.level] || 1), 0);
+  const avgScore = personalities.length > 0 ? totalScore / personalities.length : 1;
+  // 乘以 5/3 後取小數點一位
+  const computedScore = Math.round(avgScore * (5/3) * 10) / 10;
+  let scoreLabel, scoreClass, scoreSlClass;
+  if (computedScore <= 2) {
+    scoreLabel = '不符合'; scoreClass = 's1'; scoreSlClass = 'sl1';
+  } else if (computedScore <= 3) {
+    scoreLabel = '不太符合'; scoreClass = 's2'; scoreSlClass = 'sl2';
+  } else if (computedScore <= 4) {
+    scoreLabel = '大致符合'; scoreClass = 's3'; scoreSlClass = 'sl3';
+  } else {
+    scoreLabel = '非常符合'; scoreClass = 's5'; scoreSlClass = 'sl5';
+  }
+  // 邀約建議依分數決定
+  const verdictLevel = computedScore > 4 ? 'high' : computedScore > 3 ? 'mid' : 'low';
+  const verdictClass = verdictLevel === 'high' ? 'green' : verdictLevel === 'low' ? 'red' : 'amber';
+  const verdictPillClass = verdictLevel === 'high' ? 'verdict-high' : verdictLevel === 'low' ? 'verdict-low' : 'verdict-mid';
+  const verdictIcon = verdictLevel === 'high' ? '🟢' : verdictLevel === 'low' ? '🔴' : '🟡';
+  const verdictText = verdictLevel === 'high' ? '✓ 建議邀約' : verdictLevel === 'low' ? '✗ 暫不建議' : '⚠ 部分適配';
+
+  // 星星：以 computedScore 對應 1~5 範圍顯示
+  const starCount = Math.round(computedScore);
+  const filledStars = Array.from({length:5}, (_,i) => i < starCount
+    ? `<svg class="score-star filled" style="color:currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
+    : `<svg class="score-star empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
+  ).join('');
+
+  // ── AI Ratio ──
+  const aiRatio = d.aiWritingRatio || 0;
+  const aiR = 30;
+  const aiCircum = 2 * Math.PI * aiR;
+  const aiDashOffset = aiCircum - (aiRatio / 100) * aiCircum;
+  const aiColor = aiRatio >= 70 ? '#e88080' : aiRatio >= 50 ? '#e8a040' : aiRatio >= 30 ? '#e8d040' : '#5dbb8a';
+  const aiSignalsHTML = (d.aiWritingSignals || []).map(s => `<div class="ai-signal-item">${s}</div>`).join('');
+
+  // ── 六大關鍵性格：各向度分數說明 ──
+  const scoreBarHTML = personalities.map(p => {
+    const s = levelScore[p.level] || 1;
+    const scaled = Math.round(s * (5/3) * 10) / 10;
+    const fc = FACTOR_COLOR[p.factor] || '#444';
+    const barWidth = (s / 3) * 100;
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <span style="font-size:10px;background:${fc};color:white;padding:1px 7px;border-radius:10px;font-weight:600;flex-shrink:0;min-width:52px;text-align:center;">${p.factor}</span>
+      <span style="font-size:12px;font-weight:600;min-width:54px;flex-shrink:0;">${p.trait}</span>
+      <div style="flex:1;background:#ece9e4;border-radius:3px;height:8px;overflow:hidden;">
+        <div style="width:${barWidth}%;background:${fc};height:100%;border-radius:3px;transition:width 0.5s;"></div>
+      </div>
+      <span style="font-size:11px;font-weight:700;min-width:22px;text-align:right;color:${fc};">${scaled}</span>
+      <span style="font-size:10px;color:#888;min-width:44px;">${p.levelLabel || ''}</span>
+    </div>`;
+  }).join('');
+
+  // ── 「二、六大關鍵性格」：性格分析 + 面試題合體卡片 ──
+  const combinedPersonalityHTML = personalities.map((p, i) => {
+    const fc = FACTOR_COLOR[p.factor] || '#444';
+    const lvlStyle = LEVEL_STYLE[p.level] || LEVEL_STYLE.low;
+    return `
+    <div style="border:1.5px solid ${fc};border-radius:6px;margin-bottom:20px;overflow:hidden;">
+      <!-- 卡片標題列 -->
+      <div style="background:${fc};color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:700;letter-spacing:0.06em;">${p.trait}</span>
+          <span style="font-size:11px;opacity:0.85;margin-left:6px;">：${p.definition || ''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:12px;">
+          <span style="font-size:10px;opacity:0.8;">${p.factor}</span>
+          <span style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);color:white;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;">${p.levelLabel || ''}</span>
+        </div>
+      </div>
+      <!-- 性格適合度分析 -->
+      <div style="padding:14px 16px;background:#faf8f4;border-bottom:1px solid #e8e4dc;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;color:${fc};margin-bottom:10px;text-transform:uppercase;">性格適合度分析結果</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:white;border:1px solid #e8e4dc;border-radius:4px;padding:8px 10px;">
+            <div style="font-size:10px;font-weight:700;color:#888;margin-bottom:4px;letter-spacing:0.08em;">職缺需求</div>
+            <div style="font-size:11.5px;color:#1a1a2e;line-height:1.55;">${p.jobNeed || ''}</div>
           </div>
-        </section>`;
-        document.getElementById('copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(text); toast('已複製到剪貼簿！'); }catch(e){ alert('複製失敗，請手動選取文字。'); } };
-        document.getElementById('restart').onclick=()=>{ Object.assign(S,{step:0,years:'',yearsNone:false,workStatus:null,careerStage:null,jobNow:'',jobNowNone:false,jobPrev:'',jobPrevNone:false,jobOther:'',jobOtherNone:false,manageYears:'',manageNone:false,licenses:'',licensesNone:false,flow1:'',flow1None:false,flow2:'',flow2None:false,flow3:'',flow3None:false,valuesSel:[],interestsSel:[],miSel:[]}); landing.hidden=false; stage.innerHTML=''; };
-        break;
+          <div style="background:${lvlStyle.bg};border:1px solid ${lvlStyle.border};border-radius:4px;padding:8px 10px;">
+            <div style="font-size:10px;font-weight:700;color:${lvlStyle.border};margin-bottom:4px;letter-spacing:0.08em;">履歷具體行為佐證</div>
+            <div style="font-size:11.5px;color:#1a1a2e;line-height:1.55;">${p.evidence || '未見具體行為佐證'}</div>
+          </div>
+        </div>
+      </div>
+      <!-- 面試題目 & 評分標準 -->
+      <div style="padding:14px 16px;background:white;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;color:${fc};margin-bottom:10px;text-transform:uppercase;">面試題目＆評分標準</div>
+        <div style="background:#f7f5f2;border-radius:4px;padding:10px 12px;margin-bottom:10px;">
+          <span class="focus-tag ${p.focusType}" style="margin-bottom:6px;display:inline-block;">${p.focusLabel || ''}</span>
+          <div style="font-size:12.5px;font-weight:600;color:#1a1a2e;line-height:1.6;">${p.question || ''}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div class="score-col-title">評分標準</div>
+            <div class="score-row"><div class="score-dot dot-1">1</div><div class="score-desc">${p.score1 || ''}</div></div>
+            <div class="score-row"><div class="score-dot dot-2">2</div><div class="score-desc">${p.score2 || ''}</div></div>
+            <div class="score-row"><div class="score-dot dot-3">3</div><div class="score-desc">${p.score3 || ''}</div></div>
+          </div>
+          <div>
+            <div class="score-col-title">面試官觀察重點</div>
+            <div class="score-desc">${(p.tips || '').replace(/\n/g,'<br>')}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Big Five 27 Dimensions Full Table（來自 allTraits）──
+  const BIG5_DIMS = [
+    { factor: '情緒穩定', color: '#2e7d9e', traits: ['抗壓性','情緒調適','樂觀性','適應性'] },
+    { factor: '親和樂群', color: '#5a7a2e', traits: ['取悅性','社交性','合作性','互賴性','順從性'] },
+    { factor: '勤勉審慎', color: '#7a5a2e', traits: ['循規性','秩序性','謹慎性','負責任','堅毅性'] },
+    { factor: '外向實踐', color: '#7a2e2e', traits: ['活力','企圖心','表現性','領導性','影響性','直率性'] },
+    { factor: '經驗開放', color: '#4a2e7a', traits: ['文化開放','冒險性','求變性','思辨性','創造性','同理心','敏覺性'] }
+  ];
+  const DEF_MAP = {
+    '抗壓性':'面對壓力不過度緊張','情緒調適':'能迅速恢復平和','樂觀性':'正面看待人事','適應性':'彈性調整行為模式',
+    '取悅性':'迎合他人留好印象','社交性':'積極與他人互動','合作性':'喜歡團隊合作','互賴性':'喜歡尋求他人協助','順從性':'順應指示或團體壓力',
+    '循規性':'遵循社會規範','秩序性':'凡事有條理重細節','謹慎性':'行動前仔細思考','負責任':'盡責可靠信守承諾','堅毅性':'鍥而不捨堅持不懈',
+    '活力':'精力充沛活動力旺盛','企圖心':'追求個人最大成就','表現性':'喜歡突顯成就獲讚揚','領導性':'喜歡主動承擔領導責任','影響性':'喜歡影響他人行為想法','直率性':'有話就說坦白率直',
+    '文化開放':'對不同文化持開放態度','冒險性':'樂於體驗不確定性','求變性':'喜歡追求變化嘗試新事物','思辨性':'喜歡抽象思考解決問題','創造性':'喜歡獨特創新想法','同理心':'喜歡了解他人感受表達關懷','敏覺性':'觀察人際互動注意別人反應'
+  };
+
+  // 以 allTraits 建立 lookup（補充：若 allTraits 沒有，fallback 到 personalities）
+  const allTraitMap = {};
+  (d.allTraits || []).forEach(t => { allTraitMap[(t.trait||'').trim()] = t; });
+  (d.personalities || []).forEach(p => {
+    const k = (p.trait||'').trim();
+    if (!allTraitMap[k]) allTraitMap[k] = p;
+  });
+
+  const bigFiveTableHTML = BIG5_DIMS.map(group => {
+    const rowsHTML = group.traits.map(name => {
+      const info = allTraitMap[name];
+      const lvl = info ? (LEVEL_STYLE[info.level] || LEVEL_STYLE.low) : null;
+      const levelCell = lvl
+        ? `<span style="display:inline-block;background:${lvl.bg};border:1px solid ${lvl.border};color:${lvl.border};font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;">${lvl.label}</span>`
+        : `<span style="display:inline-block;background:#f0eee9;border:1px solid #ccc;color:#888;font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;">待評估</span>`;
+      const evidenceCell = info && info.evidence
+        ? `<span style="font-size:11px;color:#4a4a6a;">${info.evidence}</span>`
+        : `<span style="font-size:11px;color:#bbb;">未見具體行為佐證</span>`;
+      return `<tr>
+        <td style="padding:6px 10px;font-size:12px;font-weight:600;border-bottom:1px solid #ece9e4;white-space:nowrap;">${name}</td>
+        <td style="padding:6px 10px;font-size:11px;color:#4a4a6a;border-bottom:1px solid #ece9e4;">${DEF_MAP[name]||''}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #ece9e4;text-align:center;">${levelCell}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #ece9e4;">${evidenceCell}</td>
+      </tr>`;
+    }).join('');
+    return `
+    <div style="margin-bottom:14px;">
+      <div style="background:${group.color};color:white;font-size:10px;font-weight:700;letter-spacing:0.14em;padding:6px 12px;border-radius:3px 3px 0 0;">
+        ${group.factor}（${group.traits.length} 項向度）
+      </div>
+      <table style="width:100%;border-collapse:collapse;background:white;border:1.5px solid ${group.color};border-top:none;border-radius:0 0 3px 3px;overflow:hidden;">
+        <thead>
+          <tr style="background:#f7f5f2;">
+            <th style="padding:6px 10px;font-size:10px;letter-spacing:0.08em;color:#888;font-weight:700;text-align:left;border-bottom:1.5px solid #e8e4dc;width:70px;">向度</th>
+            <th style="padding:6px 10px;font-size:10px;letter-spacing:0.08em;color:#888;font-weight:700;text-align:left;border-bottom:1.5px solid #e8e4dc;width:160px;">定義</th>
+            <th style="padding:6px 10px;font-size:10px;letter-spacing:0.08em;color:#888;font-weight:700;text-align:center;border-bottom:1.5px solid #e8e4dc;width:90px;">表現等級</th>
+            <th style="padding:6px 10px;font-size:10px;letter-spacing:0.08em;color:#888;font-weight:700;text-align:left;border-bottom:1.5px solid #e8e4dc;">具體行為佐證</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHTML}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+
+  const strengthsHTML = (d.strengths||[]).map(s => `<div class="s-item">${s}</div>`).join('');
+  const risksHTML = (d.risks||[]).map(r => `<div class="r-item">${r}</div>`).join('');
+
+  const today = new Date().toLocaleDateString('zh-TW');
+
+  document.getElementById('reportPage').innerHTML = `
+    <!-- ── 報告標頭 ── -->
+    <div class="rpt-header">
+      <div>
+        <div class="rpt-meta-label">履歷自傳性格分析報告</div>
+        <div class="rpt-name">${d.candidateName}</div>
+        <div class="rpt-jobtitle">應徵職位：${d.jobTitle}</div>
+        <div class="rpt-meta-row">
+          <span>📅 ${today}</span>
+          <span>⏱ 聚焦性格評估</span>
+        </div>
+      </div>
+      <div>
+        <div class="verdict-pill ${verdictPillClass}">${verdictText}</div>
+      </div>
+    </div>
+
+    <!-- ── 一、整體性格符合度評估摘要 ── -->
+    <div class="sec-title">一、整體性格符合度評估摘要</div>
+    <div class="score-banner">
+      <div class="score-circle-wrap">
+        <div class="score-circle ${scoreClass}">
+          <span class="sc-num" style="font-size:22px;">${computedScore}</span>
+          <span class="sc-denom">／5</span>
+        </div>
+        <div class="score-label ${scoreSlClass}">${scoreLabel}</div>
+        <div class="score-stars ${scoreSlClass}">${filledStars}</div>
+      </div>
+      <div class="score-commentary" style="flex:1;">
+        <div>
+          <div class="commentary-label" style="margin-bottom:8px;">分析摘要說明</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            ${(d.personalityComment||'').split(/\\n|\n/).filter(l=>l.trim()).map(l=>`
+            <div style="font-size:12px;line-height:1.6;color:#2a2a3e;padding:3px 0;">${l.trim()}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 二、六大關鍵性格：符合度評估＆面試建議 ── -->
+    <div class="sec-title">二、六大關鍵性格：符合度評估＆面試建議</div>
+    ${combinedPersonalityHTML}
+
+    <hr class="divider">
+
+    <!-- ── 三、大五人格27向度全覽 ── -->
+    <div class="sec-title">三、大五人格 27 向度全覽</div>
+    ${bigFiveTableHTML}
+
+    <!-- ── 四、綜合評估摘要 ── -->
+    <div class="sec-title">四、綜合評估摘要</div>
+    <div class="summary-footer">
+      <div>
+        <div class="footer-col-title">✦ 主要性格優勢</div>
+        ${strengthsHTML}
+      </div>
+      <div>
+        <div class="footer-col-title">！ 主要性格風險</div>
+        ${risksHTML}
+      </div>
+    </div>
+
+    <!-- ── 五、AI 撰寫比重估計 ── -->
+    <div class="sec-title">五、AI 撰寫比重估計</div>
+    <div class="ai-block">
+      <div class="ai-top">
+        <div class="ai-gauge-wrap">
+          <div class="ai-gauge">
+            <svg viewBox="0 0 70 70">
+              <circle class="ai-gauge-bg" cx="35" cy="35" r="30"/>
+              <circle class="ai-gauge-fill" cx="35" cy="35" r="30"
+                stroke="${aiColor}"
+                stroke-dasharray="${aiCircum}"
+                stroke-dashoffset="${aiDashOffset}"/>
+            </svg>
+            <div class="ai-gauge-text">
+              <span class="ai-pct">${aiRatio}<span class="ai-pct-sign">%</span></span>
+            </div>
+          </div>
+          <div class="ai-level-label">${d.aiWritingLevel || ''}</div>
+        </div>
+        <div class="ai-info">
+          <div class="ai-title">判斷依據</div>
+          <div class="ai-signals">${aiSignalsHTML}</div>
+        </div>
+      </div>
+      <div>
+        <div class="ai-note-label">HR 參考提醒</div>
+        <div class="ai-note">${d.aiWritingNote || ''}</div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('loadingBar').classList.remove('active');
+  document.getElementById('analyzeBtn').disabled = false;
+  document.getElementById('reportToolbar').classList.add('visible');
+  document.getElementById('reportWrapper').classList.add('visible');
+  document.getElementById('reportWrapper').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ═══ PRINT (A4) ═══
+function printReport() {
+  window.print();
+}
+
+// ═══ EXPORT PDF ═══
+async function exportPDF() {
+  const overlay = document.getElementById('pdfOverlay');
+  overlay.classList.add('active');
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const element = document.getElementById('reportPage');
+
+    // A4 dimensions in px at 96dpi: 794 x 1123
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#faf8f4',
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      windowWidth: 794,
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageW = 210;
+    const pageH = 297;
+    const margin = 10;
+    const usableW = pageW - margin * 2;
+
+    const canvasW = canvas.width;
+    const canvasH = canvas.height;
+    const imgH = (canvasH / canvasW) * usableW;
+
+    let y = margin;
+    let remainH = imgH;
+    let srcY = 0;
+
+    while (remainH > 0) {
+      const sliceH = Math.min(remainH, pageH - margin * 2);
+      const srcSliceH = (sliceH / imgH) * canvasH;
+
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width = canvasW;
+      sliceCanvas.height = srcSliceH;
+      const ctx = sliceCanvas.getContext('2d');
+      ctx.drawImage(canvas, 0, srcY, canvasW, srcSliceH, 0, 0, canvasW, srcSliceH);
+
+      if (srcY > 0) pdf.addPage();
+      pdf.addImage(sliceCanvas.toDataURL('image/png'), 'PNG', margin, margin, usableW, sliceH);
+
+      srcY += srcSliceH;
+      remainH -= sliceH;
     }
+
+    // filename from candidate name
+    const nameEl = document.querySelector('.rpt-name');
+    const name = nameEl ? nameEl.textContent.trim() : '候選人';
+    const titleEl = document.querySelector('.rpt-jobtitle');
+    const title = titleEl ? titleEl.textContent.replace('應徵職位：','').trim() : '職缺';
+    pdf.save(`面試決策報告_${name}_${title}.pdf`);
+
+  } catch (err) {
+    console.error(err);
+    alert('PDF 產生失敗，請改用「列印報告」功能並選擇「另存為 PDF」。');
+  } finally {
+    overlay.classList.remove('active');
   }
+}
 
-  function toast(msg){
-    const n=document.createElement('div');
-    n.textContent=msg;
-    Object.assign(n.style,{position:'fixed',left:'50%',bottom:'calc(env(safe-area-inset-bottom,0) + 24px)',transform:'translateX(-50%)',background:'var(--ink)',color:'#fff',padding:'10px 14px',borderRadius:'999px',boxShadow:'var(--shadow)',zIndex:1000});
-    document.body.appendChild(n);
-    setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity .3s';},1200);
-    setTimeout(()=>n.remove(),1550);
-  }
-
-  function escape(s){ return String(s??'').replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch])); }
-  function findById(arr,id){ const f=arr.find(a=>a[0]===id); return f?f[1]:''; }
-  function withYear(v){ if(v==null||v==='') return ''; const s=String(v).trim(); return s.endsWith('年')?s:s+'年'; }
-  function compiledText(){
-    const L1 = `1.我目前累積的工作年資有：${S.yearsNone?'無。':(withYear(S.years)||'。')}`;
-    const L2 = `2.我目前的工作狀態是： ${(S.workStatus?`(${S.workStatus})`:'')}${findById(workStatusOpts,S.workStatus)}`;
-    const L3 = `3.我目前的生涯發展現況是：${(S.careerStage?`(${S.careerStage})`:'')}${findById(careerStageOpts,S.careerStage)}`;
-    const L4 = `4.最近或目前從事的工作是：${S.jobNowNone?'無。':(S.jobNow||'')}`;
-    const L5 = `5.更早之前從事的工作是：${S.jobPrevNone?'無。':(S.jobPrev||'')}`;
-    const L6 = `6.除了上述二個工作，我還從事過那個比較有成就感的工作是：${S.jobOtherNone?'無。':(S.jobOther||'')}`;
-    const L7 = `7.我的管理經驗：${S.manageNone?'無。':(withYear(S.manageYears)||'。')}`;
-    const L8 = `8.我擁有的證照：${S.licensesNone?'無。':(S.licenses||'')}`;
-    const L9 = `9.我最有心流時光的一次生命經歷是：${S.flow1None?'無。':(S.flow1||'')}`;
-    const L10= `10.我另一個比較有心流時光感覺的生命經歷是：${S.flow2None?'無。':(S.flow2||'')}`;
-    const L11= `11.我另一個比較有心流時光感覺的生命經歷是：${S.flow3None?'無。':(S.flow3||'')}`;
-    const V12 = '12.我比較在乎的三個職業價值觀是：\n' + S.valuesSel.map(id=>`(${id})${findById(valuesOpts,id)}`).join('\n');
-    const V13 = '13.我比較來勁的二個生涯興趣是：\n' + S.interestsSel.map(id=>`(${id}) ${findById(interestOpts,id)}`).join('\n');
-    const V14 = '14.我比較擅長的多元智能是：\n' + S.miSel.map(id=>`(${id})${findById(miOpts,id)}`).join('\n');
-
-    const ask = [
-      '請根據上述彙整的各項生涯發展與探索資訊，運用你的AI智慧，回答我以下八個問題。回答的內容，請直接用文字加上標題出現在對話框，方便我直接閱讀。','',
-      '1. 解析我累積的專業才能及未來開展第二人生可以運用的專業才能。請從我上述提供的各項生涯發展與探索資訊加以佐證。',
-      '2. 解析我累積的熱情特質及未來開展第二人生可以運用的熱情特質。請從我上述提供的各項生涯發展與探索資訊加以佐證。',
-      '3. 解析我未來開展第二人生時，有哪些之前累積的人脈資產可以運用。請從我上述提供的各項生涯發展與探索資訊加以佐證。',
-      '4. 從我的專業才能、熱情特質、人脈資產，解析我第二人生的使命。請詳細說明原因為何？',
-      '5. 根據上述四個分析結果，請推薦我「第二人生」可能發展的五個職涯領域。請詳細說明每個職涯領域推薦的原因，並且說明進入每個職涯領域的挑戰與切入的第一步。',
-      '6. 請說明上述推薦的五個職涯領域，我在半年內可以培養的技術/能力或取得的證照。請說明原因，也說明這些技術/能力/證照取得的管道或方法。',
-      '7. 建議我在上述各個職涯領域，可以參與哪些 社群/協會/志工團體或政府專案，並請提供這些社群/協會/志工或政府專案的正確網址….，方便我可以點閱查詢。',
-      '8. 請推薦我馬上可以嘗試的 兼職、接案或任務類型，以及如何相關的接案管道與報價建議。',
-      '9. 請提醒我開啟第二人生之前，在金錢財務、身心健康、家庭關係、人際關係....要事先做好的準備。',
-      '10. 以「未來 3 年生涯行動地圖」收斂，列出每年的「關鍵任務」、「學習主題」、「人脈經營重點」與「身心健康計畫」。'
-    ].join('\n');
-
-    return '\n'+[L1,'',L2,'',L3,'',L4,'',L5,'',L6,'',L7,'',L8,'',L9,'',L10,'',L11,'',V12,'',V13,'',V14].join('\n')+'\n」\n\n「\n'+ask+'\n';
-  }
-})();
+// ═══ RESET ═══
+function resetAnalysis() {
+  document.getElementById('reportToolbar').classList.remove('visible');
+  document.getElementById('reportWrapper').classList.remove('visible');
+  document.getElementById('reportPage').innerHTML = '';
+  document.getElementById('appShell').scrollIntoView({ behavior: 'smooth' });
+}
 </script>
 </body>
 </html>
