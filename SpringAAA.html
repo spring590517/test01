@@ -3,832 +3,1083 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>圖書資料管理人員 職業介紹</title>
+<title>AI 面試：性格分析結果報告｜吳OO × 人資專員</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap');
-:root{--gold:#c9a84c;--deep:#3d2b1f;--sub-bg:rgba(15,8,3,0.82)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#1a0e07;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Noto Sans TC',sans-serif}
-.stage{position:relative;width:960px;height:540px;max-width:100vw;overflow:hidden;border-radius:10px;box-shadow:0 30px 100px rgba(0,0,0,.9)}
-.scene{position:absolute;inset:0;z-index:2;opacity:0;transition:opacity .7s ease}
-.scene.active{opacity:1}
-.char-strip{position:absolute;right:0;top:0;width:52%;height:100%;z-index:5;pointer-events:none;overflow:hidden}
-.char-img{width:100%;height:100%;object-fit:cover;object-position:left top;opacity:0;transition:opacity .8s}
-.char-img.visible{opacity:1}
-.char-blend{position:absolute;left:0;top:0;width:55%;height:100%;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,transparent 100%);pointer-events:none;z-index:2}
-.top-bar{position:absolute;top:0;left:0;right:0;height:56px;background:linear-gradient(180deg,rgba(0,0,0,.75) 0%,transparent);z-index:20;display:flex;align-items:center;padding:0 22px;gap:12px}
-.badge{background:var(--gold);color:var(--deep);font-family:'Noto Serif TC',serif;font-weight:900;font-size:12px;padding:4px 13px;border-radius:2px;letter-spacing:2px}
-.src{color:rgba(255,255,255,.5);font-size:11px;letter-spacing:1px}
-.ts{position:absolute;top:16px;right:20px;color:rgba(255,255,255,.45);font-size:12px;letter-spacing:2px}
-.tbar{position:absolute;top:0;left:0;height:3px;background:var(--gold);z-index:30;width:0}
-.scene-label{position:absolute;top:64px;left:22px;z-index:22;opacity:0;transform:translateX(-14px);transition:opacity .4s,transform .4s}
-.scene-label.vis{opacity:1;transform:translateX(0)}
-.scene-label-inner{background:rgba(20,10,4,.82);backdrop-filter:blur(10px);border-left:3px solid var(--gold);padding:9px 16px;border-radius:0 6px 6px 0}
-.scene-label-en{color:rgba(255,255,255,.4);font-size:10px;letter-spacing:3px;margin-bottom:3px}
-.scene-label-zh{color:var(--gold);font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;letter-spacing:1px}
-.chips{position:absolute;left:22px;bottom:118px;z-index:22;display:flex;flex-direction:column;gap:7px}
-.chip{background:rgba(20,10,4,.78);backdrop-filter:blur(8px);border:1px solid rgba(201,168,76,.4);color:rgba(255,255,255,.85);font-size:12px;padding:5px 13px;border-radius:20px;letter-spacing:1px;opacity:0;transform:translateY(10px);transition:opacity .35s,transform .35s}
-.chip.vis{opacity:1;transform:translateY(0)}
-.subbox{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:25;max-width:820px;width:92%;text-align:center}
-.subline{display:inline-block;background:var(--sub-bg);backdrop-filter:blur(10px);color:#fff;font-family:'Noto Serif TC',serif;font-size:21px;font-weight:700;line-height:1.6;padding:7px 22px;border-radius:5px;letter-spacing:1px;opacity:0;transform:translateY(8px);transition:opacity .28s,transform .28s;text-shadow:0 1px 5px rgba(0,0,0,.8);border-bottom:2px solid var(--gold)}
-.subline.on{opacity:1;transform:translateY(0)}
-.spkrow{position:absolute;bottom:98px;left:50%;transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .4s;white-space:nowrap}
-.spkrow.vis{opacity:1}
-.spkdot{width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pk 1.2s ease-in-out infinite}
-@keyframes pk{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
-.spktxt{color:var(--gold);font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:3px;font-weight:700}
-.wavewrap{display:flex;gap:3px;align-items:flex-end;height:18px;opacity:0;transition:opacity .3s;margin-left:6px}
-.wavewrap.on{opacity:1}
-.wb{width:3px;background:var(--gold);border-radius:2px;animation:wba .65s ease-in-out infinite}
-.wb:nth-child(1){height:6px;animation-delay:0s}.wb:nth-child(2){height:12px;animation-delay:.1s}.wb:nth-child(3){height:18px;animation-delay:.2s}.wb:nth-child(4){height:12px;animation-delay:.3s}.wb:nth-child(5){height:6px;animation-delay:.4s}
-@keyframes wba{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1)}}
-.pdots{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:25;display:flex;gap:9px;opacity:0;transition:opacity .3s}
-.pdots.vis{opacity:1}
-.pd{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);transition:background .3s,transform .3s}
-.pd.on{background:var(--gold);border-color:var(--gold);transform:scale(1.4)}
-.povly{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(15,7,2,.65);backdrop-filter:blur(2px);cursor:pointer;transition:opacity .5s}
-.povly.gone{opacity:0;pointer-events:none}
-.pbtn{width:82px;height:82px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;box-shadow:0 0 0 14px rgba(201,168,76,.18),0 0 0 28px rgba(201,168,76,.09)}
-.pbtn:hover{transform:scale(1.1)}
-.phint{color:rgba(255,255,255,.75);font-family:'Noto Serif TC',serif;font-size:14px;margin-top:22px;letter-spacing:3px}
-.endcard{position:absolute;inset:0;z-index:35;background:linear-gradient(135deg,#1e0f06 0%,#3d2110 50%,#2c1508 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .8s}
-.endcard.vis{opacity:1;pointer-events:all}
-.etitle{font-family:'Noto Serif TC',serif;font-size:34px;font-weight:900;color:var(--gold);letter-spacing:6px;margin-bottom:8px;text-shadow:0 2px 22px rgba(201,168,76,.45)}
-.esub{color:rgba(255,255,255,.45);font-size:12px;letter-spacing:5px;margin-bottom:34px}
-.egrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:560px;width:90%;margin-bottom:32px}
-.eitem{background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.28);border-radius:7px;padding:13px 16px}
-.eititle{color:var(--gold);font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;margin-bottom:5px;font-weight:700}
-.eicontent{color:rgba(255,255,255,.7);font-size:12px;line-height:1.85}
-.rbtn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:4px;padding:10px 30px;cursor:pointer;border-radius:3px;transition:background .2s,color .2s}
-.rbtn:hover{background:var(--gold);color:var(--deep)}
-.ctrls{position:absolute;bottom:6px;right:14px;z-index:30;display:flex;gap:7px;opacity:.45;transition:opacity .2s}
-.ctrls:hover{opacity:1}
-.cbtn{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);font-size:11px;padding:4px 10px;cursor:pointer;border-radius:3px;font-family:'Noto Sans TC',sans-serif;letter-spacing:1px;transition:background .15s}
-.cbtn:hover{background:rgba(201,168,76,.3)}
-.ptcl{position:absolute;border-radius:50%;opacity:0;animation:fup linear infinite}
-@keyframes fup{0%{opacity:0;transform:translateY(0) scale(0)}10%{opacity:.5}85%{opacity:.15}100%{opacity:0;transform:translateY(-150px) scale(0)}}
+:root {
+  --ink:       #1a1a2e;
+  --ink-light: #4a4a6a;
+  --paper:     #faf8f4;
+  --rule:      #e8e4dc;
+  --accent:    #c0392b;
+  --teal:      #2e7d9e;
+  --sage:      #5a7a2e;
+  --brown:     #7a5a2e;
+  --rust:      #7a2e2e;
+  --s1:#e74c3c;--s2:#c0392b;--s3:#d4600a;--s4:#2e7d9e;--s5:#1a3a6e;
+}
+html{scroll-behavior:smooth;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0ede8;font-family:'Noto Sans TC',sans-serif;color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%;}
+
+/* PAGE */
+.page{max-width:900px;margin:0 auto;padding:24px 16px 60px;}
+
+/* HEADER */
+.rpt-header{background:var(--ink);color:white;border-radius:8px 8px 0 0;padding:24px 28px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.rpt-badge{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+.rpt-name{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;}
+.rpt-meta{font-size:11px;color:rgba(255,255,255,0.6);display:flex;gap:12px;flex-wrap:wrap;}
+.rpt-meta span{display:flex;align-items:center;gap:4px;}
+.verdict-pill{flex-shrink:0;padding:7px 16px;border-radius:30px;font-size:11px;font-weight:700;letter-spacing:0.06em;border:2px solid;white-space:nowrap;}
+.verdict-high{background:rgba(46,125,158,0.15);border-color:#2e7d9e;color:#2e7d9e;}
+.verdict-mid{background:rgba(212,96,10,0.12);border-color:#d4600a;color:#d4600a;}
+.verdict-low{background:rgba(192,57,43,0.12);border-color:#c0392b;color:#c0392b;}
+
+/* BODY */
+.rpt-body{background:var(--paper);border-radius:0 0 8px 8px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,0.1);}
+
+/* SECTION */
+.sec-title{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:700;letter-spacing:0.12em;color:var(--accent);border-left:4px solid var(--accent);padding-left:14px;margin:28px 0 16px;}
+.sec-title:first-child{margin-top:0;}
+.divider{border:none;border-top:1px solid var(--rule);margin:24px 0;}
+
+/* PART 1 SUMMARY */
+.summary-top{display:grid;grid-template-columns:150px 1fr;gap:0;background:white;border:1.5px solid var(--rule);border-radius:8px;overflow:hidden;margin-bottom:16px;}
+.summary-score-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 14px;gap:8px;}
+.summary-conclusions{display:block;}
+.conclusion-block{padding:16px 18px;}
+.conclusion-block+.conclusion-block{border-top:1px solid var(--rule);}
+.conclusion-block.alt{background:#f7f5f2;}
+.conclusion-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:7px;}
+.conclusion-text{font-size:12px;color:var(--ink);line-height:1.8;}
+
+/* OVERVIEW GRID */
+.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.overview-card{background:#f7f5f2;border-radius:6px;padding:12px 14px;border-left:3px solid;}
+
+/* TRAIT CARDS */
+.trait-card{border-radius:8px;margin-bottom:18px;overflow:hidden;border:1.5px solid var(--rule);}
+.tc-block-label{font-size:9px;font-weight:700;letter-spacing:0.12em;color:#999;text-transform:uppercase;margin-bottom:6px;}
+.tc-block-text{font-size:12px;line-height:1.75;color:var(--ink-light);}
+.tc-star-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+.tc-star-icon-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;}
+.tc-star-icon{width:32px;height:32px;border-radius:50%;color:white;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.tc-star-ev{font-size:9px;font-weight:700;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;border:1px solid;}
+.tc-star-quote{flex:1;border-radius:5px;padding:9px 12px;align-self:flex-start;margin-left:16px;}
+.tc-star-quote-label{font-size:9px;font-weight:700;letter-spacing:0.1em;margin-bottom:4px;}
+.tc-star-quote-text{font-size:12px;color:#1a1a2e;line-height:1.65;font-style:italic;}
+.tc-warn{margin-top:4px;padding:7px 10px;background:#fdeaea;border-radius:4px;font-size:11px;color:#c0392b;font-weight:600;}
+
+/* MEDIA BTNS */
+.tc-media{display:flex;justify-content:flex-end;margin-top:16px;}.media-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.media-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid;text-decoration:none;transition:background 0.15s,color 0.15s;}
+.media-btn-text{border-color:var(--teal);color:var(--teal);background:#f0f7fb;}
+.media-btn-text:hover{background:var(--teal);color:white;}
+.media-btn-video{border-color:var(--rust);color:var(--rust);background:#fdf0f0;}
+.media-btn-video:hover{background:var(--rust);color:white;}
+
+/* FOLLOWUP */
+.followup-card{border-radius:6px;margin-bottom:18px;overflow:hidden;border:1.5px solid #e8e4dc;}
+.followup-header .trait-card-title{color:white;font-size:16px;}
+.followup-reason{background:#3d2466;border-bottom:1px solid rgba(255,255,255,0.15);padding:12px 18px;font-size:11.5px;color:rgba(255,255,255,0.9);line-height:1.7;}
+.followup-reason strong{color:white;}
+.followup-body{padding:14px 18px;background:white;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fq-star-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
+.fq-star-icon{flex-shrink:0;width:32px;height:32px;border-radius:50%;color:white;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-left:20px;}
+.fq-star-q{flex:1;background:#f7f5f2;border-radius:4px;padding:8px 11px;font-size:12px;color:#1a1a2e;line-height:1.65;}
+
+/* SCORE5 */
+.score5-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;}
+.score5-num{width:24px;height:24px;border-radius:50%;color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.score5-desc{flex:1;border-radius:4px;padding:6px 10px;}
+.score5-label{font-size:10px;font-weight:700;margin-bottom:2px;}
+.score5-text{font-size:11px;color:var(--ink-light);line-height:1.6;}
+.obs-block{margin-top:12px;padding:10px 12px;background:#f7f5f2;border-radius:4px;}
+.obs-label{font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);}
+.obs-text{font-size:11.5px;color:var(--ink-light);line-height:1.65;padding-left:12px;}
+
+/* BOTTOM NOTE */
+.bottom-note{margin-top:24px;padding:14px 18px;background:#f0ede8;border-radius:6px;border:1px solid var(--rule);}
+.bottom-note-label{font-size:10px;font-weight:700;letter-spacing:0.12em;color:#aaa;text-transform:uppercase;margin-bottom:6px;}
+.bottom-note-text{font-size:11px;color:var(--ink-light);line-height:1.8;}
+
+/* ── BAR CLASSES ── */
+.bar-track{background:#ece9e4;border-radius:3px;height:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;}
+.bar-s5{background:#1a3a6e;}.bar-s4{background:#2e7d9e;}.bar-s3{background:#d4600a;}.bar-s2{background:#c0392b;}.bar-s1{background:#e74c3c;}
+
+/* ════════════ RWD ════════════ */
+
+/* Tablet ≤ 768px */
+@media(max-width:768px){
+  .page{padding:16px 12px 48px;}
+  .rpt-header{padding:20px;}
+  .rpt-body{padding:20px 16px;}
+  .summary-top{grid-template-columns:1fr;}
+  .summary-score-panel{flex-direction:row;justify-content:center;padding:16px 20px;gap:20px;border-bottom:1px solid var(--rule);}
+  .summary-conclusions{grid-template-rows:unset;}
+  .overview-grid{grid-template-columns:repeat(2,1fr);}
+  .followup-body{grid-template-columns:1fr;}
+}
+
+/* Mobile ≤ 480px */
+@media(max-width:480px){
+  .page{padding:0 0 40px;}
+  .rpt-header{border-radius:0;padding:16px 14px;gap:10px;}
+  .rpt-name{font-size:16px;}
+  .rpt-meta{font-size:10px;gap:6px;}
+  .rpt-body{border-radius:0;padding:16px 14px;box-shadow:none;}
+  .sec-title{font-size:11px;}
+  .summary-score-panel{padding:14px 16px;gap:14px;}
+  .overview-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .overview-card{padding:10px 12px;}
+  .tc-star-icon-wrap{width:64px;}
+  .tc-star-icon{width:28px;height:28px;font-size:11px;}
+  .tc-star-ev{font-size:8px;padding:1px 4px;}
+  .tc-star-quote{padding:7px 10px;}
+  .tc-star-quote-text{font-size:11px;}
+  .fq-star-icon{width:28px;height:28px;font-size:11px;}
+  .verdict-pill{padding:5px 10px;font-size:10px;}
+  .rpt-header{flex-direction:column;}
+}
+
+/* Very small ≤ 360px */
+@media(max-width:360px){
+  .overview-grid{grid-template-columns:1fr;}
+  .rpt-meta{flex-direction:column;gap:4px;}
+  .summary-score-panel{flex-direction:column;align-items:center;}
+}
 </style>
 </head>
 <body>
-<div class="stage" id="stage">
-<div class="tbar" id="tbar"></div>
+<div class="page">
 
-<!-- ══ SCENE 0: 自我介紹 – warm library interior ══ -->
-<div class="scene active" id="s0">
-<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
-  <defs>
-    <radialGradient id="g0a" cx="38%" cy="45%" r="55%"><stop offset="0%" stop-color="#ff9800" stop-opacity=".25"/><stop offset="100%" stop-color="#1a0800" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect width="960" height="540" fill="#2a1408"/>
-  <rect width="960" height="540" fill="url(#g0a)"/>
-  <!-- back wall -->
-  <rect x="0" y="0" width="490" height="480" fill="#1e0e04" opacity=".6"/>
-  <!-- shelf boards -->
-  <g stroke="#6b3a10" stroke-width="2.5" opacity=".6">
-    <line x1="0" y1="85" x2="490" y2="85"/>
-    <line x1="0" y1="175" x2="490" y2="175"/>
-    <line x1="0" y1="265" x2="490" y2="265"/>
-    <line x1="0" y1="355" x2="490" y2="355"/>
-    <line x1="0" y1="445" x2="490" y2="445"/>
-  </g>
-  <!-- vertical dividers -->
-  <g fill="#3a1c08" opacity=".5">
-    <rect x="0" y="0" width="7" height="480"/>
-    <rect x="163" y="0" width="6" height="480"/>
-    <rect x="326" y="0" width="6" height="480"/>
-    <rect x="483" y="0" width="7" height="480"/>
-  </g>
-  <!-- books row 1 -->
-  <g opacity=".9">
-    <rect x="10" y="18" width="17" height="62" rx="1" fill="#c0392b"/>
-    <rect x="29" y="26" width="13" height="54" rx="1" fill="#2980b9"/>
-    <rect x="44" y="14" width="19" height="66" rx="1" fill="#27ae60"/>
-    <rect x="65" y="22" width="15" height="58" rx="1" fill="#8e44ad"/>
-    <rect x="82" y="16" width="21" height="64" rx="1" fill="#e67e22"/>
-    <rect x="105" y="26" width="13" height="54" rx="1" fill="#16a085"/>
-    <rect x="120" y="18" width="18" height="62" rx="1" fill="#d35400"/>
-    <rect x="140" y="24" width="15" height="56" rx="1" fill="#95a5a6"/>
-    <rect x="170" y="16" width="19" height="64" rx="1" fill="#1abc9c"/>
-    <rect x="191" y="24" width="14" height="56" rx="1" fill="#9b59b6"/>
-    <rect x="207" y="18" width="18" height="62" rx="1" fill="#e74c3c"/>
-    <rect x="227" y="14" width="21" height="66" rx="1" fill="#3498db"/>
-    <rect x="250" y="22" width="15" height="58" rx="1" fill="#f39c12"/>
-    <rect x="267" y="16" width="19" height="64" rx="1" fill="#2ecc71"/>
-    <rect x="288" y="26" width="13" height="54" rx="1" fill="#e91e63"/>
-    <rect x="303" y="18" width="17" height="62" rx="1" fill="#00bcd4"/>
-    <rect x="333" y="22" width="19" height="58" rx="1" fill="#ff5722"/>
-    <rect x="354" y="14" width="15" height="66" rx="1" fill="#607d8b"/>
-    <rect x="371" y="20" width="21" height="60" rx="1" fill="#9c27b0"/>
-    <rect x="394" y="16" width="17" height="64" rx="1" fill="#4caf50"/>
-    <rect x="413" y="26" width="13" height="54" rx="1" fill="#ff9800"/>
-    <rect x="428" y="18" width="19" height="62" rx="1" fill="#2196f3"/>
-    <rect x="449" y="22" width="15" height="58" rx="1" fill="#f44336"/>
-    <rect x="466" y="16" width="18" height="64" rx="1" fill="#795548"/>
-  </g>
-  <!-- books row 2 -->
-  <g opacity=".8">
-    <rect x="10" y="106" width="18" height="62" rx="1" fill="#1565c0"/>
-    <rect x="30" y="114" width="14" height="54" rx="1" fill="#ad1457"/>
-    <rect x="46" y="102" width="21" height="66" rx="1" fill="#558b2f"/>
-    <rect x="69" y="110" width="16" height="58" rx="1" fill="#6a1f5e"/>
-    <rect x="87" y="104" width="19" height="64" rx="1" fill="#bf360c"/>
-    <rect x="108" y="116" width="13" height="52" rx="1" fill="#00838f"/>
-    <rect x="123" y="106" width="21" height="62" rx="1" fill="#f57f17"/>
-    <rect x="146" y="112" width="15" height="56" rx="1" fill="#4e342e"/>
-    <rect x="172" y="104" width="20" height="64" rx="1" fill="#1b5e20"/>
-    <rect x="194" y="114" width="14" height="54" rx="1" fill="#4a148c"/>
-    <rect x="210" y="106" width="18" height="62" rx="1" fill="#c62828"/>
-    <rect x="230" y="102" width="22" height="66" rx="1" fill="#006064"/>
-    <rect x="254" y="114" width="13" height="54" rx="1" fill="#e65100"/>
-    <rect x="269" y="108" width="16" height="60" rx="1" fill="#880e4f"/>
-    <rect x="287" y="102" width="20" height="66" rx="1" fill="#0d47a1"/>
-    <rect x="309" y="114" width="15" height="54" rx="1" fill="#33691e"/>
-    <rect x="335" y="106" width="19" height="62" rx="1" fill="#b71c1c"/>
-    <rect x="356" y="112" width="14" height="56" rx="1" fill="#1a237e"/>
-    <rect x="372" y="104" width="21" height="64" rx="1" fill="#004d40"/>
-    <rect x="395" y="110" width="17" height="58" rx="1" fill="#f57f17"/>
-    <rect x="414" y="106" width="19" height="62" rx="1" fill="#880e4f"/>
-    <rect x="435" y="114" width="14" height="54" rx="1" fill="#37474f"/>
-    <rect x="451" y="104" width="18" height="64" rx="1" fill="#6d4c41"/>
-    <rect x="471" y="110" width="13" height="58" rx="1" fill="#9e9d24"/>
-  </g>
-  <!-- desk lamp -->
-  <rect x="148" y="308" width="6" height="88" fill="#8b6020"/>
-  <ellipse cx="151" cy="303" rx="40" ry="20" fill="#c8960a" opacity=".75"/>
-  <ellipse cx="151" cy="402" rx="32" ry="9" fill="#5a3808" opacity=".9"/>
-  <ellipse cx="151" cy="360" rx="100" ry="55" fill="rgba(255,200,80,.1)"/>
-  <!-- info sign -->
-  <rect x="28" y="278" width="130" height="30" rx="3" fill="#5a3210" opacity=".9"/>
-  <text x="93" y="298" fill="#f5c842" font-size="13" font-family="sans-serif" font-weight="bold" text-anchor="middle" letter-spacing="2">INFORMATION</text>
-  <!-- book return -->
-  <rect x="28" y="358" width="120" height="72" rx="4" fill="#3a1e08" stroke="#7a5018" stroke-width="1.5"/>
-  <text x="88" y="380" fill="#c8960a" font-size="10" font-family="sans-serif" font-weight="bold" text-anchor="middle" letter-spacing="1">BOOK RETURN</text>
-  <!-- owl mascot -->
-  <circle cx="255" cy="280" r="18" fill="#7a4010"/>
-  <circle cx="248" cy="274" r="7" fill="#fff" opacity=".9"/>
-  <circle cx="262" cy="274" r="7" fill="#fff" opacity=".9"/>
-  <circle cx="248" cy="275" r="3.5" fill="#1a0800"/>
-  <circle cx="262" cy="275" r="3.5" fill="#1a0800"/>
-  <polygon points="255,284 250,292 260,292" fill="#c8960a"/>
-  <!-- floor -->
-  <rect x="0" y="480" width="960" height="60" fill="rgba(8,4,1,.7)"/>
-</svg>
-<div class="ptcl" style="left:8%;top:75%;width:5px;height:5px;background:#c9a84c;animation-duration:5s;animation-delay:0s"></div>
-<div class="ptcl" style="left:18%;top:80%;width:3px;height:3px;background:#e8b860;animation-duration:6.5s;animation-delay:1s"></div>
-</div>
+<!-- ── PAGE TITLE（深藍色區塊上方）── -->
+<div style="text-align:center;padding:20px 16px 12px;font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;color:#3a3a3a;letter-spacing:0.06em;">AI 面試＿性格分析結果報告</div>
 
-<!-- ══ SCENE 1: 採訪、分類與編目 – desk + cataloging ══ -->
-<div class="scene" id="s1">
-<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
-  <defs>
-    <radialGradient id="g1a" cx="32%" cy="60%" r="55%"><stop offset="0%" stop-color="#ff9800" stop-opacity=".22"/><stop offset="100%" stop-color="#1a0800" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect width="960" height="540" fill="#1e0e04"/>
-  <rect width="960" height="540" fill="url(#g1a)"/>
-  <!-- wooden desk -->
-  <rect x="0" y="330" width="490" height="210" fill="#4a2508"/>
-  <rect x="0" y="326" width="490" height="9" fill="#6b3a12"/>
-  <line x1="0" y1="360" x2="490" y2="360" stroke="#3a1c06" stroke-width="1" opacity=".5"/>
-  <!-- stacked books on desk -->
-  <rect x="28" y="262" width="115" height="68" rx="3" fill="#c0392b"/>
-  <rect x="28" y="258" width="115" height="9" rx="2" fill="#a93226"/>
-  <rect x="33" y="244" width="108" height="20" rx="3" fill="#2980b9"/>
-  <rect x="33" y="240" width="108" height="9" rx="2" fill="#2471a3"/>
-  <rect x="38" y="228" width="102" height="17" rx="3" fill="#27ae60"/>
-  <rect x="38" y="224" width="102" height="9" rx="2" fill="#1e8449"/>
-  <!-- catalog card tray -->
-  <rect x="168" y="266" width="165" height="66" rx="4" fill="#7a5018" stroke="#a07028" stroke-width="1.5"/>
-  <rect x="174" y="272" width="153" height="54" rx="2" fill="#5a3808"/>
-  <!-- catalog cards -->
-  <rect x="178" y="276" width="64" height="44" rx="2" fill="#fdf6ee" opacity=".93"/>
-  <text x="182" y="284" fill="#3a1c06" font-size="7.5" font-family="sans-serif" font-weight="bold">分類號：020.1</text>
-  <line x1="182" y1="288" x2="238" y2="288" stroke="#888" stroke-width=".8"/>
-  <line x1="182" y1="295" x2="238" y2="295" stroke="#aaa" stroke-width=".8"/>
-  <line x1="182" y1="302" x2="232" y2="302" stroke="#aaa" stroke-width=".8"/>
-  <line x1="182" y1="309" x2="228" y2="309" stroke="#aaa" stroke-width=".8"/>
-  <rect x="250" y="276" width="64" height="44" rx="2" fill="#fdf6ee" opacity=".85"/>
-  <text x="254" y="284" fill="#3a1c06" font-size="7.5" font-family="sans-serif" font-weight="bold">分類號：158.3</text>
-  <line x1="254" y1="288" x2="310" y2="288" stroke="#888" stroke-width=".8"/>
-  <line x1="254" y1="295" x2="310" y2="295" stroke="#aaa" stroke-width=".8"/>
-  <!-- barcode scanner -->
-  <rect x="48" y="306" width="84" height="19" rx="3" fill="#1a1a1a"/>
-  <g fill="#e74c3c">
-    <rect x="53" y="309" width="3" height="13"/>
-    <rect x="58" y="309" width="2" height="13"/>
-    <rect x="62" y="309" width="4" height="13"/>
-    <rect x="68" y="309" width="2" height="13"/>
-    <rect x="73" y="309" width="3" height="13"/>
-    <rect x="79" y="309" width="2" height="13"/>
-    <rect x="84" y="309" width="4" height="13"/>
-    <rect x="90" y="309" width="2" height="13"/>
-    <rect x="95" y="309" width="3" height="13"/>
-    <rect x="101" y="309" width="2" height="13"/>
-    <rect x="106" y="309" width="4" height="13"/>
-    <rect x="112" y="309" width="2" height="13"/>
-    <rect x="117" y="309" width="3" height="13"/>
-    <rect x="122" y="309" width="2" height="13"/>
-  </g>
-  <line x1="53" y1="315" x2="126" y2="315" stroke="rgba(255,80,80,.75)" stroke-width="1.5">
-    <animate attributeName="y1" values="309;322;309" dur="1.2s" repeatCount="indefinite"/>
-    <animate attributeName="y2" values="309;322;309" dur="1.2s" repeatCount="indefinite"/>
-  </line>
-  <!-- monitor with MARC -->
-  <rect x="338" y="200" width="140" height="122" rx="6" fill="#111" stroke="#555" stroke-width="2"/>
-  <rect x="344" y="206" width="128" height="104" rx="3" fill="#0a1628"/>
-  <text x="352" y="222" fill="#4fc3f7" font-size="9" font-family="monospace">MARC 21 編目系統</text>
-  <text x="348" y="235" fill="#80cbc4" font-size="8" font-family="monospace">020 $a 978-626-xxx</text>
-  <text x="348" y="247" fill="#80cbc4" font-size="8" font-family="monospace">100 $a 作者姓名</text>
-  <text x="348" y="259" fill="#80cbc4" font-size="8" font-family="monospace">245 $a 書名正題</text>
-  <text x="348" y="271" fill="#80cbc4" font-size="8" font-family="monospace">650 $a 圖書館學</text>
-  <text x="348" y="283" fill="#a5d6a7" font-size="8" font-family="monospace">✓ 編目完成</text>
-  <rect x="348" y="291" width="5" height="8" fill="#4fc3f7" opacity=".8">
-    <animate attributeName="opacity" values=".8;0;.8" dur="1s" repeatCount="indefinite"/>
-  </rect>
-  <rect x="397" y="322" width="10" height="20" fill="#333"/>
-  <rect x="377" y="340" width="50" height="6" rx="2" fill="#444"/>
-  <!-- DDC chart on wall -->
-  <rect x="0" y="55" width="205" height="242" fill="rgba(18,8,2,.68)"/>
-  <text x="102" y="78" fill="#c9a84c" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle" letter-spacing="2">中國圖書分類法</text>
-  <g fill="rgba(255,255,255,.6)" font-size="9.5" font-family="sans-serif">
-    <text x="14" y="97">000 總類</text>
-    <text x="14" y="113">100 哲學類</text>
-    <text x="14" y="129">200 宗教類</text>
-    <text x="14" y="145">300 科學類</text>
-    <text x="14" y="161">400 應用科學</text>
-    <text x="14" y="177">500 社會科學</text>
-    <text x="14" y="193">600 中國史地</text>
-    <text x="14" y="209">700 世界史地</text>
-    <text x="14" y="225">800 語言文學</text>
-    <text x="14" y="241">900 藝術</text>
-  </g>
-  <line x1="10" y1="85" x2="195" y2="85" stroke="rgba(201,168,76,.4)" stroke-width="1"/>
-  <rect x="8" y="133" width="192" height="16" rx="2" fill="rgba(201,168,76,.15)"/>
-  <text x="14" y="145" fill="#f5c842" font-size="9.5" font-family="sans-serif" font-weight="bold">300 科學類 ◀</text>
-  <!-- floor -->
-  <rect x="0" y="480" width="960" height="60" fill="rgba(8,4,1,.7)"/>
-</svg>
-</div>
-
-<!-- ══ SCENE 2: 書在對的位置 – tall shelves spotlight ══ -->
-<div class="scene" id="s2">
-<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
-  <defs>
-    <radialGradient id="spot2" cx="22%" cy="44%" r="40%"><stop offset="0%" stop-color="#ffe090" stop-opacity=".45"/><stop offset="100%" stop-color="#0e0804" stop-opacity="0"/></radialGradient>
-    <linearGradient id="shG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a2808"/><stop offset="100%" stop-color="#1e0c04"/></linearGradient>
-  </defs>
-  <rect width="960" height="540" fill="#0e0804"/>
-  <rect width="960" height="540" fill="url(#spot2)"/>
-  <rect x="0" y="0" width="448" height="540" fill="url(#shG)" opacity=".65"/>
-  <!-- shelf boards -->
-  <g fill="#3a1c08" opacity=".9">
-    <rect x="0" y="86" width="448" height="10"/>
-    <rect x="0" y="176" width="448" height="10"/>
-    <rect x="0" y="266" width="448" height="10"/>
-    <rect x="0" y="356" width="448" height="10"/>
-    <rect x="0" y="446" width="448" height="10"/>
-  </g>
-  <g fill="#3a1c08" opacity=".65">
-    <rect x="0" y="0" width="8" height="540"/>
-    <rect x="150" y="0" width="7" height="540"/>
-    <rect x="300" y="0" width="7" height="540"/>
-    <rect x="440" y="0" width="8" height="540"/>
-  </g>
-  <!-- many book spines row 1 -->
-  <g opacity=".88">
-    <rect x="12" y="16" width="16" height="65" rx="1" fill="#c0392b"/>
-    <rect x="30" y="24" width="12" height="57" rx="1" fill="#2980b9"/>
-    <rect x="44" y="12" width="19" height="69" rx="1" fill="#27ae60"/>
-    <rect x="65" y="20" width="14" height="61" rx="1" fill="#8e44ad"/>
-    <rect x="81" y="14" width="21" height="67" rx="1" fill="#e67e22"/>
-    <rect x="104" y="24" width="12" height="57" rx="1" fill="#16a085"/>
-    <rect x="118" y="16" width="17" height="65" rx="1" fill="#d35400"/>
-    <rect x="137" y="22" width="14" height="59" rx="1" fill="#607d8b"/>
-    <rect x="158" y="14" width="20" height="67" rx="1" fill="#1abc9c"/>
-    <rect x="180" y="22" width="13" height="59" rx="1" fill="#9b59b6"/>
-    <rect x="195" y="16" width="18" height="65" rx="1" fill="#e74c3c"/>
-    <rect x="215" y="12" width="21" height="69" rx="1" fill="#3498db"/>
-    <rect x="238" y="20" width="14" height="61" rx="1" fill="#f39c12"/>
-    <rect x="254" y="14" width="19" height="67" rx="1" fill="#2ecc71"/>
-    <rect x="275" y="24" width="12" height="57" rx="1" fill="#e91e63"/>
-    <rect x="289" y="16" width="17" height="65" rx="1" fill="#00bcd4"/>
-    <rect x="308" y="20" width="19" height="61" rx="1" fill="#ff5722"/>
-    <rect x="329" y="12" width="15" height="69" rx="1" fill="#607d8b"/>
-    <rect x="346" y="18" width="21" height="63" rx="1" fill="#9c27b0"/>
-    <rect x="369" y="14" width="17" height="67" rx="1" fill="#4caf50"/>
-    <rect x="388" y="24" width="13" height="57" rx="1" fill="#ff9800"/>
-    <rect x="403" y="16" width="19" height="65" rx="1" fill="#2196f3"/>
-    <rect x="424" y="20" width="15" height="61" rx="1" fill="#f44336"/>
-  </g>
-  <!-- row 2 -->
-  <g opacity=".78">
-    <rect x="12" y="108" width="17" height="61" rx="1" fill="#1565c0"/>
-    <rect x="31" y="116" width="13" height="53" rx="1" fill="#ad1457"/>
-    <rect x="46" y="104" width="21" height="65" rx="1" fill="#558b2f"/>
-    <rect x="69" y="112" width="16" height="57" rx="1" fill="#6a1f5e"/>
-    <rect x="87" y="106" width="19" height="63" rx="1" fill="#bf360c"/>
-    <rect x="108" y="118" width="13" height="51" rx="1" fill="#00838f"/>
-    <rect x="123" y="108" width="21" height="61" rx="1" fill="#f57f17"/>
-    <rect x="146" y="114" width="15" height="55" rx="1" fill="#4e342e"/>
-    <rect x="160" y="106" width="20" height="63" rx="1" fill="#1b5e20"/>
-    <rect x="182" y="116" width="14" height="53" rx="1" fill="#4a148c"/>
-    <rect x="198" y="108" width="18" height="61" rx="1" fill="#c62828"/>
-    <rect x="218" y="104" width="22" height="65" rx="1" fill="#006064"/>
-    <rect x="242" y="116" width="13" height="53" rx="1" fill="#e65100"/>
-    <rect x="257" y="110" width="16" height="59" rx="1" fill="#880e4f"/>
-    <rect x="275" y="104" width="20" height="65" rx="1" fill="#0d47a1"/>
-    <rect x="297" y="116" width="15" height="53" rx="1" fill="#33691e"/>
-    <rect x="314" y="108" width="19" height="61" rx="1" fill="#b71c1c"/>
-    <rect x="335" y="114" width="14" height="55" rx="1" fill="#1a237e"/>
-    <rect x="351" y="106" width="21" height="63" rx="1" fill="#004d40"/>
-    <rect x="374" y="112" width="17" height="57" rx="1" fill="#f57f17"/>
-    <rect x="393" y="108" width="19" height="61" rx="1" fill="#880e4f"/>
-    <rect x="414" y="116" width="14" height="53" rx="1" fill="#37474f"/>
-  </g>
-  <!-- spotlight cone -->
-  <polygon points="80,0 30,0 0,200 110,200" fill="rgba(255,220,120,.07)"/>
-  <!-- highlighted golden book -->
-  <rect x="62" y="196" width="21" height="64" rx="2" fill="#f5c842"/>
-  <text x="72" y="232" fill="#3a1c06" font-size="8" font-family="sans-serif" font-weight="bold" transform="rotate(-90,72,232)" text-anchor="middle">精選館藏</text>
-  <ellipse cx="72" cy="228" rx="30" ry="46" fill="rgba(245,200,66,.2)"/>
-  <!-- call number label -->
-  <rect x="57" y="260" width="30" height="14" rx="2" fill="white" opacity=".92"/>
-  <text x="72" y="271" fill="#1a0800" font-size="7.5" font-family="sans-serif" text-anchor="middle" font-weight="bold">020.2</text>
-  <!-- info bubble -->
-  <rect x="108" y="210" width="145" height="40" rx="5" fill="rgba(10,6,2,.82)" stroke="rgba(201,168,76,.5)" stroke-width="1"/>
-  <text x="118" y="226" fill="#c9a84c" font-size="11.5" font-family="sans-serif" font-weight="bold">書目索引完整</text>
-  <text x="118" y="242" fill="rgba(255,255,255,.6)" font-size="9.5" font-family="sans-serif">分類號・索書號・館藏位置</text>
-  <rect x="0" y="490" width="960" height="50" fill="rgba(5,3,1,.7)"/>
-</svg>
-</div>
-
-<!-- ══ SCENE 3: 館藏管理 – ILS screen, stats ══ -->
-<div class="scene" id="s3">
-<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
-  <defs>
-    <radialGradient id="g3a" cx="28%" cy="48%" r="52%"><stop offset="0%" stop-color="#1565c0" stop-opacity=".38"/><stop offset="100%" stop-color="#0a0e14" stop-opacity="0"/></radialGradient>
-    <linearGradient id="sBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d1a2e"/><stop offset="100%" stop-color="#061020"/></linearGradient>
-  </defs>
-  <rect width="960" height="540" fill="#0a0e14"/>
-  <rect width="960" height="540" fill="url(#g3a)"/>
-  <!-- main ILS terminal -->
-  <rect x="18" y="48" width="418" height="315" rx="8" fill="#0f1520" stroke="#1e3a5f" stroke-width="2"/>
-  <rect x="24" y="54" width="406" height="303" rx="5" fill="url(#sBg)"/>
-  <!-- system header -->
-  <rect x="24" y="54" width="406" height="28" rx="5" fill="#0d2a4a"/>
-  <text x="40" y="73" fill="#4fc3f7" font-size="11" font-family="monospace" font-weight="bold">📚 圖書館自動化系統 (ILS)</text>
-  <circle cx="404" cy="68" r="5" fill="#e74c3c" opacity=".7"/>
-  <circle cx="392" cy="68" r="5" fill="#f39c12" opacity=".7"/>
-  <circle cx="380" cy="68" r="5" fill="#27ae60" opacity=".7"/>
-  <!-- column headers -->
-  <text x="34" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">索書號</text>
-  <text x="108" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">書名</text>
-  <text x="230" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">狀態</text>
-  <text x="308" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">借閱者</text>
-  <text x="376" y="102" fill="#546e7a" font-size="9.5" font-family="monospace">到期日</text>
-  <line x1="28" y1="106" x2="424" y2="106" stroke="#1e3a5f" stroke-width="1"/>
-  <!-- rows -->
-  <g font-size="9.5" font-family="monospace">
-    <rect x="24" y="108" width="406" height="14" fill="rgba(69,160,229,.08)"/>
-    <text x="34" y="119" fill="#4fc3f7">020.1</text>
-    <text x="108" y="119" fill="#80cbc4">圖書館學概論</text>
-    <text x="230" y="119" fill="#66bb6a">● 在架</text>
-
-    <text x="34" y="135" fill="#4fc3f7">158.3</text>
-    <text x="108" y="135" fill="#80cbc4">資訊素養教育</text>
-    <text x="230" y="135" fill="#ef5350">● 借出</text>
-    <text x="308" y="135" fill="#90a4ae">王○○</text>
-    <text x="376" y="135" fill="#ef5350">03/15</text>
-
-    <rect x="24" y="138" width="406" height="14" fill="rgba(69,160,229,.06)"/>
-    <text x="34" y="149" fill="#4fc3f7">370.1</text>
-    <text x="108" y="149" fill="#80cbc4">教育心理學</text>
-    <text x="230" y="149" fill="#66bb6a">● 在架</text>
-
-    <text x="34" y="165" fill="#4fc3f7">020.2</text>
-    <text x="108" y="165" fill="#80cbc4">編目實務手冊</text>
-    <text x="230" y="165" fill="#ffa726">● 預約</text>
-    <text x="308" y="165" fill="#90a4ae">李○○</text>
-
-    <rect x="24" y="168" width="406" height="14" fill="rgba(69,160,229,.06)"/>
-    <text x="34" y="179" fill="#4fc3f7">540.1</text>
-    <text x="108" y="179" fill="#80cbc4">化學導論</text>
-    <text x="230" y="179" fill="#66bb6a">● 在架</text>
-
-    <text x="34" y="195" fill="#4fc3f7">020.5</text>
-    <text x="108" y="195" fill="#80cbc4">數位圖書館</text>
-    <text x="230" y="195" fill="#ef5350">● 借出</text>
-    <text x="308" y="195" fill="#90a4ae">陳○○</text>
-    <text x="376" y="195" fill="#ef5350">03/20</text>
-
-    <rect x="24" y="198" width="406" height="14" fill="rgba(69,160,229,.06)"/>
-    <text x="34" y="209" fill="#4fc3f7">800.1</text>
-    <text x="108" y="209" fill="#80cbc4">現代文學選</text>
-    <text x="230" y="209" fill="#66bb6a">● 在架</text>
-
-    <text x="34" y="225" fill="#4fc3f7">310.5</text>
-    <text x="108" y="225" fill="#80cbc4">統計學原理</text>
-    <text x="230" y="225" fill="#ffa726">● 預約</text>
-    <text x="308" y="225" fill="#90a4ae">張○○</text>
-  </g>
-  <rect x="34" y="336" width="5" height="9" fill="#4fc3f7">
-    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
-  </rect>
-  <!-- stats panel -->
-  <rect x="240" y="386" width="195" height="118" rx="6" fill="rgba(10,18,30,.9)" stroke="#1e3a5f" stroke-width="1.5"/>
-  <text x="255" y="406" fill="#4fc3f7" font-size="11" font-family="sans-serif" font-weight="bold" letter-spacing="1">館藏統計</text>
-  <g font-size="10.5" font-family="sans-serif">
-    <text x="255" y="426" fill="rgba(255,255,255,.6)">總館藏量</text>
-    <text x="427" y="426" fill="#66bb6a" text-anchor="end">45,280 冊</text>
-    <text x="255" y="444" fill="rgba(255,255,255,.6)">今日借出</text>
-    <text x="427" y="444" fill="#ffa726" text-anchor="end">127 冊</text>
-    <text x="255" y="462" fill="rgba(255,255,255,.6)">逾期未還</text>
-    <text x="427" y="462" fill="#ef5350" text-anchor="end">23 冊</text>
-    <text x="255" y="480" fill="rgba(255,255,255,.6)">採購中</text>
-    <text x="427" y="480" fill="#4fc3f7" text-anchor="end">56 冊</text>
-  </g>
-  <!-- donut chart -->
-  <circle cx="100" cy="440" r="60" fill="none" stroke="#1e3a5f" stroke-width="1"/>
-  <circle cx="100" cy="440" r="60" fill="none" stroke="#66bb6a" stroke-width="13" stroke-dasharray="226 151" stroke-dashoffset="0" transform="rotate(-90 100 440)"/>
-  <circle cx="100" cy="440" r="60" fill="none" stroke="#ef5350" stroke-width="13" stroke-dasharray="60 317" stroke-dashoffset="-226" transform="rotate(-90 100 440)"/>
-  <circle cx="100" cy="440" r="60" fill="none" stroke="#ffa726" stroke-width="13" stroke-dasharray="46 331" stroke-dashoffset="-286" transform="rotate(-90 100 440)"/>
-  <circle cx="100" cy="440" r="60" fill="none" stroke="#4fc3f7" stroke-width="13" stroke-dasharray="45 332" stroke-dashoffset="-332" transform="rotate(-90 100 440)"/>
-  <text x="100" y="436" fill="white" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="bold">館藏</text>
-  <text x="100" y="452" fill="white" font-size="9" font-family="sans-serif" text-anchor="middle">分布</text>
-  <g font-size="9" font-family="sans-serif">
-    <rect x="24" y="502" width="8" height="8" rx="1" fill="#66bb6a"/><text x="36" y="511" fill="rgba(255,255,255,.55)">在架</text>
-    <rect x="78" y="502" width="8" height="8" rx="1" fill="#ef5350"/><text x="90" y="511" fill="rgba(255,255,255,.55)">借出</text>
-    <rect x="132" y="502" width="8" height="8" rx="1" fill="#ffa726"/><text x="144" y="511" fill="rgba(255,255,255,.55)">預約</text>
-    <rect x="186" y="502" width="8" height="8" rx="1" fill="#4fc3f7"/><text x="198" y="511" fill="rgba(255,255,255,.55)">採購</text>
-  </g>
-</svg>
-</div>
-
-<!-- ══ SCENE 4: 讀者諮詢 – reference desk consultation ══ -->
-<div class="scene" id="s4">
-<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
-  <defs>
-    <radialGradient id="g4a" cx="30%" cy="52%" r="52%"><stop offset="0%" stop-color="#2e7d32" stop-opacity=".32"/><stop offset="100%" stop-color="#0a1208" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect width="960" height="540" fill="#0a1208"/>
-  <rect width="960" height="540" fill="url(#g4a)"/>
-  <!-- reference books on back wall -->
-  <g opacity=".78">
-    <rect x="8"  y="40" width="17" height="270" rx="1" fill="#1b5e20"/>
-    <rect x="27" y="60" width="14" height="250" rx="1" fill="#4a148c"/>
-    <rect x="43" y="32" width="20" height="275" rx="1" fill="#b71c1c"/>
-    <rect x="65" y="52" width="15" height="260" rx="1" fill="#e65100"/>
-    <rect x="82" y="38" width="21" height="270" rx="1" fill="#006064"/>
-    <rect x="105" y="58" width="13" height="250" rx="1" fill="#4e342e"/>
-    <rect x="120" y="44" width="18" height="265" rx="1" fill="#1565c0"/>
-    <rect x="140" y="52" width="16" height="255" rx="1" fill="#f57f17"/>
-    <rect x="158" y="36" width="21" height="272" rx="1" fill="#880e4f"/>
-    <rect x="181" y="56" width="14" height="252" rx="1" fill="#2e7d32"/>
-    <rect x="197" y="42" width="19" height="266" rx="1" fill="#37474f"/>
-    <rect x="218" y="50" width="17" height="258" rx="1" fill="#c62828"/>
-    <rect x="237" y="38" width="22" height="270" rx="1" fill="#0d47a1"/>
-    <rect x="261" y="56" width="15" height="252" rx="1" fill="#33691e"/>
-  </g>
-  <!-- shelf board -->
-  <rect x="0" y="312" width="290" height="8" fill="#2e4a24" opacity=".8"/>
-  <!-- reference desk surface -->
-  <rect x="0" y="332" width="490" height="208" fill="#1e3a18"/>
-  <rect x="0" y="328" width="490" height="9" fill="#2a5020"/>
-  <!-- OPAC terminal on desk -->
-  <rect x="278" y="198" width="168" height="126" rx="6" fill="#0d1a0a" stroke="#2e7d32" stroke-width="1.5"/>
-  <rect x="284" y="204" width="156" height="113" rx="4" fill="#071208"/>
-  <rect x="284" y="204" width="156" height="24" rx="4" fill="#0a2010"/>
-  <text x="290" y="220" fill="#4caf50" font-size="10" font-family="sans-serif" font-weight="bold">📖 館藏查詢系統</text>
-  <rect x="287" y="232" width="136" height="15" rx="3" fill="#1b3a1a" stroke="#2e7d32" stroke-width="1"/>
-  <text x="291" y="243" fill="rgba(255,255,255,.5)" font-size="8.5" font-family="sans-serif">搜尋：氣候變遷</text>
-  <rect x="425" y="232" width="19" height="15" rx="3" fill="#2e7d32"/>
-  <text x="435" y="243" fill="white" font-size="9" font-family="sans-serif" text-anchor="middle">→</text>
-  <g font-size="8.5" font-family="sans-serif">
-    <text x="290" y="263" fill="#a5d6a7">1. 氣候變遷與永續發展</text>
-    <text x="290" y="276" fill="#81c784">2. 全球暖化的科學</text>
-    <text x="290" y="289" fill="#81c784">3. 碳中和策略指南</text>
-    <text x="290" y="302" fill="#66bb6a">找到 38 筆結果</text>
-    <text x="290" y="315" fill="rgba(255,255,255,.35)">--</text>
-  </g>
-  <!-- reader silhouette -->
-  <ellipse cx="128" cy="258" rx="32" ry="35" fill="#1a2e14" opacity=".85"/>
-  <rect x="96" y="286" width="64" height="65" rx="5" fill="#152610" opacity=".8"/>
-  <!-- thought bubble -->
-  <circle cx="172" cy="224" r="5" fill="rgba(255,255,255,.22)"/>
-  <circle cx="188" cy="212" r="8" fill="rgba(255,255,255,.22)"/>
-  <rect x="197" y="176" width="128" height="48" rx="8" fill="rgba(20,40,18,.88)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
-  <text x="206" y="196" fill="rgba(255,255,255,.7)" font-size="10" font-family="sans-serif">我需要關於</text>
-  <text x="206" y="210" fill="#a5d6a7" font-size="10" font-family="sans-serif" font-weight="bold">「氣候變遷」的資料</text>
-  <text x="206" y="223" fill="rgba(255,255,255,.55)" font-size="9" font-family="sans-serif">怎麼找呢？</text>
-  <!-- librarian speech bubble -->
-  <rect x="315" y="142" width="120" height="55" rx="8" fill="rgba(16,48,16,.92)" stroke="#4caf50" stroke-width="1"/>
-  <polygon points="375,197 362,214 388,197" fill="rgba(16,48,16,.92)" stroke="#4caf50" stroke-width="1"/>
-  <text x="322" y="162" fill="#a5d6a7" font-size="9.5" font-family="sans-serif">為您找到相關資料！</text>
-  <text x="322" y="177" fill="rgba(255,255,255,.72)" font-size="8.5" font-family="sans-serif">可參考 363.7 類，</text>
-  <text x="322" y="190" fill="rgba(255,255,255,.72)" font-size="8.5" font-family="sans-serif">及電子資料庫。</text>
-  <!-- floor -->
-  <rect x="0" y="490" width="960" height="50" fill="rgba(3,8,3,.7)"/>
-</svg>
-</div>
-
-<!-- ══ SCENE 5: 招募 Call to Action ══ -->
-<div class="scene" id="s5">
-<svg viewBox="0 0 960 540" width="960" height="540" style="position:absolute;inset:0">
-  <defs>
-    <radialGradient id="g5a" cx="32%" cy="50%" r="62%"><stop offset="0%" stop-color="#ff9800" stop-opacity=".32"/><stop offset="100%" stop-color="#1a0800" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect width="960" height="540" fill="#1a0800"/>
-  <rect width="960" height="540" fill="url(#g5a)"/>
-  <!-- large open book silhouette -->
-  <g transform="translate(18,95)" opacity=".2">
-    <path d="M8,18 Q8,8 18,8 L195,8 Q215,8 215,23 L215,245 Q215,260 195,260 L18,260 Q8,260 8,250 Z" fill="#6b3810"/>
-    <path d="M215,23 L415,8 Q425,8 425,18 L425,250 Q425,260 415,260 L215,245 Z" fill="#5a2e08"/>
-    <g stroke="#a07030" stroke-width="1.5" opacity=".6">
-      <line x1="28" y1="48" x2="195" y2="48"/>
-      <line x1="28" y1="68" x2="195" y2="68"/>
-      <line x1="28" y1="88" x2="195" y2="88"/>
-      <line x1="28" y1="108" x2="195" y2="108"/>
-      <line x1="28" y1="128" x2="175" y2="128"/>
-      <line x1="235" y1="48" x2="410" y2="48"/>
-      <line x1="235" y1="68" x2="410" y2="68"/>
-      <line x1="235" y1="88" x2="410" y2="88"/>
-    </g>
-  </g>
-  <!-- education card -->
-  <rect x="18" y="72" width="208" height="118" rx="8" fill="rgba(28,12,2,.9)" stroke="rgba(201,168,76,.55)" stroke-width="1.5"/>
-  <text x="32" y="96" fill="#c9a84c" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">🎓 所需學歷</text>
-  <line x1="26" y1="101" x2="218" y2="101" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
-  <g font-size="10.5" font-family="sans-serif" fill="rgba(255,255,255,.72)">
-    <text x="32" y="118">・圖書資訊學系</text>
-    <text x="32" y="135">・資訊管理相關科系</text>
-    <text x="32" y="152">・圖書館技術人員培訓</text>
-    <text x="32" y="169">・相關碩士學位佳</text>
-  </g>
-  <!-- workplace card -->
-  <rect x="18" y="208" width="208" height="138" rx="8" fill="rgba(28,12,2,.9)" stroke="rgba(201,168,76,.55)" stroke-width="1.5"/>
-  <text x="32" y="232" fill="#c9a84c" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">💼 工作場所</text>
-  <line x1="26" y1="237" x2="218" y2="237" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
-  <g font-size="10.5" font-family="sans-serif" fill="rgba(255,255,255,.72)">
-    <text x="32" y="254">・公共圖書館</text>
-    <text x="32" y="271">・大學院校圖書館</text>
-    <text x="32" y="288">・中小學圖書館</text>
-    <text x="32" y="305">・企業資料中心</text>
-    <text x="32" y="322">・政府檔案機構</text>
-  </g>
-  <!-- invitation banner -->
-  <rect x="18" y="364" width="430" height="96" rx="8" fill="rgba(14,6,1,.85)" stroke="rgba(201,168,76,.65)" stroke-width="2"/>
-  <text x="38" y="394" fill="#c9a84c" font-family="'Noto Serif TC',serif" font-size="22" font-weight="900" letter-spacing="2">歡迎加入我們的行列！</text>
-  <text x="38" y="418" fill="rgba(255,255,255,.62)" font-family="sans-serif" font-size="12.5" letter-spacing="1">連結知識與人，推動終身學習</text>
-  <text x="38" y="436" fill="rgba(255,255,255,.4)" font-family="sans-serif" font-size="11" letter-spacing="1">Knowledge · Service · Community</text>
-  <!-- sparkles -->
-  <g fill="#c9a84c">
-    <circle cx="244" cy="58" r="3" opacity=".6"><animate attributeName="opacity" values=".2;.9;.2" dur="1.8s" repeatCount="indefinite"/></circle>
-    <circle cx="22" cy="355" r="2.5" opacity=".5"><animate attributeName="opacity" values=".1;.8;.1" dur="2.2s" repeatCount="indefinite" begin=".4s"/></circle>
-    <circle cx="18" cy="205" r="2" opacity=".5"><animate attributeName="opacity" values=".15;.85;.15" dur="2.6s" repeatCount="indefinite" begin=".9s"/></circle>
-    <circle cx="232" cy="200" r="3" opacity=".55"><animate attributeName="opacity" values=".1;.75;.1" dur="1.5s" repeatCount="indefinite" begin=".2s"/></circle>
-  </g>
-</svg>
-<div class="ptcl" style="left:6%;top:82%;width:5px;height:5px;background:#c9a84c;animation-duration:4.5s;animation-delay:0s"></div>
-<div class="ptcl" style="left:14%;top:88%;width:3px;height:3px;background:#e8b860;animation-duration:5.5s;animation-delay:.7s"></div>
-<div class="ptcl" style="left:22%;top:76%;width:4px;height:4px;background:#c9a84c;animation-duration:6s;animation-delay:1.4s"></div>
-<div class="ptcl" style="left:30%;top:90%;width:3px;height:3px;background:#ffe090;animation-duration:4s;animation-delay:.3s"></div>
-</div>
-
-<!-- ══ CHARACTER (right side, always) ══ -->
-<div class="char-strip">
-  <img class="char-img" id="charImg" src="/mnt/user-data/uploads/1772708343485_image.png" alt="圖書館員"/>
-  <div class="char-blend"></div>
-</div>
-
-<!-- TOP BAR -->
-<div class="top-bar">
-  <div class="badge">職業介紹</div>
-  <div class="src">資料來源：104工作世界</div>
-  <div class="ts" id="ts">00:30</div>
-</div>
-
-<!-- SCENE LABEL -->
-<div class="scene-label" id="sceneLabel">
-  <div class="scene-label-inner">
-    <div class="scene-label-en" id="slEn">INTRODUCTION</div>
-    <div class="scene-label-zh" id="slZh">圖書資料管理人員</div>
+<!-- ── REPORT HEADER ── -->
+<div class="rpt-header">
+  <div style="flex:1;">
+    <!-- 姓名 + badge 同行 -->
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+      <div class="rpt-name" style="margin-bottom:0;">吳OO　先生</div>
+      <div style="background:#d4600a;border-radius:8px;padding:6px 14px;display:flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(0,0,0,0.3);flex-shrink:0;">
+        <span style="font-size:15px;line-height:1;">⚠</span>
+        <span style="font-size:13px;font-weight:900;color:white;letter-spacing:0.05em;white-space:nowrap;">建議進一步面試</span>
+      </div>
+    </div>
+    <div class="rpt-meta">
+      <span>💼 應徵職位：人資專員</span>
+      <span>🏢 104人力銀行</span>
+      <span>📅 2025年5月2日</span>
+      <span>⏱ 面試時長：28分鐘</span>
+    </div>
   </div>
 </div>
 
-<!-- KEYWORD CHIPS -->
-<div class="chips" id="chips"></div>
+<div class="rpt-body">
 
-<!-- PROGRESS DOTS -->
-<div class="pdots" id="pdots">
-  <div class="pd on" id="pd0"></div>
-  <div class="pd" id="pd1"></div>
-  <div class="pd" id="pd2"></div>
-  <div class="pd" id="pd3"></div>
-  <div class="pd" id="pd4"></div>
-  <div class="pd" id="pd5"></div>
-</div>
-
-<!-- SPEAKER ROW -->
-<div class="spkrow" id="spkrow">
-  <div class="spkdot"></div>
-  <div class="spktxt">圖書資料管理人員</div>
-  <div class="wavewrap" id="wave">
-    <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+  <!-- ── 報告說明（置於第一部份前）── -->
+  <div style="background:#eef4f8;border:1.5px solid #c0d8e8;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0;">
+      <div style="font-size:16px;font-weight:700;color:#2e7d9e;letter-spacing:0.12em;">📋 報告說明</div>
+      <button onclick="toggleNote()" id="noteToggleBtn"
+        style="background:#2e7d9e;color:white;border:none;border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.04em;display:flex;align-items:center;gap:4px;">
+        <span id="noteToggleIcon">▲</span><span id="noteToggleText">收合</span>
+      </button>
+    </div>
+    <div id="noteContent">
+      <div style="border-top:1px solid #c0d8e8;margin:10px 0;"></div>
+      <div style="font-size:12px;color:var(--ink-light);line-height:1.9;margin-bottom:12px;">
+        本報告依據應徵者於 AI 線上面試中的口頭回答，以 <strong style="color:var(--ink);">STAR 行為事例法</strong>為評估框架，針對六大關鍵性格向度進行分析，結果供用人主管參考使用，建議搭配後續面談結果綜合判斷。
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;">符合度說明</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
+        <div style="background:#e8edf8;border-radius:6px;padding:8px 10px;border-top:3px solid #1a3a6e;">
+          <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:5px;">
+            <span style="font-size:16px;font-weight:900;color:#1a3a6e;line-height:1;">5</span>
+            <span style="font-size:11px;font-weight:700;color:#1a3a6e;">非常符合</span>
+          </div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.5;">以完整具體的行為事例充分佐證，回答清晰且具說服力</div>
+        </div>
+        <div style="background:#e4f0f8;border-radius:6px;padding:8px 10px;border-top:3px solid #2e7d9e;">
+          <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:5px;">
+            <span style="font-size:16px;font-weight:900;color:#2e7d9e;line-height:1;">4</span>
+            <span style="font-size:11px;font-weight:700;color:#2e7d9e;">大致符合</span>
+          </div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.5;">有具體事例支撐，部分細節稍弱，整體表現穩定</div>
+        </div>
+        <div style="background:#fef0e6;border-radius:6px;padding:8px 10px;border-top:3px solid #d4600a;">
+          <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:5px;">
+            <span style="font-size:16px;font-weight:900;color:#d4600a;line-height:1;">3</span>
+            <span style="font-size:11px;font-weight:700;color:#d4600a;">部分符合</span>
+          </div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.5;">能舉出事例但說明不完整，或僅有部分環節有佐證</div>
+        </div>
+        <div style="background:#fdeaea;border-radius:6px;padding:8px 10px;border-top:3px solid #c0392b;">
+          <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:5px;">
+            <span style="font-size:16px;font-weight:900;color:#c0392b;line-height:1;">2</span>
+            <span style="font-size:11px;font-weight:700;color:#c0392b;">不太符合</span>
+          </div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.5;">回答以自我評價為主，缺乏具體情境與行動佐證</div>
+        </div>
+        <div style="background:#fdeaea;border-radius:6px;padding:8px 10px;border-top:3px solid #c0392b;">
+          <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:5px;">
+            <span style="font-size:16px;font-weight:900;color:#c0392b;line-height:1;">1</span>
+            <span style="font-size:11px;font-weight:700;color:#c0392b;">不符合</span>
+          </div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.5;">無法提供任何相關事例，或回答與評估向度完全無關</div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- SUBTITLE -->
-<div class="subbox">
-  <div class="subline" id="sub">　</div>
-</div>
+  <!-- ════════════════════════════════ -->
+  <!-- 第一部份：AI面試結果摘要         -->
+  <!-- ════════════════════════════════ -->
+  <div class="sec-title">第一部份　AI 面試結果摘要</div>
 
-<!-- END CARD -->
-<div class="endcard" id="endcard">
-  <div class="etitle">圖書資料管理人員</div>
-  <div class="esub">LIBRARY &amp; INFORMATION MANAGER</div>
-  <div class="egrid">
-    <div class="eitem"><div class="eititle">🏛 工作場所</div><div class="eicontent">公共・學校・大學圖書館<br>企業資料中心・檔案館</div></div>
-    <div class="eitem"><div class="eititle">🎓 學歷要求</div><div class="eicontent">圖書資訊學系<br>相關資訊管理科系</div></div>
-    <div class="eitem"><div class="eititle">📋 核心任務</div><div class="eicontent">採訪編目・館藏管理<br>讀者服務・資訊推廣</div></div>
-    <div class="eitem"><div class="eititle">✨ 職涯特色</div><div class="eicontent">連結知識與人<br>推動終身學習</div></div>
+  <!-- ── 頂部藍色區塊：分數 + 性格側寫 ── -->
+  <div style="background:#2e7d9e;border-radius:8px 8px 0 0;padding:14px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+
+    <!-- 分數 + 說明 -->
+    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <div style="font-size:8px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.6);text-transform:uppercase;">整體符合度</div>
+        <div style="width:58px;height:58px;border-radius:50%;border:2.5px solid white;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span style="font-size:20px;font-weight:800;color:white;line-height:1;">3.7</span>
+          <span style="font-size:8px;color:rgba(255,255,255,0.6);">／ 5</span>
+        </div>
+        <div style="display:flex;gap:2px;">
+          <svg style="width:9px;height:9px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg style="width:9px;height:9px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg style="width:9px;height:9px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg style="width:9px;height:9px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg style="width:9px;height:9px;color:rgba(255,255,255,0.28);fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+      </div>
+      <!-- 大致符合說明 -->
+      <div style="background:rgba(255,255,255,0.12);border-radius:6px;padding:6px 10px;">
+        <div style="font-size:12px;font-weight:800;color:white;margin-bottom:2px;">大致符合</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.75);line-height:1.5;">有具體事例支撐，<br>部分細節稍弱，<br>整體表現穩定。</div>
+      </div>
+    </div>
+
+    <!-- 分隔線 -->
+    <div style="width:1px;height:60px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+
+    <!-- 性格側寫 -->
+    <div style="flex:1;min-width:180px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:5px;">🧭 性格側寫</div>
+      <div style="font-size:16px;font-weight:700;color:white;line-height:1.55;letter-spacing:0.02em;">
+        行動力強、勇於當責，<br>細膩度與抗壓仍待確認。
+      </div>
+    </div>
+
   </div>
-  <button class="rbtn" onclick="resetAndPlay()">↺ 重新播放</button>
-</div>
 
-<!-- CONTROLS -->
-<div class="ctrls">
-  <button class="cbtn" onclick="togglePlay()" id="ppbtn">⏸ 暫停</button>
-  <button class="cbtn" onclick="resetAndPlay()">↺ 重播</button>
-</div>
+  <!-- ── 六個關鍵性格：依序垂直排列 ── -->
+  <div style="background:white;border:1.5px solid var(--rule);border-top:none;border-radius:0 0 8px 8px;padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
 
-<!-- PLAY OVERLAY -->
-<div class="povly" id="povly" onclick="startVideo()">
-  <div class="pbtn">
-    <svg width="32" height="32" viewBox="0 0 32 32"><polygon points="10,6 26,16 10,26" fill="#3d2b1f"/></svg>
+    <!-- 堅毅性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #1a3a6e;">
+      <div style="flex-shrink:0;width:36px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#1a3a6e;line-height:1;">5</div>
+        <div style="font-size:8px;font-weight:700;color:#1a3a6e;">非常符合</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">堅毅性</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">R✓</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">徒步環島40天、高中半工半讀，兩則完整事例，STAR四環節均清楚佐證</div>
+      </div>
+      <button onclick="jumpTo('trait-堅毅性')" style="flex-shrink:0;font-size:9px;background:#1a3a6e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">詳細評估 →</button>
+    </div>
+
+    <!-- 合作性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:36px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">4</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;">大致符合</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">合作性</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">多方協作設計新人課程，行動具體清楚，但最終成果說明稍模糊</div>
+      </div>
+      <button onclick="jumpTo('trait-合作性')" style="flex-shrink:0;font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">詳細評估 →</button>
+    </div>
+
+    <!-- 負責任 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:36px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">4</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;">大致符合</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">負責任</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">主動舉報竊盜超出職責範圍，當責行為可驗證，結果說明稍略</div>
+      </div>
+      <button onclick="jumpTo('trait-負責任')" style="flex-shrink:0;font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">詳細評估 →</button>
+    </div>
+
+    <!-- 社交性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:36px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">4</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;">大致符合</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">社交性</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">50場活動多方協調，臨場反應佳；主動建立關係的動機待確認</div>
+      </div>
+      <button onclick="jumpTo('trait-社交性')" style="flex-shrink:0;font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">詳細評估 →</button>
+    </div>
+
+    <!-- 謹慎性 ⚠ -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff4f0;border-radius:6px;border-left:4px solid #d4600a;">
+      <div style="flex-shrink:0;width:36px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#d4600a;line-height:1;">3</div>
+        <div style="font-size:8px;font-weight:700;color:#d4600a;">部分符合</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">謹慎性</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">S△</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">A△</span>
+          <span style="font-size:9px;background:#fdeaea;color:#c0392b;font-weight:700;padding:0 4px;border-radius:2px;">R✗</span>
+        </div>
+        <div style="font-size:11px;color:#c0392b;line-height:1.5;">全程以「做事都會先想清楚」帶過，缺乏具體行動前確認情境</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+        <button onclick="jumpTo('trait-謹慎性')" style="font-size:9px;background:#d4600a;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">詳細評估 →</button>
+        <button onclick="jumpTo('fq-謹慎性')" style="font-size:9px;background:#c0392b;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">面試建議 →</button>
+      </div>
+    </div>
+
+    <!-- 抗壓性 ⚠ -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff4f0;border-radius:6px;border-left:4px solid #c0392b;">
+      <div style="flex-shrink:0;width:36px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#c0392b;line-height:1;">3</div>
+        <div style="font-size:8px;font-weight:700;color:#c0392b;">部分符合</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">抗壓性</span>
+          <span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span>
+          <span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">A△</span>
+          <span style="font-size:9px;background:#fdeaea;color:#c0392b;font-weight:700;padding:0 4px;border-radius:2px;">R✗</span>
+        </div>
+        <div style="font-size:11px;color:#c0392b;line-height:1.5;">應對策略以「告訴自己冷靜」帶過，缺優先排序邏輯與具體結果</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+        <button onclick="jumpTo('trait-抗壓性')" style="font-size:9px;background:#d4600a;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">詳細評估 →</button>
+        <button onclick="jumpTo('fq-抗壓性')" style="font-size:9px;background:#c0392b;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">面試建議 →</button>
+      </div>
+    </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 第二部份：六大向度評估結果       -->
+  <!-- ════════════════════════════════ -->
+  <div class="sec-title">第二部份　六大關鍵性格向度評估結果</div>
+
+  <!-- 定義 macro：星星列 -->
+
+  <!-- ── 堅毅性 ── -->
+    <div class="trait-card" id="trait-堅毅性">
+    <div class="trait-card-header" style="background:#1a3a6e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">4.5</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">非常符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;letter-spacing:0.04em;">堅毅性</span><span style="font-size:13px;color:rgba(255,255,255,0.85);margin-left:4px;">：鍥而不捨、堅持不懈</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);word-break:break-all;">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者以獨自徒步環島40天的具體事例，清楚說明在體力極限與心理挑戰下仍持續推進目標的意志力。描述中能具體呈現遇困難時的調適策略與堅持的心理動機。此外，高中即半工半讀、工專同時工作的學習歷程，進一步印證堅毅性格的一貫表現。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#2e7d9e;">S</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 情境清晰</div>
+          </div>
+          <div style="flex:1;background:#eef5fa;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div>
+            <div class="tc-star-quote-text">「我決定獨自徒步環島，從新北市出發，沿著台灣海岸線一步一步走，沒有人陪，只有自己的意志撐著。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#5a7a2e;">T</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 任務明確</div>
+          </div>
+          <div style="flex:1;background:#f2f8ee;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div>
+            <div class="tc-star-quote-text">「第23天腳底起了嚴重水泡，每走一步都像刀割，我站在路邊認真考慮要不要就此放棄環島這個念頭。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a5a2e;">A</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 行動具體</div>
+          </div>
+          <div style="flex:1;background:#f8f5f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div>
+            <div class="tc-star-quote-text">「我告訴自己只要還能動就不停下來，把目標縮短成『只走到下一個休息點』，一小段一小段地慢慢撐過去。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a2e2e;">R</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 結果有反思</div>
+          </div>
+          <div style="flex:1;background:#f8f0f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div>
+            <div class="tc-star-quote-text">「最後走完了40天，全程沒有搭任何交通工具。我從這段旅程學到：很多事情難的不是能力，而是要不要繼續往前。」</div>
+          </div>
+        </div>
+        <div class="tc-media">
+          <div class="media-btns">
+            <a href="#" class="media-btn media-btn-text">📄 完整文字</a>
+            <a href="#" class="media-btn media-btn-video">🎬 完整影音</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="phint">點擊播放 · 職業介紹影片</div>
-</div>
-</div>
+
+  <!-- ── 合作性 ── -->
+    <div class="trait-card" id="trait-合作性">
+    <div class="trait-card-header" style="background:#2e7d9e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">4.0</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">大致符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;letter-spacing:0.04em;">合作性</span><span style="font-size:13px;color:rgba(255,255,255,0.85);margin-left:4px;">：喜歡團隊合作、共同達成目標</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);word-break:break-all;">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者描述與活動公司、廠商、各部門協調的具體經驗，說明在多方利害關係人之間協調意見並推動活動執行。「Let's Camp新人關懷計畫」中與專案人員從無到有共同設計課程、來回調整三四次的過程，進一步印證其主動投入協作的特質。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#2e7d9e;">S</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 情境清晰</div>
+          </div>
+          <div style="flex:1;background:#eef5fa;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div>
+            <div class="tc-star-quote-text">「新人關懷課程從零開始，什麼素材都沒有，只有主管說的一句話：想讓新人感覺被照顧、不孤單。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#5a7a2e;">T</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 任務明確</div>
+          </div>
+          <div style="flex:1;background:#f2f8ee;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div>
+            <div class="tc-star-quote-text">「我需要同時對接外部講師、內部多個部門主管、還有一位專案夥伴，大家對課程內容的想法差距很大，很難整合。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a5a2e;">A</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 行動具體</div>
+          </div>
+          <div style="flex:1;background:#f8f5f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div>
+            <div class="tc-star-quote-text">「我先收集員工進公司前三個月最常問的問題，整理成課程需求清單，再逐一和講師確認調整方向，前後來回修改了三四次。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a2e2e;">R</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 結果稍模糊</div>
+          </div>
+          <div style="flex:1;background:#f8f0f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div>
+            <div class="tc-star-quote-text">「課程最後被指定為新人必修，我自己也協助執行了超過十場，新人的課後回饋大多正面，主管說這個課程改變了新人的第一印象。」</div>
+          </div>
+        </div>
+        <div class="tc-media">
+          <div class="media-btns">
+            <a href="#" class="media-btn media-btn-text">📄 完整文字</a>
+            <a href="#" class="media-btn media-btn-video">🎬 完整影音</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 負責任 ── -->
+    <div class="trait-card" id="trait-負責任">
+    <div class="trait-card-header" style="background:#2e7d9e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">3.8</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">大致符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;letter-spacing:0.04em;">負責任</span><span style="font-size:13px;color:rgba(255,255,255,0.85);margin-left:4px;">：盡責可靠、信守承諾</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);word-break:break-all;">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者以即時發現並阻止產線金線竊盜的事例，展現超出職責範圍的主動當責行為，是具體可驗證的關鍵事件。連續三季擔任公司季刊保險專欄作者，顯示穩定交付承諾的可靠性。但說明理賠300件以上時，對確保品質的具體做法著墨較少。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#2e7d9e;">S</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 情境清晰</div>
+          </div>
+          <div style="flex:1;background:#eef5fa;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div>
+            <div class="tc-star-quote-text">「那天我在庫管區附近走動，無意間注意到一位作業員的動作有點不對勁，放置材料的方式和平常不一樣。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#5a7a2e;">T</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 任務明確</div>
+          </div>
+          <div style="flex:1;background:#f2f8ee;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div>
+            <div class="tc-star-quote-text">「那個區域不在我負責的範圍內，但我判斷如果不立刻反應，可能會有不小的材料損失，而且時間拖越久越難處理。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a5a2e;">A</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 行動具體</div>
+          </div>
+          <div style="flex:1;background:#f8f5f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div>
+            <div class="tc-star-quote-text">「我當下立刻走去找現場主管回報觀察到的情況，主管馬上調出監視器畫面確認，發現確實有人試圖偷竊金線，及時阻止了。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a2e2e;">R</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 結果稍模糊</div>
+          </div>
+          <div style="flex:1;background:#f8f0f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div>
+            <div class="tc-star-quote-text">「那批金線沒有被帶走，事後公司針對這個漏洞啟動更嚴格的庫管稽核流程，我也因為主動回報而獲得主管的特別表揚。」</div>
+          </div>
+        </div>
+        <div class="tc-media">
+          <div class="media-btns">
+            <a href="#" class="media-btn media-btn-text">📄 完整文字</a>
+            <a href="#" class="media-btn media-btn-video">🎬 完整影音</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 社交性 ── -->
+    <div class="trait-card" id="trait-社交性">
+    <div class="trait-card-header" style="background:#2e7d9e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">3.6</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">大致符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;letter-spacing:0.04em;">社交性</span><span style="font-size:13px;color:rgba(255,255,255,0.85);margin-left:4px;">：積極與他人互動</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);word-break:break-all;">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者以主辦50場以上活動的經驗說明與多元對象互動的能力，展現在多元人際場合中自在應對的特質，且表達帶有真實的臨場感。但針對「如何主動建立關係」的追問，回答偏向配合情境，主動社交動機表達較不明確。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#2e7d9e;">S</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 情境清晰</div>
+          </div>
+          <div style="flex:1;background:#eef5fa;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div>
+            <div class="tc-star-quote-text">「辦萬人年終晚會那天，我必須同時維繫場地方、音響公司、餐飲廠商、接送安排、還有現場貴賓與藝人的需求。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#5a7a2e;">T</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 任務稍不清晰</div>
+          </div>
+          <div style="flex:1;background:#f2f8ee;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div>
+            <div class="tc-star-quote-text">「各方的時間點和要求都不一樣，有人要提前確認動線，有人臨時改需求，我要讓每個人都在對的時間出現在對的地方。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a5a2e;">A</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 行動具體</div>
+          </div>
+          <div style="flex:1;background:#f8f5f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div>
+            <div class="tc-star-quote-text">「我事先建了一份多方聯絡清單，每隔一段時間主動確認各方進度，現場一有突發狀況就立刻用對方最習慣的方式溝通解決。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a2e2e;">R</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 結果稍模糊</div>
+          </div>
+          <div style="flex:1;background:#f8f0f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div>
+            <div class="tc-star-quote-text">「整場活動沒有出現重大失誤，事後有廠商主動跟我說，我是他們合作過最好溝通、最好協調的活動對口。」</div>
+          </div>
+        </div>
+        <div class="tc-media">
+          <div class="media-btns">
+            <a href="#" class="media-btn media-btn-text">📄 完整文字</a>
+            <a href="#" class="media-btn media-btn-video">🎬 完整影音</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 謹慎性 ── -->
+    <div class="trait-card" id="trait-謹慎性">
+    <div class="trait-card-header" style="background:#d4600a;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">2.8</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">部分符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;letter-spacing:0.04em;">謹慎性</span><span style="font-size:13px;color:rgba(255,255,255,0.85);margin-left:4px;">：行動前仔細思考</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);word-break:break-all;">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者在描述謹慎性相關事例時，主要以結果陳述為主，較少提及行動前如何評估風險、確認細節的具體思考過程。回答以自我評價帶過，缺乏STAR各環節的具體支撐。<span style="color:var(--accent);font-weight:600;">建議在後續面試重點確認。</span></div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#2e7d9e;">S</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 情境模糊</div>
+          </div>
+          <div style="flex:1;background:#eef5fa;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div>
+            <div class="tc-star-quote-text">「我平常做事就是會先把整個流程在腦袋裡想過一遍再開始動手，這是我從高中做半工半讀就養成的習慣。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#5a7a2e;">T</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 任務不明確</div>
+          </div>
+          <div style="flex:1;background:#f2f8ee;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div>
+            <div class="tc-star-quote-text">「像是在做各種大型活動規劃的時候，我都會提前想好如果出了狀況，每個環節應該怎麼處理，備案要到什麼程度。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a5a2e;">A</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 行動泛化</div>
+          </div>
+          <div style="flex:1;background:#f8f5f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div>
+            <div class="tc-star-quote-text">「我在做任何事情之前都會先想清楚，這是我一貫的做事方式，跟大家說我比較少出錯，應該就是這個原因。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a2e2e;">R</div>
+            <div style="font-size:9px;font-weight:700;color:#c0392b;background:#fdeaea;border:1px solid #c0392b;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✗ 未提及結果</div>
+          </div>
+          <div style="flex:1;background:#f8f0f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div>
+            <div class="tc-star-quote-text">「大家都說我是比較細心的人，我自己也覺得這個習慣確實讓我在工作上少走了很多彎路。」</div>
+          </div>
+        </div>
+        <div class="tc-warn">⚠ 以自我評價為主，缺乏具體情境與行動佐證</div>
+        <div class="tc-media">
+          <div class="media-btns">
+            <a href="#" class="media-btn media-btn-text">📄 完整文字</a>
+            <a href="#" class="media-btn media-btn-video">🎬 完整影音</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 抗壓性 ── -->
+    <div class="trait-card" id="trait-抗壓性">
+    <div class="trait-card-header" style="background:#d4600a;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">2.6</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">部分符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;letter-spacing:0.04em;">抗壓性</span><span style="font-size:13px;color:rgba(255,255,255,0.85);margin-left:4px;">：面對壓力不過度緊張</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);word-break:break-all;">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者提及活動現場多線並進的壓力情境，描述有一定的臨場感，但在說明具體壓力應對策略與情緒調節方式時，回答較為表面，未能清楚說明在高壓下如何維持判斷力與執行品質。<span style="color:var(--accent);font-weight:600;">⚠ 後續面試需重點確認。</span></div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#2e7d9e;">S</div>
+            <div style="font-size:9px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✓ 情境尚可</div>
+          </div>
+          <div style="flex:1;background:#eef5fa;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div>
+            <div class="tc-star-quote-text">「辦大型活動當天，我同時要處理場地、音響、餐飲、接送各方的臨時狀況，有時候三支電話同時響個不停。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#5a7a2e;">T</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 任務稍不清晰</div>
+          </div>
+          <div style="flex:1;background:#f2f8ee;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div>
+            <div class="tc-star-quote-text">「每一件事都很緊急，都要我馬上給答案，還不能讓任何一方覺得被忽略或處理得不夠快。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a5a2e;">A</div>
+            <div style="font-size:9px;font-weight:700;color:#d4600a;background:#fef0e6;border:1px solid #d4600a;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">△ 行動泛化</div>
+          </div>
+          <div style="flex:1;background:#f8f5f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div>
+            <div class="tc-star-quote-text">「我壓力大的時候其實還好，就是提醒自己先冷靜，然後把最緊急的排第一，一件一件依序處理，不讓自己亂。」</div>
+          </div>
+        </div>        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap">
+            <div class="tc-star-icon" style="background:#7a2e2e;">R</div>
+            <div style="font-size:9px;font-weight:700;color:#c0392b;background:#fdeaea;border:1px solid #c0392b;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;">✗ 未提及結果</div>
+          </div>
+          <div style="flex:1;background:#f8f0f0;border-radius:5px;padding:9px 12px;align-self:flex-start;">
+            <div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div>
+            <div class="tc-star-quote-text">「活動最後都有順利完成，沒有出什麼大問題，但我自己知道，當時的應對其實比較靠直覺，還沒有一套固定的處理邏輯。」</div>
+          </div>
+        </div>
+        <div class="tc-warn">⚠ 行動描述泛化，缺乏具體情緒調節策略</div>
+        <div class="tc-media">
+          <div class="media-btns">
+            <a href="#" class="media-btn media-btn-text">📄 完整文字</a>
+            <a href="#" class="media-btn media-btn-video">🎬 完整影音</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- 第三部份：後續面試建議提問的問題及評分標準 -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="sec-title">第三部份　後續面試建議提問的問題及評分標準</div>
+
+  <div style="background:#fdf8ec;border:1.5px solid #d4aa30;border-radius:6px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#7a5a10;line-height:1.7;">
+    ⚠ 以下三題係根據吳OO先生在AI面試中的回答表現，針對<strong>需要進一步確認的向度</strong>設計，建議後續面試官直接以這些問題接續追問，以獲得更充分的評估依據。
+  </div>
+
+  <!-- ── FQ1. 謹慎性 深挖 ── -->
+  <div class="followup-card" id="fq-謹慎性">
+    <div class="followup-header" style="background:#4a2e7a;padding:14px 18px;">
+      <div>
+        <span class="trait-card-title">後續面試建議問題 01</span>
+        <div style="margin-top:4px;font-size:11px;color:rgba(255,255,255,0.85);">針對向度：謹慎性｜提問原因：AI面試回答以自我評價為主，缺乏具體情境</div>
+      </div>
+    </div>
+    <div class="followup-reason">
+      <strong>提問原因：</strong>吳先生在AI面試中對謹慎性的回答（「我做事都會先想清楚」）屬於自我評價，未能提出具體的行動前評估情境。由於人資專員在假勤管理與保險審核上需要高度細心與嚴謹，此向度必須在後續面試中取得具體行為事例才能有效評估。
+    </div>
+    <div class="trait-card-body">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;margin-top:20px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">面試問題</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#2e7d9e;">S</div>
+            <div class="fq-star-q">您在HR或其他工作中，有沒有一次因為事前仔細確認細節，而避免了一個可能造成麻煩的錯誤？可以描述那是什麼樣的情況嗎？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#5a7a2e;">T</div>
+            <div class="fq-star-q">在那個情況下，您當時需要核對或確認哪些重要資訊？如果出錯，可能會有什麼後果？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a5a2e;">A</div>
+            <div class="fq-star-q">您具體做了哪些動作來確認正確性？是用什麼方式交叉比對的？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a2e2e;">R</div>
+            <div class="fq-star-q">最後的結果如何？這個經驗讓您對「細心確認」這件事有什麼新的理解？</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">評分標準（五點量表）</div>
+        <div style="margin-top:6px;padding-left:20px;">
+          <div style="margin-bottom:10px;"><div style="background:#fdeaea;border-radius:4px;padding:8px 12px;border-left:3px solid #e74c3c;">
+              <div style="font-size:10px;font-weight:700;color:#e74c3c;margin-bottom:2px;">1分　完全不符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">仍以自我評價帶過（如「我就是細心的人」），無法說出任何具體的確認步驟或細節。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fef3e8;border-radius:4px;padding:8px 12px;border-left:3px solid #c0392b;">
+              <div style="font-size:10px;font-weight:700;color:#c0392b;margin-bottom:2px;">2分　不太符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能提及曾核對某些資料，但無法說明如何發現問題或採取哪些具體確認動作。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fefce8;border-radius:4px;padding:8px 12px;border-left:3px solid #d4600a;">
+              <div style="font-size:10px;font-weight:700;color:#d4600a;margin-bottom:2px;">3分　部分符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能舉出一個事例，說明確認過程，但缺乏說明發現疑點後如何進一步處置的邏輯。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e8f5ee;border-radius:4px;padding:8px 12px;border-left:3px solid #2e7d9e;">
+              <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin-bottom:2px;">4分　大致符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能清楚描述確認的步驟與邏輯，說明如何交叉比對資訊，發現問題後採取行動，結果具體。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e0f7f4;border-radius:4px;padding:8px 12px;border-left:3px solid #1a3a6e;">
+              <div style="font-size:10px;font-weight:700;color:#1a3a6e;margin-bottom:2px;">5分　非常符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">以完整STAR架構說明系統性核對流程，主動發現問題並即時處置，結果有明確成果，並反思建立了更好的確認習慣。</div>
+          </div>
+        </div>
+        </div>
+        <div class="obs-block">
+          <div class="obs-label">面試官觀察重點</div>
+          <div class="obs-text">觀察應徵者是否能從被動回應變為主動提出具體事例。若仍無法舉出細節，可進一步問：「在人資工作上，您有沒有處理過比較複雜的假勤或保險案件？」</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FQ2. 抗壓性 深挖 ── -->
+  <div class="followup-card" id="fq-抗壓性">
+    <div class="followup-header" style="background:#4a2e7a;padding:14px 18px;">
+      <div>
+        <span class="trait-card-title">後續面試建議問題 02</span>
+        <div style="margin-top:4px;font-size:11px;color:rgba(255,255,255,0.85);">針對向度：抗壓性｜提問原因：AI面試行動描述泛化，缺乏具體壓力管理策略</div>
+      </div>
+    </div>
+    <div class="followup-reason">
+      <strong>提問原因：</strong>吳先生在AI面試中對抗壓性的回答（「告訴自己冷靜，一件一件處理」）缺乏具體策略說明。人資專員需同時處理複雜的勞資問題、系統操作與主管要求，高壓情境下的情緒穩定度是關鍵，需以更具體的事例深入評估。
+    </div>
+    <div class="trait-card-body">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;margin-top:20px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">面試問題</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#2e7d9e;">S</div>
+            <div class="fq-star-q">在您的工作經驗中，有沒有一次面臨非常緊迫的期限或多項緊急任務同時出現的情況，讓您感覺到明顯的壓力？可以說說那是什麼狀況嗎？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#5a7a2e;">T</div>
+            <div class="fq-star-q">當時您必須在多短的時間內完成哪些事？如果沒有完成會有什麼影響？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a5a2e;">A</div>
+            <div class="fq-star-q">面對那樣的壓力，您當時具體做了哪些事來讓自己保持清晰的判斷？是如何決定處理順序的？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a2e2e;">R</div>
+            <div class="fq-star-q">最後結果如何？事後您有沒有調整自己處理高壓情境的方式？</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">評分標準（五點量表）</div>
+        <div style="margin-top:6px;padding-left:20px;">
+          <div style="margin-bottom:10px;"><div style="background:#fdeaea;border-radius:4px;padding:8px 12px;border-left:3px solid #e74c3c;">
+              <div style="font-size:10px;font-weight:700;color:#e74c3c;margin-bottom:2px;">1分　完全不符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">仍以「告訴自己冷靜」等泛化語句帶過，完全無法說明具體的優先排序邏輯或應對策略。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fef3e8;border-radius:4px;padding:8px 12px;border-left:3px solid #c0392b;">
+              <div style="font-size:10px;font-weight:700;color:#c0392b;margin-bottom:2px;">2分　不太符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能描述情境，但應對方式說明籠統，缺乏清楚的決策邏輯，無法說明如何維持執行品質。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fefce8;border-radius:4px;padding:8px 12px;border-left:3px solid #d4600a;">
+              <div style="font-size:10px;font-weight:700;color:#d4600a;margin-bottom:2px;">3分　部分符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能說明大致的優先排序方式，但缺乏說明在情緒波動下如何穩定自己並持續有效執行的具體策略。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e8f5ee;border-radius:4px;padding:8px 12px;border-left:3px solid #2e7d9e;">
+              <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin-bottom:2px;">4分　大致符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能清楚說明在壓力下評估輕重緩急的方式、穩定情緒的具體做法，以及逐步執行的過程，結果具體。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e0f7f4;border-radius:4px;padding:8px 12px;border-left:3px solid #1a3a6e;">
+              <div style="font-size:10px;font-weight:700;color:#1a3a6e;margin-bottom:2px;">5分　非常符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">以完整STAR架構描述高壓情境全程應對，包含情緒調節策略、優先決策邏輯、執行過程，並主動反思壓力管理方法，展現高度自我覺察。</div>
+          </div>
+        </div>
+        </div>
+        <div class="obs-block">
+          <div class="obs-label">面試官觀察重點</div>
+          <div class="obs-text">觀察應徵者在描述時是否仍保持冷靜的敘述語氣，以及是否能清楚說明決策邏輯而非直覺反應。若回答仍泛化，可追問：「當時最讓您感到焦慮的是哪一件事？您怎麼讓自己繼續動作？」</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FQ3. 社交性 主動性深挖 ── -->
+  <div class="followup-card" id="fq-社交性">
+    <div class="followup-header" style="background:#4a2e7a;padding:14px 18px;">
+      <div>
+        <span class="trait-card-title">後續面試建議問題 03</span>
+        <div style="margin-top:4px;font-size:11px;color:rgba(255,255,255,0.85);">針對向度：社交性｜提問原因：AI面試未能釐清主動社交動機</div>
+      </div>
+    </div>
+    <div class="followup-reason">
+      <strong>提問原因：</strong>吳先生在AI面試中的社交性展現偏向被動應對，描述的多為「工作要求需要與人互動」，而非主動建立關係。人資人員需主動建立跨部門信任，因此需進一步確認其主動社交的意願與習慣。
+    </div>
+    <div class="trait-card-body">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;margin-top:20px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">面試問題</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#2e7d9e;">S</div>
+            <div class="fq-star-q">您曾經有沒有主動去認識一位原本不熟的同事或跨部門的人，而不是因為工作上被指派要合作？可以說說是什麼樣的情況嗎？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#5a7a2e;">T</div>
+            <div class="fq-star-q">您當時為什麼會決定主動去找這個人？是看到什麼機會或感受到什麼需要？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a5a2e;">A</div>
+            <div class="fq-star-q">您具體怎麼做的？第一步是什麼？您用什麼方式讓對方感覺自在？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a2e2e;">R</div>
+            <div class="fq-star-q">後來這段關係有沒有對您的工作產生幫助？您從這個經驗中對自己的社交方式有什麼體會？</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">評分標準（五點量表）</div>
+        <div style="margin-top:6px;padding-left:20px;">
+          <div style="margin-bottom:10px;"><div style="background:#fdeaea;border-radius:4px;padding:8px 12px;border-left:3px solid #e74c3c;">
+              <div style="font-size:10px;font-weight:700;color:#e74c3c;margin-bottom:2px;">1分　完全不符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">無法舉出任何主動認識他人的例子，或所有事例均屬被動配合工作需求，從未主動出擊。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fef3e8;border-radius:4px;padding:8px 12px;border-left:3px solid #c0392b;">
+              <div style="font-size:10px;font-weight:700;color:#c0392b;margin-bottom:2px;">2分　不太符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能舉出一個例子，但明顯是機緣巧合，並非刻意主動建立關係，無法說明主動社交的動機。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fefce8;border-radius:4px;padding:8px 12px;border-left:3px solid #d4600a;">
+              <div style="font-size:10px;font-weight:700;color:#d4600a;margin-bottom:2px;">3分　部分符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能說明主動接觸的情境，但動機說明薄弱，或難以說明這段關係後來帶來了什麼具體價值。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e8f5ee;border-radius:4px;padding:8px 12px;border-left:3px solid #2e7d9e;">
+              <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin-bottom:2px;">4分　大致符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能清楚說明主動社交的動機、具體接觸方式，以及這段關係後來對工作帶來的實質幫助，敘述完整。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e0f7f4;border-radius:4px;padding:8px 12px;border-left:3px solid #1a3a6e;">
+              <div style="font-size:10px;font-weight:700;color:#1a3a6e;margin-bottom:2px;">5分　非常符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">以完整STAR架構說明主動建立關係的全過程，動機清晰、行動具體、成果有意義，並能反思自己的社交風格與策略，展現高度的人際主動性。</div>
+          </div>
+        </div>
+        </div>
+        <div class="obs-block">
+          <div class="obs-label">面試官觀察重點</div>
+          <div class="obs-text">留意應徵者是否以「自己主動出擊」為核心描述，而非「剛好有機會認識」。人資人員需要能主動走進各部門建立信任，觀察其是否具備這樣的性格底色。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部備注 -->
+
+</div><!-- /rpt-body -->
+</div><!-- /page -->
+<script>
+function toggleNote() {
+  const content = document.getElementById('noteContent');
+  const icon    = document.getElementById('noteToggleIcon');
+  const text    = document.getElementById('noteToggleText');
+  const isOpen  = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'block';
+  icon.textContent = isOpen ? '▼' : '▲';
+  text.textContent = isOpen ? '展開' : '收合';
+}
+</script>
 
 <script>
-const lines = [
-  "大家好，我是一名圖書資料管理人員！",
-  "我們負責圖書的採訪、分類與編目，",
-  "讓每一本書都能在對的位置，等待對的讀者。",
-  "除了管理館藏，我們也提供參考諮詢服務，",
-  "協助讀者找到所需資訊，推廣資訊素養。",
-  "喜歡知識、熱愛服務？歡迎加入我們的行列！",
-];
-
-const scenes = [
-  { en:"INTRODUCTION",    zh:"認識這份職業",    chips:["📚 圖書館學","🎓 專業人員","🏛 知識的守護者"] },
-  { en:"CATALOGING",      zh:"採訪・分類・編目", chips:["📋 採訪作業","🔢 中國圖書分類法","💻 MARC 格式"] },
-  { en:"COLLECTION MGT",  zh:"書在對的位置",    chips:["📖 索書號","📍 館藏位置","🔍 書目查詢"] },
-  { en:"CIRCULATION SYS", zh:"館藏流通管理",    chips:["🖥 ILS 系統","📊 館藏統計","⏰ 借還期管理"] },
-  { en:"READER SERVICES", zh:"讀者諮詢服務",    chips:["💬 參考諮詢","🔎 資訊檢索","📡 資訊素養推廣"] },
-  { en:"JOIN US",         zh:"職涯邀請",        chips:["🎓 相關學系","💼 多元職場","🌟 終身學習推手"] },
-];
-
-const synth = window.speechSynthesis;
-let playing = false, currentLineIdx = -1, shownLine = -1;
-let lineStartTimes = [], animFrame = null;
-
-function getZhVoice() {
-  const vs = synth.getVoices();
-  return vs.find(v=>v.lang==='zh-TW') || vs.find(v=>v.lang==='zh-CN') || vs.find(v=>v.lang.startsWith('zh')) || null;
-}
-
-function switchScene(idx) {
-  document.querySelectorAll('.scene').forEach((s,i)=>s.classList.toggle('active',i===idx));
-  const sd = scenes[idx];
-  document.getElementById('slEn').textContent = sd.en;
-  document.getElementById('slZh').textContent = sd.zh;
-  const lbl = document.getElementById('sceneLabel');
-  lbl.classList.remove('vis');
-  setTimeout(()=>lbl.classList.add('vis'), 80);
-  const ch = document.getElementById('chips');
-  ch.innerHTML = '';
-  sd.chips.forEach((c,i)=>{
-    const el = document.createElement('div');
-    el.className = 'chip';
-    el.textContent = c;
-    ch.appendChild(el);
-    setTimeout(()=>el.classList.add('vis'), 200+i*150);
-  });
-}
-
-function showSub(idx) {
-  if (shownLine===idx) return;
-  shownLine = idx;
-  const el = document.getElementById('sub');
-  el.classList.remove('on');
-  setTimeout(()=>{ el.textContent = lines[idx]; el.classList.add('on'); }, 80);
-  for(let i=0;i<lines.length;i++){
-    const d=document.getElementById('pd'+i);
-    if(d) d.classList.toggle('on',i===idx);
+function jumpTo(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-  switchScene(idx);
-}
-
-function speakLine(idx) {
-  if (idx >= lines.length || !playing) return;
-  const utt = new SpeechSynthesisUtterance(lines[idx]);
-  utt.lang = 'zh-TW'; utt.rate = 0.93; utt.pitch = 1.05;
-  const v = getZhVoice(); if(v) utt.voice = v;
-  utt.onstart = ()=>{
-    lineStartTimes[idx] = performance.now();
-    currentLineIdx = idx;
-    showSub(idx);
-    document.getElementById('wave').classList.add('on');
-  };
-  utt.onend = ()=>{
-    document.getElementById('wave').classList.remove('on');
-    if (!playing) return;
-    if (idx === lines.length-1) setTimeout(()=>{ playing=false; doEnd(); }, 400);
-    else speakLine(idx+1);
-  };
-  utt.onerror = ()=>{
-    if (idx < lines.length-1) speakLine(idx+1);
-    else { playing=false; doEnd(); }
-  };
-  synth.speak(utt);
-}
-
-function startTimerBar() {
-  const tb = document.getElementById('tbar');
-  tb.style.transition='none'; tb.style.width='0%'; tb.offsetWidth;
-  tb.style.transition='width 32s linear'; tb.style.width='100%';
-}
-
-function tickTs() {
-  if (!playing) return;
-  const idx = Math.max(0,currentLineIdx);
-  const le = lineStartTimes[idx] ? (performance.now()-lineStartTimes[idx])/1000 : 0;
-  const total = Math.min(30, idx*5+le);
-  const rem = Math.max(0, 30-total);
-  document.getElementById('ts').textContent = '00:'+String(Math.floor(rem)).padStart(2,'0');
-  animFrame = requestAnimationFrame(tickTs);
-}
-
-function doEnd() {
-  cancelAnimationFrame(animFrame);
-  document.getElementById('sub').classList.remove('on');
-  document.getElementById('spkrow').classList.remove('vis');
-  document.getElementById('wave').classList.remove('on');
-  document.getElementById('sceneLabel').classList.remove('vis');
-  document.getElementById('chips').innerHTML='';
-  document.getElementById('ts').textContent='00:00';
-  document.getElementById('endcard').classList.add('vis');
-}
-
-function startVideo() {
-  document.getElementById('povly').classList.add('gone');
-  document.getElementById('charImg').classList.add('visible');
-  document.getElementById('spkrow').classList.add('vis');
-  document.getElementById('pdots').classList.add('vis');
-  playing=true; currentLineIdx=0; lineStartTimes=[];
-  startTimerBar();
-  animFrame = requestAnimationFrame(tickTs);
-  const go = ()=>speakLine(0);
-  if (!synth.getVoices().length) { synth.onvoiceschanged=()=>{ synth.onvoiceschanged=null; go(); }; }
-  else go();
-}
-
-function togglePlay() {
-  const btn = document.getElementById('ppbtn');
-  if (playing) {
-    playing=false; synth.pause(); cancelAnimationFrame(animFrame);
-    btn.textContent='▶ 播放';
-    document.getElementById('wave').classList.remove('on');
-    const tb=document.getElementById('tbar');
-    const w=parseFloat(getComputedStyle(tb).width);
-    const sw=document.getElementById('stage').offsetWidth;
-    tb.style.transition='none'; tb.style.width=(w/sw*100).toFixed(1)+'%';
-  } else {
-    if (currentLineIdx>=lines.length) return;
-    playing=true; btn.textContent='⏸ 暫停';
-    synth.resume(); animFrame=requestAnimationFrame(tickTs);
-  }
-}
-
-function resetAndPlay() {
-  synth.cancel(); cancelAnimationFrame(animFrame);
-  playing=false; currentLineIdx=-1; shownLine=-1; lineStartTimes=[];
-  const tb=document.getElementById('tbar');
-  tb.style.transition='none'; tb.style.width='0%';
-  document.getElementById('endcard').classList.remove('vis');
-  document.getElementById('sub').classList.remove('on');
-  document.getElementById('sub').textContent='　';
-  document.getElementById('spkrow').classList.remove('vis');
-  document.getElementById('pdots').classList.remove('vis');
-  document.getElementById('wave').classList.remove('on');
-  document.getElementById('sceneLabel').classList.remove('vis');
-  document.getElementById('chips').innerHTML='';
-  document.getElementById('ppbtn').textContent='⏸ 暫停';
-  document.getElementById('ts').textContent='00:30';
-  document.getElementById('charImg').classList.remove('visible');
-  for(let i=0;i<6;i++){const d=document.getElementById('pd'+i);if(d)d.classList.toggle('on',i===0);}
-  document.querySelectorAll('.scene').forEach((s,i)=>s.classList.toggle('active',i===0));
-  document.getElementById('povly').classList.remove('gone');
 }
 </script>
 </body>
