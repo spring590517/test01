@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 面試：性格分析結果報告｜吳OO × 人資專員</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:       #1a1a2e;
+  --ink-light: #4a4a6a;
+  --paper:     #faf8f4;
+  --rule:      #e8e4dc;
+  --accent:    #c0392b;
+  --teal:      #2e7d9e;
+  --sage:      #5a7a2e;
+  --brown:     #7a5a2e;
+  --rust:      #7a2e2e;
+  --s1:#e74c3c;--s2:#c0392b;--s3:#d4600a;--s4:#2e7d9e;--s5:#1a3a6e;
+}
+html{scroll-behavior:smooth;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0ede8;font-family:'Noto Sans TC',sans-serif;color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%;}
+
+/* PAGE */
+.page{max-width:900px;margin:0 auto;padding:24px 16px 60px;}
+
+/* HEADER */
+.rpt-header{background:var(--ink);color:white;border-radius:8px 8px 0 0;padding:24px 28px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.rpt-badge{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+.rpt-name{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;}
+.rpt-meta{font-size:11px;color:rgba(255,255,255,0.6);display:flex;gap:12px;flex-wrap:wrap;}
+.rpt-meta span{display:flex;align-items:center;gap:4px;}
+.verdict-pill{flex-shrink:0;padding:7px 16px;border-radius:30px;font-size:11px;font-weight:700;letter-spacing:0.06em;border:2px solid;white-space:nowrap;}
+.verdict-high{background:rgba(46,125,158,0.15);border-color:#2e7d9e;color:#2e7d9e;}
+.verdict-mid{background:rgba(212,96,10,0.12);border-color:#d4600a;color:#d4600a;}
+.verdict-low{background:rgba(192,57,43,0.12);border-color:#c0392b;color:#c0392b;}
+
+/* BODY */
+.rpt-body{background:var(--paper);border-radius:0 0 8px 8px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,0.1);}
+
+/* SECTION */
+.sec-title{font-family:'Noto Serif TC',serif;font-size:16px;font-weight:700;letter-spacing:0.12em;color:var(--accent);border-left:4px solid var(--accent);padding-left:14px;margin:28px 0 16px;}
+.sec-title:first-child{margin-top:0;}
+.divider{border:none;border-top:1px solid var(--rule);margin:24px 0;}
+
+/* PART 1 SUMMARY */
+.summary-top{display:grid;grid-template-columns:150px 1fr;gap:0;background:white;border:1.5px solid var(--rule);border-radius:8px;overflow:hidden;margin-bottom:16px;}
+.summary-score-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 14px;gap:8px;}
+.summary-conclusions{display:block;}
+.conclusion-block{padding:16px 18px;}
+.conclusion-block+.conclusion-block{border-top:1px solid var(--rule);}
+.conclusion-block.alt{background:#f7f5f2;}
+.conclusion-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:7px;}
+.conclusion-text{font-size:12px;color:var(--ink);line-height:1.8;}
+/* trait row vertical center */
+.trait-summary-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:6px;border-left:4px solid;}
+
+/* OVERVIEW GRID */
+.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.overview-card{background:#f7f5f2;border-radius:6px;padding:12px 14px;border-left:3px solid;}
+
+/* TRAIT CARDS */
+.trait-card{border-radius:8px;margin-bottom:18px;overflow:hidden;border:1.5px solid var(--rule);}
+.tc-block-label{font-size:9px;font-weight:700;letter-spacing:0.12em;color:#999;text-transform:uppercase;margin-bottom:6px;}
+.tc-block-text{font-size:12px;line-height:1.75;color:var(--ink-light);}
+.tc-star-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+.tc-star-icon-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;}
+.tc-star-icon{width:32px;height:32px;border-radius:50%;color:white;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.tc-star-ev{font-size:9px;font-weight:700;border-radius:8px;padding:2px 6px;text-align:center;white-space:nowrap;border:1px solid;}
+.tc-star-quote{flex:1;border-radius:5px;padding:9px 12px;align-self:flex-start;margin-left:16px;}
+.tc-star-quote-label{font-size:9px;font-weight:700;letter-spacing:0.1em;margin-bottom:4px;}
+.tc-star-quote-text{font-size:12px;color:#1a1a2e;line-height:1.65;font-style:italic;}
+.tc-warn{margin-top:4px;padding:7px 10px;background:#fdeaea;border-radius:4px;font-size:11px;color:#c0392b;font-weight:600;}
+
+/* MEDIA BTNS */
+.tc-media{display:flex;justify-content:flex-end;margin-top:16px;}.media-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.media-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid;text-decoration:none;transition:background 0.15s,color 0.15s;}
+.media-btn-text{border-color:var(--teal);color:var(--teal);background:#f0f7fb;}
+.media-btn-text:hover{background:var(--teal);color:white;}
+.media-btn-video{border-color:var(--rust);color:var(--rust);background:#fdf0f0;}
+.media-btn-video:hover{background:var(--rust);color:white;}
+
+/* FOLLOWUP */
+.followup-card{border-radius:6px;margin-bottom:18px;overflow:hidden;border:1.5px solid #e8e4dc;}
+.followup-header .trait-card-title{color:white;font-size:16px;}
+.followup-reason{background:#3d2466;border-bottom:1px solid rgba(255,255,255,0.15);padding:12px 18px;font-size:11.5px;color:rgba(255,255,255,0.9);line-height:1.7;}
+.followup-reason strong{color:white;}
+.followup-body{padding:14px 18px;background:white;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fq-star-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
+.fq-star-icon{flex-shrink:0;width:32px;height:32px;border-radius:50%;color:white;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-left:20px;}
+.fq-star-q{flex:1;background:#f7f5f2;border-radius:4px;padding:8px 11px;font-size:12px;color:#1a1a2e;line-height:1.65;}
+
+/* SCORE5 */
+.score5-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;}
+.score5-num{width:24px;height:24px;border-radius:50%;color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.score5-desc{flex:1;border-radius:4px;padding:6px 10px;}
+.score5-label{font-size:10px;font-weight:700;margin-bottom:2px;}
+.score5-text{font-size:11px;color:var(--ink-light);line-height:1.6;}
+.obs-block{margin-top:12px;padding:10px 12px;background:#f7f5f2;border-radius:4px;}
+.obs-label{font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);}
+.obs-text{font-size:11.5px;color:var(--ink-light);line-height:1.65;padding-left:12px;}
+
+/* BOTTOM NOTE */
+.bottom-note{margin-top:24px;padding:14px 18px;background:#f0ede8;border-radius:6px;border:1px solid var(--rule);}
+.bottom-note-label{font-size:10px;font-weight:700;letter-spacing:0.12em;color:#aaa;text-transform:uppercase;margin-bottom:6px;}
+.bottom-note-text{font-size:11px;color:var(--ink-light);line-height:1.8;}
+
+/* ── BAR CLASSES ── */
+.bar-track{background:#ece9e4;border-radius:3px;height:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;}
+.bar-s5{background:#1a3a6e;}.bar-s4{background:#2e7d9e;}.bar-s3{background:#d4600a;}.bar-s2{background:#c0392b;}.bar-s1{background:#e74c3c;}
+
+/* ════════════ RWD ════════════ */
+
+/* Tablet ≤ 768px */
+@media(max-width:768px){
+  .page{padding:16px 12px 48px;}
+  .rpt-header{padding:20px;}
+  .rpt-body{padding:20px 16px;}
+  .summary-top{grid-template-columns:1fr;}
+  .summary-score-panel{flex-direction:row;justify-content:center;padding:16px 20px;gap:20px;border-bottom:1px solid var(--rule);}
+  .summary-conclusions{grid-template-rows:unset;}
+  .overview-grid{grid-template-columns:repeat(2,1fr);}
+  .followup-body{grid-template-columns:1fr;}
+}
+
+/* Mobile ≤ 480px */
+@media(max-width:480px){
+  .page{padding:0 0 40px;}
+  .rpt-header{border-radius:0;padding:16px 14px;gap:10px;}
+  .rpt-name{font-size:16px;}
+  .rpt-meta{font-size:10px;gap:6px;}
+  .rpt-body{border-radius:0;padding:16px 14px;box-shadow:none;}
+  .sec-title{font-size:11px;}
+  .summary-score-panel{padding:14px 16px;gap:14px;}
+  .overview-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .overview-card{padding:10px 12px;}
+  .tc-star-icon-wrap{width:64px;}
+  .tc-star-icon{width:28px;height:28px;font-size:11px;}
+  .tc-star-ev{font-size:8px;padding:1px 4px;}
+  .tc-star-quote{padding:7px 10px;}
+  .tc-star-quote-text{font-size:11px;}
+  .fq-star-icon{width:28px;height:28px;font-size:11px;}
+  .verdict-pill{padding:5px 10px;font-size:10px;}
+  .rpt-header{flex-direction:column;}
+}
+
+/* Very small ≤ 360px */
+@media(max-width:360px){
+  .overview-grid{grid-template-columns:1fr;}
+  .rpt-meta{flex-direction:column;gap:4px;}
+  .summary-score-panel{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── PAGE TITLE（深藍色區塊上方）── -->
+<div style="padding:20px 16px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:200px;font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;color:#3a3a3a;letter-spacing:0.06em;text-align:left;">AI 面試＿性格分析結果報告</div>
+  <div style="display:flex;gap:8px;flex-shrink:0;">
+    <button onclick="window.location.href='mailto:?subject=AI面試性格分析結果報告'" style="padding:6px 14px;background:white;border:1.5px solid #2e7d9e;border-radius:20px;cursor:pointer;color:#2e7d9e;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;" onmouseover="this.style.background='#2e7d9e';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='#2e7d9e'">轉寄</button>
+    <button onclick="scrollToPrint()" style="padding:6px 14px;background:white;border:1.5px solid #2e7d9e;border-radius:20px;cursor:pointer;color:#2e7d9e;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;" onmouseover="this.style.background='#2e7d9e';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='#2e7d9e'">閱讀書面版</button>
+  </div>
+</div>
+
+<!-- ── REPORT HEADER ── -->
+<div class="rpt-header">
+  <div style="flex:1;">
+    <!-- 姓名 + badge 同行 -->
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+      <div class="rpt-name" style="margin-bottom:0;">吳OO　先生</div>
+      <div style="background:#d4600a;border-radius:8px;padding:6px 14px;display:flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(0,0,0,0.3);flex-shrink:0;">
+        <span style="font-size:15px;line-height:1;">⚠</span>
+        <span style="font-size:13px;font-weight:900;color:white;letter-spacing:0.05em;white-space:nowrap;">建議進一步面試</span>
+      </div>
+    </div>
+    <div class="rpt-meta">
+      <span>💼 應徵職位：人資專員</span>
+      <span>🏢 104人力銀行</span>
+      <span>📅 2025年5月2日</span>
+      <span>⏱ 面試時長：28分鐘</span>
+    </div>
+  </div>
+</div>
+
+<div class="rpt-body">
+
+  <!-- ── 報告說明（置於第一部份前）── -->
+  <div style="background:#eef4f8;border:1.5px solid #c0d8e8;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0;">
+      <div style="font-size:16px;font-weight:700;color:#2e7d9e;letter-spacing:0.12em;">📋 報告說明</div>
+      <button onclick="toggleNote()" id="noteToggleBtn"
+        style="background:#2e7d9e;color:white;border:none;border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.04em;display:flex;align-items:center;gap:4px;">
+        <span id="noteToggleIcon">▲</span><span id="noteToggleText">收合</span>
+      </button>
+    </div>
+    <div id="noteContent">
+      <div style="border-top:1px solid #c0d8e8;margin:10px 0;"></div>
+      <div style="font-size:12px;color:var(--ink-light);line-height:1.9;margin-bottom:12px;">
+        本報告依據應徵者於 AI 線上面試中的口頭回答，以 <strong style="color:var(--ink);">STAR 行為事例法</strong>為評估框架，針對六大關鍵性格向度進行分析，結果供用人主管參考使用，建議搭配後續面談結果綜合判斷。
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;margin-top:4px;">STAR 行為面試法說明</div>
+      <div style="font-size:12px;color:var(--ink-light);line-height:1.8;margin-bottom:10px;">STAR 行為面試法是一種結構化面試技巧。目的在引導應徵者用具體事例說明自己的特質或能力。</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;">
+        <div style="text-align:center;background:#eef5fa;border-radius:6px;padding:8px 4px;border-top:3px solid #2e7d9e;">
+          <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">S</span><span style="font-size:9px;">ituation</span> 情境</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">描述事件背景，說明何時、何地、發生什麼事，具體且簡短</div>
+        </div>
+        <div style="text-align:center;background:#f2f8ee;border-radius:6px;padding:8px 4px;border-top:3px solid #5a7a2e;">
+          <div style="font-size:10px;font-weight:700;color:#5a7a2e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">T</span><span style="font-size:9px;">ask</span> 任務</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">說明需達成的任務、目標或面臨的挑戰</div>
+        </div>
+        <div style="text-align:center;background:#f8f5f0;border-radius:6px;padding:8px 4px;border-top:3px solid #7a5a2e;">
+          <div style="font-size:10px;font-weight:700;color:#7a5a2e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">A</span><span style="font-size:9px;">ction</span> 行動</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">重點：說明「你」具體採取了哪些行動，強調個人貢獻</div>
+        </div>
+        <div style="text-align:center;background:#f8f0f0;border-radius:6px;padding:8px 4px;border-top:3px solid #7a2e2e;">
+          <div style="font-size:10px;font-weight:700;color:#7a2e2e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">R</span><span style="font-size:9px;">esult</span> 結果</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">分享最終成果，儘量使用量化數據佐證（如提升20%效率）</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;margin-top:14px;">符合度評估等級說明</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
+        <div style="text-align:center;background:#e8edf8;border-radius:6px;padding:8px 4px;border-top:3px solid #1a3a6e;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#1a3a6e;line-height:1;">5</span><span style="font-size:10px;font-weight:700;color:#1a3a6e;">非常符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">以完整具體的行為事例充分佐證，回答清晰且具說服力</div>
+        </div>
+        <div style="text-align:center;background:#e4f0f8;border-radius:6px;padding:8px 4px;border-top:3px solid #2e7d9e;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#2e7d9e;line-height:1;">4</span><span style="font-size:10px;font-weight:700;color:#2e7d9e;">大致符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">有具體事例支撐，部分細節稍弱，整體表現穩定</div>
+        </div>
+        <div style="text-align:center;background:#fef0e6;border-radius:6px;padding:8px 4px;border-top:3px solid #d4600a;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#d4600a;line-height:1;">3</span><span style="font-size:10px;font-weight:700;color:#d4600a;">部分符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">能舉出事例但說明不完整，或僅有部分環節有佐證</div>
+        </div>
+        <div style="text-align:center;background:#fdeaea;border-radius:6px;padding:8px 4px;border-top:3px solid #c0392b;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#c0392b;line-height:1;">2</span><span style="font-size:10px;font-weight:700;color:#c0392b;">不太符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">回答以自我評價為主，缺乏具體情境與行動佐證</div>
+        </div>
+        <div style="text-align:center;background:#fdeaea;border-radius:6px;padding:8px 4px;border-top:3px solid #c0392b;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#c0392b;line-height:1;">1</span><span style="font-size:10px;font-weight:700;color:#c0392b;">不符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">無法提供任何相關事例，或回答與評估向度完全無關</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 第一部份：AI面試結果摘要         -->
+  <!-- ════════════════════════════════ -->
+  <div class="sec-title">AI面試＿性格分析結果摘要</div>
+
+  <!-- ── 頂部藍色區塊 ── -->
+  <div style="background:#2e7d9e;border-radius:8px 8px 0 0;padding:16px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+
+    <!-- 左：圓圈＋星等 -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">
+      <div style="font-size:8px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:1px;">整體符合度</div>
+      <div style="width:58px;height:58px;border-radius:50%;border:2.5px solid white;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <span style="font-size:22px;font-weight:800;color:white;line-height:1;">3.7</span>
+        <span style="font-size:8px;color:rgba(255,255,255,0.55);">／ 5</span>
+      </div>
+      <div style="display:flex;gap:2px;margin-top:2px;">
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:rgba(255,255,255,0.28);fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+    </div>
+
+    <!-- 中：大致符合＋說明 -->
+    <div style="flex-shrink:0;background:rgba(255,255,255,0.12);border-radius:6px;padding:8px 12px;">
+      <div style="font-size:13px;font-weight:800;color:white;margin-bottom:3px;">大致符合</div>
+      <div style="font-size:9.5px;color:rgba(255,255,255,0.75);line-height:1.6;">有具體事例支撐，<br>部分細節稍弱，<br>整體表現穩定。</div>
+    </div>
+
+    <!-- 分隔線 -->
+    <div style="width:1px;height:70px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+
+    <!-- 右：性格側寫 -->
+    <div style="flex:1;min-width:180px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.6);margin-bottom:5px;">🧭 性格側寫</div>
+      <div style="font-size:15px;font-weight:700;color:white;line-height:1.7;">
+        行動力強、當責主動、善於多方協調；<br>細膩思考與壓力應對仍待後續面談確認。
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 六個關鍵性格：依序垂直排列 ── -->
+  <div style="background:white;border:1.5px solid var(--rule);border-top:none;border-radius:0 0 8px 8px;padding:14px 18px;display:flex;flex-direction:column;gap:8px;">
+
+    <!-- 堅毅性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #1a3a6e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#1a3a6e;line-height:1;">4.5</div>
+        <div style="font-size:8px;font-weight:700;color:#1a3a6e;line-height:1.3;">非常符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">R✓</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">堅毅性</span>
+          <span style="font-size:10px;color:var(--ink-light);">鍥而不捨、堅持不懈</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">徒步環島40天、高中半工半讀，兩則完整事例，STAR四環節均清楚佐證</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;"><button onclick="toggleInline('inline-detail-堅毅性', this, '▼ 展開詳細評估', '▲ 收合詳細評估')" style="font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開詳細評估</button></div></div>
+    </div>
+    <div id="inline-detail-堅毅性" style="display:none;border:1.5px solid #1a3a6e;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#1a3a6e;padding:10px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:22px;font-weight:900;color:white;line-height:1;">4.5</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);">/ 5　非常符合</div>
+        </div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-size:15px;font-weight:700;color:white;">堅毅性</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.8);margin-left:4px;">：鍥而不捨、堅持不懈</span>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:#faf8f4;border-bottom:1px solid #e8e4dc;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:5px;">評分依據</div>
+        <div style="font-size:11.5px;color:#4a4a6a;line-height:1.75;">應徵者以獨自徒步環島40天的具體事例，清楚說明在體力極限與心理挑戰下仍持續推進目標的意志力。高中即半工半讀、工專同時工作的學習歷程，進一步印證堅毅性格的一貫表現。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:10px;">應徵者原話摘錄　＋　STAR 回答完整度</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">S</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">情境清晰 ✓</div>
+              </div>
+              <div style="flex:1;background:#eef5fa;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;margin-bottom:3px;">Situation 情境</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我決定獨自徒步環島，從新北市出發，沿著台灣海岸線一步一步走，沒有人陪，只有自己的意志撐著。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">T</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">任務明確 ✓</div>
+              </div>
+              <div style="flex:1;background:#f2f8ee;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#5a7a2e;margin-bottom:3px;">Task 任務</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「第23天腳底起了嚴重水泡，每走一步都像刀割，我站在路邊認真考慮要不要就此放棄環島這個念頭。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">A</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">行動具體 ✓</div>
+              </div>
+              <div style="flex:1;background:#f8f5f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a5a2e;margin-bottom:3px;">Action 行動</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我告訴自己只要還能動就不停下來，把目標縮短成「只走到下一個休息點」，一小段一小段地慢慢撐過去。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">R</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">結果有反思 ✓</div>
+              </div>
+              <div style="flex:1;background:#f8f0f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a2e2e;margin-bottom:3px;">Result 結果</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「最後走完了40天，全程沒有搭任何交通工具。這讓我知道：很多事情難的不是能力，而是要不要繼續往前。」</div>
+              </div>
+            </div>
+      </div>
+    </div>
+    <!-- 合作性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">4.0</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;line-height:1.3;">大致符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">合作性</span>
+          <span style="font-size:10px;color:var(--ink-light);">喜歡團隊合作、共同達成目標</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">多方協作設計新人課程，行動具體清楚，但最終成果說明稍模糊</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;"><button onclick="toggleInline('inline-detail-合作性', this, '▼ 展開詳細評估', '▲ 收合詳細評估')" style="font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開詳細評估</button></div></div>
+    </div>
+    <div id="inline-detail-合作性" style="display:none;border:1.5px solid #2e7d9e;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#2e7d9e;padding:10px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:22px;font-weight:900;color:white;line-height:1;">4.0</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);">/ 5　大致符合</div>
+        </div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-size:15px;font-weight:700;color:white;">合作性</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.8);margin-left:4px;">：喜歡團隊合作、共同達成目標</span>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:#faf8f4;border-bottom:1px solid #e8e4dc;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:5px;">評分依據</div>
+        <div style="font-size:11.5px;color:#4a4a6a;line-height:1.75;">應徵者描述與活動公司、廠商、各部門協調的具體經驗。「Let's Camp新人關懷計畫」中從無到有共同設計課程、來回調整三四次，印證其主動投入協作的特質。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:10px;">應徵者原話摘錄　＋　STAR 回答完整度</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">S</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">情境清晰 ✓</div>
+              </div>
+              <div style="flex:1;background:#eef5fa;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;margin-bottom:3px;">Situation 情境</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「新人關懷課程從零開始，什麼素材都沒有，只有主管說的一句話：想讓新人感覺被照顧、不孤單。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">T</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">任務明確 ✓</div>
+              </div>
+              <div style="flex:1;background:#f2f8ee;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#5a7a2e;margin-bottom:3px;">Task 任務</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我需要同時對接外部講師、內部多個部門主管、還有一位專案夥伴，大家對課程內容的想法差距很大。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">A</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">行動具體 ✓</div>
+              </div>
+              <div style="flex:1;background:#f8f5f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a5a2e;margin-bottom:3px;">Action 行動</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我先收集員工進公司前三個月最常問的問題，整理成課程需求清單，再逐一和講師確認調整方向，前後修改了三四次。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">R</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">結果稍模糊 △</div>
+              </div>
+              <div style="flex:1;background:#f8f0f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a2e2e;margin-bottom:3px;">Result 結果</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「課程最後被指定為新人必修，自己也執行了超過十場，新人的課後回饋大多正面。」</div>
+              </div>
+            </div>
+      </div>
+    </div>
+    <!-- 負責任 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">3.8</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;line-height:1.3;">大致符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">負責任</span>
+          <span style="font-size:10px;color:var(--ink-light);">盡責可靠、信守承諾</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">主動舉報竊盜超出職責範圍，當責行為可驗證，結果說明稍略</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;"><button onclick="toggleInline('inline-detail-負責任', this, '▼ 展開詳細評估', '▲ 收合詳細評估')" style="font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開詳細評估</button></div></div>
+    </div>
+    <div id="inline-detail-負責任" style="display:none;border:1.5px solid #2e7d9e;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#2e7d9e;padding:10px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:22px;font-weight:900;color:white;line-height:1;">3.8</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);">/ 5　大致符合</div>
+        </div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-size:15px;font-weight:700;color:white;">負責任</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.8);margin-left:4px;">：盡責可靠、信守承諾</span>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:#faf8f4;border-bottom:1px solid #e8e4dc;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:5px;">評分依據</div>
+        <div style="font-size:11.5px;color:#4a4a6a;line-height:1.75;">應徵者以即時發現並阻止產線金線竊盜的事例，展現超出職責範圍的主動當責行為。連續三季擔任公司季刊保險專欄作者，顯示穩定交付的可靠性。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:10px;">應徵者原話摘錄　＋　STAR 回答完整度</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">S</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">情境清晰 ✓</div>
+              </div>
+              <div style="flex:1;background:#eef5fa;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;margin-bottom:3px;">Situation 情境</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「那天我在庫管區附近走動，無意間注意到一位作業員的動作有點不對勁，放置材料的方式和平常不一樣。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">T</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">任務明確 ✓</div>
+              </div>
+              <div style="flex:1;background:#f2f8ee;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#5a7a2e;margin-bottom:3px;">Task 任務</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「那個區域不在我負責的範圍內，但我判斷如果不立刻反應，可能會有不小的材料損失。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">A</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">行動具體 ✓</div>
+              </div>
+              <div style="flex:1;background:#f8f5f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a5a2e;margin-bottom:3px;">Action 行動</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我立刻走去找現場主管回報，主管馬上調出監視器畫面確認，發現確實有人試圖偷竊金線，及時阻止了。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">R</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">結果稍模糊 △</div>
+              </div>
+              <div style="flex:1;background:#f8f0f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a2e2e;margin-bottom:3px;">Result 結果</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「那批金線沒有被帶走，事後公司啟動更嚴格的庫管稽核流程，我也因此獲得主管的特別表揚。」</div>
+              </div>
+            </div>
+      </div>
+    </div>
+    <!-- 社交性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">3.6</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;line-height:1.3;">大致符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">社交性</span>
+          <span style="font-size:10px;color:var(--ink-light);">積極與他人互動</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">50場活動多方協調，臨場反應佳；主動建立關係的動機待確認</div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;"><button onclick="toggleInline('inline-detail-社交性', this, '▼ 展開詳細評估', '▲ 收合詳細評估')" style="font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開詳細評估</button><button onclick="toggleInline('inline-fq-社交性', this, '▼ 展開後續面試建議', '▲ 收合後續面試建議')" style="font-size:9px;background:#c0392b;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開後續面試建議</button></div>
+    </div>
+    <div id="inline-detail-社交性" style="display:none;border:1.5px solid #2e7d9e;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#2e7d9e;padding:10px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:22px;font-weight:900;color:white;line-height:1;">3.6</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);">/ 5　大致符合</div>
+        </div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-size:15px;font-weight:700;color:white;">社交性</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.8);margin-left:4px;">：積極與他人互動</span>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:#faf8f4;border-bottom:1px solid #e8e4dc;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:5px;">評分依據</div>
+        <div style="font-size:11.5px;color:#4a4a6a;line-height:1.75;">應徵者以主辦50場以上活動的經驗說明與多元對象互動的能力，表達帶有真實的臨場感。但針對「如何主動建立關係」的追問，主動社交動機表達較不明確。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:10px;">應徵者原話摘錄　＋　STAR 回答完整度</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">S</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">情境清晰 ✓</div>
+              </div>
+              <div style="flex:1;background:#eef5fa;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;margin-bottom:3px;">Situation 情境</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「辦萬人年終晚會那天，我必須同時維繫場地方、音響公司、餐飲廠商、接送安排、還有現場貴賓與藝人的需求。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">T</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">任務稍不清晰 △</div>
+              </div>
+              <div style="flex:1;background:#f2f8ee;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#5a7a2e;margin-bottom:3px;">Task 任務</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「各方的時間點和要求都不一樣，有人要提前確認動線，有人臨時改需求，我要讓每個人都在對的時間出現在對的地方。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">A</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">行動具體 ✓</div>
+              </div>
+              <div style="flex:1;background:#f8f5f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a5a2e;margin-bottom:3px;">Action 行動</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我事先建了一份多方聯絡清單，每隔一段時間主動確認各方進度，現場一有突發狀況就立刻用對方最習慣的方式溝通解決。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">R</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">結果稍模糊 △</div>
+              </div>
+              <div style="flex:1;background:#f8f0f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a2e2e;margin-bottom:3px;">Result 結果</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「整場活動沒有出現重大失誤，事後有廠商主動跟我說，我是他們合作過最好溝通的活動對口。」</div>
+              </div>
+            </div>
+      </div>
+    </div>    <div id="inline-fq-社交性" style="display:none;border:1.5px solid #4a2e7a;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#4a2e7a;padding:12px 16px;">
+        <div style="font-size:14px;font-weight:700;color:white;">後續面試建議問題 03</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.75);margin-top:3px;">針對向度：社交性｜提問原因：AI面試未能釐清主動社交動機</div>
+      </div>
+      <div style="background:#3d2466;padding:10px 16px;">
+        <div style="font-size:11.5px;color:rgba(255,255,255,0.9);line-height:1.7;"><strong style="color:white;">提問原因：</strong>吳先生在AI面試中的社交性展現偏向被動應對，描述的多為「工作要求需要與人互動」，而非主動建立關係。人資人員需主動建立跨部門信任，需進一步確認其主動社交的意願與習慣。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:#1a1a2e;padding-bottom:6px;border-bottom:2px solid #e8e4dc;margin-bottom:10px;padding-left:10px;">面試問題</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">S</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">您曾經有沒有主動去認識一位原本不熟的同事或跨部門的人，而不是因為工作上被指派要合作？可以說說是什麼樣的情況嗎？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">T</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">您當時為什麼會決定主動去找這個人？是看到什麼機會或感受到什麼需要？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">A</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">您具體怎麼做的？第一步是什麼？您用什麼方式讓對方感覺自在？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">R</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">後來這段關係有沒有對您的工作產生幫助？您從這個經驗中對自己的社交方式有什麼體會？</div>
+            </div>
+      </div>
+    </div>
+    <!-- 謹慎性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff4f0;border-radius:6px;border-left:4px solid #d4600a;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#d4600a;line-height:1;">2.8</div>
+        <div style="font-size:8px;font-weight:700;color:#d4600a;line-height:1.3;">部分符合 ⚠</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">S△</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">A△</span><span style="font-size:9px;background:#fdeaea;color:#c0392b;font-weight:700;padding:0 4px;border-radius:2px;">R✗</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">謹慎性</span>
+          <span style="font-size:10px;color:var(--ink-light);">行動前仔細思考</span>
+        </div>
+        <div style="font-size:11px;color:#c0392b;line-height:1.5;">全程以「做事都會先想清楚」帶過，缺乏具體行動前確認情境</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;"><button onclick="toggleInline('inline-detail-謹慎性', this, '▼ 展開詳細評估', '▲ 收合詳細評估')" style="font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開詳細評估</button><button onclick="toggleInline('inline-fq-謹慎性', this, '▼ 展開後續面試建議', '▲ 收合後續面試建議')" style="font-size:9px;background:#c0392b;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開後續面試建議</button></div></div>
+    </div>
+    <div id="inline-detail-謹慎性" style="display:none;border:1.5px solid #d4600a;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#d4600a;padding:10px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:22px;font-weight:900;color:white;line-height:1;">2.8</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);">/ 5　部分符合</div>
+        </div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-size:15px;font-weight:700;color:white;">謹慎性</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.8);margin-left:4px;">：行動前仔細思考</span>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:#faf8f4;border-bottom:1px solid #e8e4dc;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:5px;">評分依據</div>
+        <div style="font-size:11.5px;color:#4a4a6a;line-height:1.75;">應徵者描述謹慎性時，主要以結果陳述為主，較少提及行動前如何評估風險、確認細節的具體思考過程。回答以自我評價帶過，缺乏STAR各環節的具體支撐。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:10px;">應徵者原話摘錄　＋　STAR 回答完整度</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">S</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">情境模糊 △</div>
+              </div>
+              <div style="flex:1;background:#eef5fa;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;margin-bottom:3px;">Situation 情境</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我平常做事就是會先把整個流程在腦袋裡想過一遍再開始動手，這是我從高中做半工半讀就養成的習慣。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">T</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">任務不明確 △</div>
+              </div>
+              <div style="flex:1;background:#f2f8ee;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#5a7a2e;margin-bottom:3px;">Task 任務</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「像是在做各種大型活動規劃的時候，我都會提前想好如果出了狀況，每個環節應該怎麼處理。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">A</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">行動泛化 △</div>
+              </div>
+              <div style="flex:1;background:#f8f5f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a5a2e;margin-bottom:3px;">Action 行動</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我在做任何事情之前都會先想清楚，這是我一貫的做事方式，所以比較少出錯。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">R</div>
+                <div style="font-size:8px;font-weight:700;color:#c0392b;background:#fdeaea;border:1px solid #c0392b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">未提及結果 ✗</div>
+              </div>
+              <div style="flex:1;background:#f8f0f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a2e2e;margin-bottom:3px;">Result 結果</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「大家都說我是比較細心的人，我自己也覺得這個習慣確實讓我在工作上少走了很多彎路。」</div>
+              </div>
+            </div><div style="margin-top:8px;padding:6px 10px;background:#fdeaea;border-radius:4px;font-size:11px;color:#c0392b;font-weight:600;">⚠ 以自我評價為主，缺乏具體情境與行動佐證</div>
+      </div>
+    </div>    <div id="inline-fq-謹慎性" style="display:none;border:1.5px solid #4a2e7a;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#4a2e7a;padding:12px 16px;">
+        <div style="font-size:14px;font-weight:700;color:white;">後續面試建議問題 01</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.75);margin-top:3px;">針對向度：謹慎性｜提問原因：AI面試回答以自我評價為主，缺乏具體情境</div>
+      </div>
+      <div style="background:#3d2466;padding:10px 16px;">
+        <div style="font-size:11.5px;color:rgba(255,255,255,0.9);line-height:1.7;"><strong style="color:white;">提問原因：</strong>吳先生在AI面試中對謹慎性的回答（「我做事都會先想清楚」）屬於自我評價，未能提出具體的行動前評估情境。由於人資專員在假勤管理與保險審核上需要高度細心與嚴謹，此向度必須取得具體行為事例才能有效評估。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:#1a1a2e;padding-bottom:6px;border-bottom:2px solid #e8e4dc;margin-bottom:10px;padding-left:10px;">面試問題</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">S</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">您在HR或其他工作中，有沒有一次因為事前仔細確認細節，而避免了一個可能造成麻煩的錯誤？可以描述那是什麼樣的情況嗎？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">T</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">在那個情況下，您當時需要核對或確認哪些重要資訊？如果出錯，可能會有什麼後果？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">A</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">您具體做了哪些動作來確認正確性？是用什麼方式交叉比對的？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">R</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">最後的結果如何？這個經驗讓您對「細心確認」這件事有什麼新的理解？</div>
+            </div>
+      </div>
+    </div>
+    <!-- 抗壓性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff4f0;border-radius:6px;border-left:4px solid #c0392b;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#c0392b;line-height:1;">2.6</div>
+        <div style="font-size:8px;font-weight:700;color:#c0392b;line-height:1.3;">部分符合 ⚠</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">A△</span><span style="font-size:9px;background:#fdeaea;color:#c0392b;font-weight:700;padding:0 4px;border-radius:2px;">R✗</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">抗壓性</span>
+          <span style="font-size:10px;color:var(--ink-light);">面對壓力不過度緊張</span>
+        </div>
+        <div style="font-size:11px;color:#c0392b;line-height:1.5;">應對策略以「告訴自己冷靜」帶過，缺優先排序邏輯與具體結果</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;"><button onclick="toggleInline('inline-detail-抗壓性', this, '▼ 展開詳細評估', '▲ 收合詳細評估')" style="font-size:9px;background:#2e7d9e;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開詳細評估</button><button onclick="toggleInline('inline-fq-抗壓性', this, '▼ 展開後續面試建議', '▲ 收合後續面試建議')" style="font-size:9px;background:#c0392b;color:white;padding:3px 9px;border-radius:8px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;">▼ 展開後續面試建議</button></div></div>
+    </div>
+    <div id="inline-detail-抗壓性" style="display:none;border:1.5px solid #7a2e2e;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#7a2e2e;padding:10px 16px;display:flex;align-items:center;gap:12px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:22px;font-weight:900;color:white;line-height:1;">2.6</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);">/ 5　部分符合</div>
+        </div>
+        <div style="width:1px;height:36px;background:rgba(255,255,255,0.25);flex-shrink:0;"></div>
+        <div>
+          <span style="font-size:15px;font-weight:700;color:white;">抗壓性</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.8);margin-left:4px;">：面對壓力不過度緊張</span>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:#faf8f4;border-bottom:1px solid #e8e4dc;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:5px;">評分依據</div>
+        <div style="font-size:11.5px;color:#4a4a6a;line-height:1.75;">應徵者提及活動現場多線並進的壓力情境，有一定臨場感，但說明具體壓力應對策略時回答較表面，未能清楚說明在高壓下如何維持判斷力與執行品質。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:#999;text-transform:uppercase;margin-bottom:10px;">應徵者原話摘錄　＋　STAR 回答完整度</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">S</div>
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;background:#e4f0f8;border:1px solid #2e7d9e;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">情境尚可 ✓</div>
+              </div>
+              <div style="flex:1;background:#eef5fa;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#2e7d9e;margin-bottom:3px;">Situation 情境</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「辦大型活動當天，我同時要處理場地、音響、餐飲、接送各方的臨時狀況，有時候三支電話同時響個不停。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">T</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">任務稍不清晰 △</div>
+              </div>
+              <div style="flex:1;background:#f2f8ee;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#5a7a2e;margin-bottom:3px;">Task 任務</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「每一件事都很緊急，都要我馬上給答案，還不能讓任何一方覺得被忽略或處理得不夠快。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">A</div>
+                <div style="font-size:8px;font-weight:700;color:#b8860b;background:#fdf8ec;border:1px solid #b8860b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">行動泛化 △</div>
+              </div>
+              <div style="flex:1;background:#f8f5f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a5a2e;margin-bottom:3px;">Action 行動</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「我壓力大的時候其實還好，就是提醒自己先冷靜，然後把最緊急的排第一，一件一件依序處理，不讓自己亂。」</div>
+              </div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">R</div>
+                <div style="font-size:8px;font-weight:700;color:#c0392b;background:#fdeaea;border:1px solid #c0392b;border-radius:6px;padding:1px 5px;text-align:center;white-space:nowrap;">未提及結果 ✗</div>
+              </div>
+              <div style="flex:1;background:#f8f0f0;border-radius:4px;padding:8px 10px;">
+                <div style="font-size:8px;font-weight:700;color:#7a2e2e;margin-bottom:3px;">Result 結果</div>
+                <div style="font-size:11px;color:#1a1a2e;line-height:1.6;font-style:italic;">「活動最後都有順利完成，沒有出什麼大問題，但當時的應對其實比較靠直覺，還沒有一套固定的處理邏輯。」</div>
+              </div>
+            </div><div style="margin-top:8px;padding:6px 10px;background:#fdeaea;border-radius:4px;font-size:11px;color:#c0392b;font-weight:600;">⚠ 行動描述泛化，缺乏具體情緒調節策略</div>
+      </div>
+    </div>    <div id="inline-fq-抗壓性" style="display:none;border:1.5px solid #4a2e7a;border-radius:6px;margin:6px 0 6px 0;overflow:hidden;background:white;">
+      <div style="background:#4a2e7a;padding:12px 16px;">
+        <div style="font-size:14px;font-weight:700;color:white;">後續面試建議問題 02</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.75);margin-top:3px;">針對向度：抗壓性｜提問原因：AI面試行動描述泛化，缺乏具體壓力管理策略</div>
+      </div>
+      <div style="background:#3d2466;padding:10px 16px;">
+        <div style="font-size:11.5px;color:rgba(255,255,255,0.9);line-height:1.7;"><strong style="color:white;">提問原因：</strong>吳先生在AI面試中對抗壓性的回答（「告訴自己冷靜，一件一件處理」）缺乏具體策略說明。人資專員需同時處理複雜的勞資問題、系統操作與主管要求，高壓情境下的情緒穩定度是關鍵。</div>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.1em;color:#1a1a2e;padding-bottom:6px;border-bottom:2px solid #e8e4dc;margin-bottom:10px;padding-left:10px;">面試問題</div>
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#2e7d9e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">S</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">在您的工作經驗中，有沒有一次面臨非常緊迫的期限或多項緊急任務同時出現的情況，讓您感覺到明顯的壓力？可以說說那是什麼狀況嗎？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#5a7a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">T</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">當時您必須在多短的時間內完成哪些事？如果沒有完成會有什麼影響？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#7a5a2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">A</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">面對那樣的壓力，您當時具體做了哪些事來讓自己保持清晰的判斷？是如何決定處理順序的？</div>
+            </div>            <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#7a2e2e;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">R</div>
+              <div style="flex:1;background:#f7f5f2;border-radius:4px;padding:7px 10px;font-size:11px;color:#1a1a2e;line-height:1.6;">最後結果如何？事後您有沒有調整自己處理高壓情境的方式？</div>
+            </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /rpt-body -->
+<div style="margin:48px 0;border:none;border-top:6px solid #d4600a;border-radius:3px;"></div>
+<div style="padding:0 0 40px;">
+  <div id="full-version-section" style="display:flex;align-items:center;justify-content:space-between;padding:32px 16px 12px;flex-wrap:wrap;gap:12px;">
+  <div style="flex:1;font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;color:#3a3a3a;letter-spacing:0.06em;">AI 面試＿性格分析結果書面版</div>
+  <button onclick="window.print()" style="display:flex;align-items:center;gap:6px;padding:6px 16px;background:white;border:1.5px solid #2e7d9e;border-radius:20px;cursor:pointer;color:#2e7d9e;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#2e7d9e';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='#2e7d9e'">🖨️ 列印</button>
+</div>
+  <div class="rpt-body">
+
+  <!-- ── 應徵者資訊 header ── -->
+  <div class="rpt-header" style="border-radius:8px;margin-bottom:16px;">
+    <div style="flex:1;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+        <div class="rpt-name" style="margin-bottom:0;">吳OO　先生</div>
+        <div style="background:#d4600a;border-radius:8px;padding:6px 14px;display:flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(0,0,0,0.3);flex-shrink:0;">
+          <span style="font-size:15px;line-height:1;">⚠</span>
+          <span style="font-size:13px;font-weight:900;color:white;letter-spacing:0.05em;white-space:nowrap;">建議進一步面試</span>
+        </div>
+      </div>
+      <div class="rpt-meta">
+        <span>💼 應徵職位：人資專員</span>
+        <span>🏢 104人力銀行</span>
+        <span>📅 2025年5月2日</span>
+        <span>⏱ 面試時長：28分鐘</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 報告說明（置於第一部份前）── -->
+  <div style="background:#eef4f8;border:1.5px solid #c0d8e8;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0;">
+      <div style="font-size:16px;font-weight:700;color:#2e7d9e;letter-spacing:0.12em;">📋 報告說明</div>
+      
+    </div>
+    <div>
+      <div style="border-top:1px solid #c0d8e8;margin:10px 0;"></div>
+      <div style="font-size:12px;color:var(--ink-light);line-height:1.9;margin-bottom:12px;">
+        本報告依據應徵者於 AI 線上面試中的口頭回答，以 <strong style="color:var(--ink);">STAR 行為事例法</strong>為評估框架，針對六大關鍵性格向度進行分析，結果供用人主管參考使用，建議搭配後續面談結果綜合判斷。
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;margin-top:4px;">STAR 行為面試法說明</div>
+      <div style="font-size:12px;color:var(--ink-light);line-height:1.8;margin-bottom:10px;">STAR 行為面試法是一種結構化面試技巧。目的在引導應徵者用具體事例說明自己的特質或能力。</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;">
+        <div style="text-align:center;background:#eef5fa;border-radius:6px;padding:8px 4px;border-top:3px solid #2e7d9e;">
+          <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">S</span><span style="font-size:9px;">ituation</span> 情境</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">描述事件背景，說明何時、何地、發生什麼事，具體且簡短</div>
+        </div>
+        <div style="text-align:center;background:#f2f8ee;border-radius:6px;padding:8px 4px;border-top:3px solid #5a7a2e;">
+          <div style="font-size:10px;font-weight:700;color:#5a7a2e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">T</span><span style="font-size:9px;">ask</span> 任務</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">說明需達成的任務、目標或面臨的挑戰</div>
+        </div>
+        <div style="text-align:center;background:#f8f5f0;border-radius:6px;padding:8px 4px;border-top:3px solid #7a5a2e;">
+          <div style="font-size:10px;font-weight:700;color:#7a5a2e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">A</span><span style="font-size:9px;">ction</span> 行動</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">重點：說明「你」具體採取了哪些行動，強調個人貢獻</div>
+        </div>
+        <div style="text-align:center;background:#f8f0f0;border-radius:6px;padding:8px 4px;border-top:3px solid #7a2e2e;">
+          <div style="font-size:10px;font-weight:700;color:#7a2e2e;margin:3px 0;"><span style="font-size:15px;font-weight:900;">R</span><span style="font-size:9px;">esult</span> 結果</div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">分享最終成果，儘量使用量化數據佐證（如提升20%效率）</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;margin-top:14px;">符合度評估等級說明</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
+        <div style="text-align:center;background:#e8edf8;border-radius:6px;padding:8px 4px;border-top:3px solid #1a3a6e;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#1a3a6e;line-height:1;">5</span><span style="font-size:10px;font-weight:700;color:#1a3a6e;">非常符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">以完整具體的行為事例充分佐證，回答清晰且具說服力</div>
+        </div>
+        <div style="text-align:center;background:#e4f0f8;border-radius:6px;padding:8px 4px;border-top:3px solid #2e7d9e;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#2e7d9e;line-height:1;">4</span><span style="font-size:10px;font-weight:700;color:#2e7d9e;">大致符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">有具體事例支撐，部分細節稍弱，整體表現穩定</div>
+        </div>
+        <div style="text-align:center;background:#fef0e6;border-radius:6px;padding:8px 4px;border-top:3px solid #d4600a;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#d4600a;line-height:1;">3</span><span style="font-size:10px;font-weight:700;color:#d4600a;">部分符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">能舉出事例但說明不完整，或僅有部分環節有佐證</div>
+        </div>
+        <div style="text-align:center;background:#fdeaea;border-radius:6px;padding:8px 4px;border-top:3px solid #c0392b;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#c0392b;line-height:1;">2</span><span style="font-size:10px;font-weight:700;color:#c0392b;">不太符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">回答以自我評價為主，缺乏具體情境與行動佐證</div>
+        </div>
+        <div style="text-align:center;background:#fdeaea;border-radius:6px;padding:8px 4px;border-top:3px solid #c0392b;">
+          <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-bottom:4px;"><span style="font-size:16px;font-weight:900;color:#c0392b;line-height:1;">1</span><span style="font-size:10px;font-weight:700;color:#c0392b;">不符合</span></div>
+          <div style="font-size:10px;color:var(--ink-light);line-height:1.4;">無法提供任何相關事例，或回答與評估向度完全無關</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════ -->
+  <!-- 第一部份：AI面試結果摘要         -->
+  <!-- ════════════════════════════════ -->
+  <div class="sec-title">第一部份　AI面試＿性格分析結果摘要</div>
+
+  <!-- ── 頂部藍色區塊 ── -->
+  <div style="background:#2e7d9e;border-radius:8px 8px 0 0;padding:16px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+
+    <!-- 左：圓圈＋星等 -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">
+      <div style="font-size:8px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:1px;">整體符合度</div>
+      <div style="width:58px;height:58px;border-radius:50%;border:2.5px solid white;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <span style="font-size:22px;font-weight:800;color:white;line-height:1;">3.7</span>
+        <span style="font-size:8px;color:rgba(255,255,255,0.55);">／ 5</span>
+      </div>
+      <div style="display:flex;gap:2px;margin-top:2px;">
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:white;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg style="width:10px;height:10px;color:rgba(255,255,255,0.28);fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+    </div>
+
+    <!-- 中：大致符合＋說明 -->
+    <div style="flex-shrink:0;background:rgba(255,255,255,0.12);border-radius:6px;padding:8px 12px;">
+      <div style="font-size:13px;font-weight:800;color:white;margin-bottom:3px;">大致符合</div>
+      <div style="font-size:9.5px;color:rgba(255,255,255,0.75);line-height:1.6;">有具體事例支撐，<br>部分細節稍弱，<br>整體表現穩定。</div>
+    </div>
+
+    <!-- 分隔線 -->
+    <div style="width:1px;height:70px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+
+    <!-- 右：性格側寫 -->
+    <div style="flex:1;min-width:180px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.6);margin-bottom:5px;">🧭 性格側寫</div>
+      <div style="font-size:15px;font-weight:700;color:white;line-height:1.7;">
+        行動力強、當責主動、善於多方協調；<br>細膩思考與壓力應對仍待後續面談確認。
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 六個關鍵性格：依序垂直排列 ── -->
+  <div style="background:white;border:1.5px solid var(--rule);border-top:none;border-radius:0 0 8px 8px;padding:14px 18px;display:flex;flex-direction:column;gap:8px;">
+
+    <!-- 堅毅性 -->
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #1a3a6e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#1a3a6e;line-height:1;">4.5</div>
+        <div style="font-size:8px;font-weight:700;color:#1a3a6e;line-height:1.3;">非常符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">R✓</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">堅毅性</span>
+          <span style="font-size:10px;color:var(--ink-light);">鍥而不捨、堅持不懈</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">徒步環島40天、高中半工半讀，兩則完整事例，STAR四環節均清楚佐證</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">4.0</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;line-height:1.3;">大致符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">合作性</span>
+          <span style="font-size:10px;color:var(--ink-light);">喜歡團隊合作、共同達成目標</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">多方協作設計新人課程，行動具體清楚，但最終成果說明稍模糊</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">3.8</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;line-height:1.3;">大致符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">T✓</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">負責任</span>
+          <span style="font-size:10px;color:var(--ink-light);">盡責可靠、信守承諾</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">主動舉報竊盜超出職責範圍，當責行為可驗證，結果說明稍略</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f0f5fb;border-radius:6px;border-left:4px solid #2e7d9e;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#2e7d9e;line-height:1;">3.6</div>
+        <div style="font-size:8px;font-weight:700;color:#2e7d9e;line-height:1.3;">大致符合</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">A✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">R△</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">社交性</span>
+          <span style="font-size:10px;color:var(--ink-light);">積極與他人互動</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-light);line-height:1.5;">50場活動多方協調，臨場反應佳；主動建立關係的動機待確認</div>
+      </div>
+      
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff4f0;border-radius:6px;border-left:4px solid #d4600a;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#d4600a;line-height:1;">2.8</div>
+        <div style="font-size:8px;font-weight:700;color:#d4600a;line-height:1.3;">部分符合 ⚠</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">S△</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">A△</span><span style="font-size:9px;background:#fdeaea;color:#c0392b;font-weight:700;padding:0 4px;border-radius:2px;">R✗</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">謹慎性</span>
+          <span style="font-size:10px;color:var(--ink-light);">行動前仔細思考</span>
+        </div>
+        <div style="font-size:11px;color:#c0392b;line-height:1.5;">全程以「做事都會先想清楚」帶過，缺乏具體行動前確認情境</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff4f0;border-radius:6px;border-left:4px solid #c0392b;">
+      <div style="flex-shrink:0;width:52px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#c0392b;line-height:1;">2.6</div>
+        <div style="font-size:8px;font-weight:700;color:#c0392b;line-height:1.3;">部分符合 ⚠</div>
+        <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-top:4px;"><span style="font-size:9px;background:#e4f0f8;color:#2e7d9e;font-weight:700;padding:0 4px;border-radius:2px;">S✓</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">T△</span><span style="font-size:9px;background:#fef0e6;color:#d4600a;font-weight:700;padding:0 4px;border-radius:2px;">A△</span><span style="font-size:9px;background:#fdeaea;color:#c0392b;font-weight:700;padding:0 4px;border-radius:2px;">R✗</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px;">
+          <span style="font-size:13px;font-weight:700;color:var(--ink);">抗壓性</span>
+          <span style="font-size:10px;color:var(--ink-light);">面對壓力不過度緊張</span>
+        </div>
+        <div style="font-size:11px;color:#c0392b;line-height:1.5;">應對策略以「告訴自己冷靜」帶過，缺優先排序邏輯與具體結果</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;"></div>
+    </div>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════ -->
+  <!-- 第二部份：六大關鍵性格向度評估結果 -->
+  <!-- ════════════════════════════════ -->
+  <div class="sec-title">第二部份　六大關鍵性格向度評估結果</div>
+
+  <!-- ── 堅毅性 ── -->
+  <div class="trait-card" id="full-trait-堅毅性">
+    <div class="trait-card-header" style="background:#1a3a6e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">4.5</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">非常符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+        <div>
+          <span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;letter-spacing:0.04em;">堅毅性</span><span style="font-size:13px;color:rgba(255,255,255,0.8);margin-left:4px;">：鍥而不捨、堅持不懈</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者以獨自徒步環島40天的具體事例，清楚說明在體力極限與心理挑戰下仍持續推進目標的意志力。描述中能具體呈現遇困難時的調適策略與堅持的心理動機。此外，高中即半工半讀、工專同時工作的學習歷程，進一步印證堅毅性格的一貫表現。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#2e7d9e;">S</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 情境清晰</div></div>
+          <div class="tc-star-quote" style="background:#eef5fa;margin-left:16px;"><div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div><div class="tc-star-quote-text">「我決定獨自徒步環島，從新北市出發，沿著台灣海岸線一步一步走，沒有人陪，只有自己的意志撐著。」</div></div>
+        </div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#5a7a2e;">T</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 任務明確</div></div>
+          <div class="tc-star-quote" style="background:#f2f8ee;margin-left:16px;"><div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div><div class="tc-star-quote-text">「第23天腳底起了嚴重水泡，每走一步都像刀割，我站在路邊認真考慮要不要就此放棄環島這個念頭。」</div></div>
+        </div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a5a2e;">A</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 行動具體</div></div>
+          <div class="tc-star-quote" style="background:#f8f5f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div><div class="tc-star-quote-text">「我告訴自己只要還能動就不停下來，把目標縮短成『只走到下一個休息點』，一小段一小段地慢慢撐過去。」</div></div>
+        </div>
+        <div class="tc-star-row">
+          <div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a2e2e;">R</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 結果有反思</div></div>
+          <div class="tc-star-quote" style="background:#f8f0f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div><div class="tc-star-quote-text">「最後走完了40天，全程沒有搭任何交通工具。我從這段旅程學到：很多事情難的不是能力，而是要不要繼續往前。」</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ── 合作性 ── -->
+  <div class="trait-card" id="full-trait-合作性">
+    <div class="trait-card-header" style="background:#2e7d9e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">4.0</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">大致符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;">合作性</span><span style="font-size:13px;color:rgba(255,255,255,0.8);margin-left:4px;">：喜歡團隊合作、共同達成目標</span></div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者描述與活動公司、廠商、各部門協調的具體經驗。「Let's Camp新人關懷計畫」中與專案人員從無到有共同設計課程、來回調整三四次的過程，進一步印證其主動投入協作的特質。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#2e7d9e;">S</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 情境清晰</div></div><div class="tc-star-quote" style="background:#eef5fa;margin-left:16px;"><div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div><div class="tc-star-quote-text">「新人關懷課程從零開始，什麼素材都沒有，只有主管說的一句話：想讓新人感覺被照顧、不孤單。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#5a7a2e;">T</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 任務明確</div></div><div class="tc-star-quote" style="background:#f2f8ee;margin-left:16px;"><div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div><div class="tc-star-quote-text">「我需要同時對接外部講師、內部多個部門主管、還有一位專案夥伴，大家對課程內容的想法差距很大，很難整合。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a5a2e;">A</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 行動具體</div></div><div class="tc-star-quote" style="background:#f8f5f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div><div class="tc-star-quote-text">「我先收集員工進公司前三個月最常問的問題，整理成課程需求清單，再逐一和講師確認調整方向，前後來回修改了三四次。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a2e2e;">R</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 結果稍模糊</div></div><div class="tc-star-quote" style="background:#f8f0f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div><div class="tc-star-quote-text">「課程最後被指定為新人必修，自己也執行了超過十場，新人的課後回饋大多正面，主管說這個課程改變了新人的第一印象。」</div></div></div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ── 負責任 ── -->
+  <div class="trait-card" id="full-trait-負責任">
+    <div class="trait-card-header" style="background:#2e7d9e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">3.8</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">大致符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;">負責任</span><span style="font-size:13px;color:rgba(255,255,255,0.8);margin-left:4px;">：盡責可靠、信守承諾</span></div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者以即時發現並阻止產線金線竊盜的事例，展現超出職責範圍的主動當責行為。連續三季擔任公司季刊保險專欄作者，顯示穩定交付承諾的可靠性。但說明理賠300件以上時，對確保品質的具體做法著墨較少。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#2e7d9e;">S</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 情境清晰</div></div><div class="tc-star-quote" style="background:#eef5fa;margin-left:16px;"><div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div><div class="tc-star-quote-text">「那天我在庫管區附近走動，無意間注意到一位作業員的動作有點不對勁，放置材料的方式和平常不一樣。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#5a7a2e;">T</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 任務明確</div></div><div class="tc-star-quote" style="background:#f2f8ee;margin-left:16px;"><div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div><div class="tc-star-quote-text">「那個區域不在我負責的範圍內，但我判斷如果不立刻反應，可能會有不小的材料損失，而且時間拖越久越難處理。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a5a2e;">A</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 行動具體</div></div><div class="tc-star-quote" style="background:#f8f5f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div><div class="tc-star-quote-text">「我當下立刻走去找現場主管回報觀察到的情況，主管馬上調出監視器畫面確認，發現確實有人試圖偷竊金線，及時阻止了。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a2e2e;">R</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 結果稍模糊</div></div><div class="tc-star-quote" style="background:#f8f0f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div><div class="tc-star-quote-text">「那批金線沒有被帶走，事後公司針對這個漏洞啟動更嚴格的庫管稽核流程，我也因為主動回報而獲得主管的特別表揚。」</div></div></div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ── 社交性 ── -->
+  <div class="trait-card" id="full-trait-社交性">
+    <div class="trait-card-header" style="background:#2e7d9e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">3.6</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">大致符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;">社交性</span><span style="font-size:13px;color:rgba(255,255,255,0.8);margin-left:4px;">：積極與他人互動</span></div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者以主辦50場以上活動的經驗說明與多元對象互動的能力，展現在多元人際場合中自在應對的特質。但針對「如何主動建立關係」的追問，回答偏向配合情境，主動社交動機表達較不明確。</div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#2e7d9e;">S</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 情境清晰</div></div><div class="tc-star-quote" style="background:#eef5fa;margin-left:16px;"><div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div><div class="tc-star-quote-text">「辦萬人年終晚會那天，我必須同時維繫場地方、音響公司、餐飲廠商、接送安排、還有現場貴賓與藝人的需求。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#5a7a2e;">T</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 任務稍不清晰</div></div><div class="tc-star-quote" style="background:#f2f8ee;margin-left:16px;"><div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div><div class="tc-star-quote-text">「各方的時間點和要求都不一樣，有人要提前確認動線，有人臨時改需求，我要讓每個人都在對的時間出現在對的地方。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a5a2e;">A</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 行動具體</div></div><div class="tc-star-quote" style="background:#f8f5f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div><div class="tc-star-quote-text">「我事先建了一份多方聯絡清單，每隔一段時間主動確認各方進度，現場一有突發狀況就立刻用對方最習慣的方式溝通解決。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a2e2e;">R</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 結果稍模糊</div></div><div class="tc-star-quote" style="background:#f8f0f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div><div class="tc-star-quote-text">「整場活動沒有出現重大失誤，事後有廠商主動跟我說，我是他們合作過最好溝通、最好協調的活動對口。」</div></div></div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ── 謹慎性 ── -->
+  <div class="trait-card" id="full-trait-謹慎性">
+    <div class="trait-card-header" style="background:#d4600a;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">2.8</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">部分符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;">謹慎性</span><span style="font-size:13px;color:rgba(255,255,255,0.8);margin-left:4px;">：行動前仔細思考</span></div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者在描述謹慎性相關事例時，主要以結果陳述為主，較少提及行動前如何評估風險、確認細節的具體思考過程。回答以自我評價帶過，缺乏STAR各環節的具體支撐。<span style="color:var(--accent);font-weight:600;">建議在後續面試重點確認。</span></div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#2e7d9e;">S</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 情境模糊</div></div><div class="tc-star-quote" style="background:#eef5fa;margin-left:16px;"><div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div><div class="tc-star-quote-text">「我平常做事就是會先把整個流程在腦袋裡想過一遍再開始動手，這是我從高中做半工半讀就養成的習慣。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#5a7a2e;">T</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 任務不明確</div></div><div class="tc-star-quote" style="background:#f2f8ee;margin-left:16px;"><div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div><div class="tc-star-quote-text">「像是在做各種大型活動規劃的時候，我都會提前想好如果出了狀況，每個環節應該怎麼處理，備案要到什麼程度。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a5a2e;">A</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 行動泛化</div></div><div class="tc-star-quote" style="background:#f8f5f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div><div class="tc-star-quote-text">「我在做任何事情之前都會先想清楚，這是我一貫的做事方式，跟大家說我比較少出錯，應該就是這個原因。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a2e2e;">R</div><div class="tc-star-ev" style="color:#c0392b;background:#fdeaea;border-color:#c0392b;">✗ 未提及結果</div></div><div class="tc-star-quote" style="background:#f8f0f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div><div class="tc-star-quote-text">「大家都說我是比較細心的人，我自己也覺得這個習慣確實讓我在工作上少走了很多彎路。」</div></div></div>
+        <div class="tc-warn">⚠ 以自我評價為主，缺乏具體情境與行動佐證</div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ── 抗壓性 ── -->
+  <div class="trait-card" id="full-trait-抗壓性">
+    <div class="trait-card-header" style="background:#7a2e2e;padding:20px 18px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="flex-shrink:0;text-align:center;min-width:80px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:4px;">
+            <span style="font-size:36px;font-weight:900;color:white;line-height:1;letter-spacing:-1px;">2.6</span>
+            <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1;">/ 5</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:white;margin-top:5px;background:rgba(255,255,255,0.2);border-radius:8px;padding:3px 10px;">部分符合</div>
+        </div>
+        <div style="width:1px;height:48px;background:rgba(255,255,255,0.22);flex-shrink:0;"></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:white;">抗壓性</span><span style="font-size:13px;color:rgba(255,255,255,0.8);margin-left:4px;">：面對壓力不過度緊張</span></div>
+      </div>
+    </div>
+    <div style="padding:0;">
+      <div style="padding:14px 18px;background:#faf8f4;border-bottom:1px solid var(--rule);">
+        <div class="tc-block-label">評分依據</div>
+        <div class="tc-block-text">應徵者提及活動現場多線並進的壓力情境，描述有一定的臨場感，但在說明具體壓力應對策略與情緒調節方式時，回答較為表面，未能清楚說明在高壓下如何維持判斷力與執行品質。<span style="color:var(--accent);font-weight:600;">⚠ 後續面試需重點確認。</span></div>
+      </div>
+      <div style="padding:14px 18px;background:white;">
+        <div class="tc-block-label" style="margin-bottom:12px;">應徵者原話摘錄　＋　STAR 回答完整度評估</div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#2e7d9e;">S</div><div class="tc-star-ev" style="color:#2e7d9e;background:#e4f0f8;border-color:#2e7d9e;">✓ 情境尚可</div></div><div class="tc-star-quote" style="background:#eef5fa;margin-left:16px;"><div class="tc-star-quote-label" style="color:#2e7d9e;">Situation 情境</div><div class="tc-star-quote-text">「辦大型活動當天，我同時要處理場地、音響、餐飲、接送各方的臨時狀況，有時候三支電話同時響個不停。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#5a7a2e;">T</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 任務稍不清晰</div></div><div class="tc-star-quote" style="background:#f2f8ee;margin-left:16px;"><div class="tc-star-quote-label" style="color:#5a7a2e;">Task 任務</div><div class="tc-star-quote-text">「每一件事都很緊急，都要我馬上給答案，還不能讓任何一方覺得被忽略或處理得不夠快。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a5a2e;">A</div><div class="tc-star-ev" style="color:#b8860b;background:#fdf8ec;border-color:#b8860b;">△ 行動泛化</div></div><div class="tc-star-quote" style="background:#f8f5f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a5a2e;">Action 行動</div><div class="tc-star-quote-text">「我壓力大的時候其實還好，就是提醒自己先冷靜，然後把最緊急的排第一，一件一件依序處理，不讓自己亂。」</div></div></div>
+        <div class="tc-star-row"><div class="tc-star-icon-wrap"><div class="tc-star-icon" style="background:#7a2e2e;">R</div><div class="tc-star-ev" style="color:#c0392b;background:#fdeaea;border-color:#c0392b;">✗ 未提及結果</div></div><div class="tc-star-quote" style="background:#f8f0f0;margin-left:16px;"><div class="tc-star-quote-label" style="color:#7a2e2e;">Result 結果</div><div class="tc-star-quote-text">「活動最後都有順利完成，沒有出什麼大問題，但我自己知道，當時的應對其實比較靠直覺，還沒有一套固定的處理邏輯。」</div></div></div>
+        <div class="tc-warn">⚠ 行動描述泛化，缺乏具體情緒調節策略</div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- 第三部份：後續面試建議提問的問題及評分標準 -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="sec-title">第三部份　後續面試建議提問的問題及評分標準</div>
+
+  <div style="background:#fdf8ec;border:1.5px solid #d4aa30;border-radius:6px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#7a5a10;line-height:1.7;">
+    ⚠ 以下三題係根據吳OO先生在AI面試中的回答表現，針對<strong>需要進一步確認的向度</strong>設計，建議後續面試官直接以這些問題接續追問，以獲得更充分的評估依據。
+  </div>
+
+  <!-- ── FQ1. 謹慎性 深挖 ── -->
+  <div class="followup-card" id="full-fq-謹慎性">
+    <div class="followup-header" style="background:#4a2e7a;padding:14px 18px;">
+      <div>
+        <span class="trait-card-title">後續面試建議問題 01</span>
+        <div style="margin-top:4px;font-size:11px;color:rgba(255,255,255,0.85);">針對向度：謹慎性｜提問原因：AI面試回答以自我評價為主，缺乏具體情境</div>
+      </div>
+    </div>
+    <div class="followup-reason">
+      <strong>提問原因：</strong>吳先生在AI面試中對謹慎性的回答（「我做事都會先想清楚」）屬於自我評價，未能提出具體的行動前評估情境。由於人資專員在假勤管理與保險審核上需要高度細心與嚴謹，此向度必須在後續面試中取得具體行為事例才能有效評估。
+    </div>
+    <div class="trait-card-body">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;margin-top:20px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">面試問題</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#2e7d9e;">S</div>
+            <div class="fq-star-q">您在HR或其他工作中，有沒有一次因為事前仔細確認細節，而避免了一個可能造成麻煩的錯誤？可以描述那是什麼樣的情況嗎？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#5a7a2e;">T</div>
+            <div class="fq-star-q">在那個情況下，您當時需要核對或確認哪些重要資訊？如果出錯，可能會有什麼後果？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a5a2e;">A</div>
+            <div class="fq-star-q">您具體做了哪些動作來確認正確性？是用什麼方式交叉比對的？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a2e2e;">R</div>
+            <div class="fq-star-q">最後的結果如何？這個經驗讓您對「細心確認」這件事有什麼新的理解？</div>
+          </div>
+        </div>
+      </div>
+      <div>
+<div class="obs-block">
+          <div class="obs-label">面試官觀察重點</div>
+          <div class="obs-text">觀察應徵者是否能從被動回應變為主動提出具體事例。若仍無法舉出細節，可進一步問：「在人資工作上，您有沒有處理過比較複雜的假勤或保險案件？」</div>
+        </div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);margin-bottom:10px;">符合度等級評估建議</div>
+        <div id="full-score-謹慎性" style="display:block;">
+<div style="margin-top:6px;padding-left:20px;">
+          <div style="margin-bottom:10px;"><div style="background:#fdeaea;border-radius:4px;padding:8px 12px;border-left:3px solid #e74c3c;">
+              <div style="font-size:10px;font-weight:700;color:#e74c3c;margin-bottom:2px;">1分　完全不符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">仍以自我評價帶過（如「我就是細心的人」），無法說出任何具體的確認步驟或細節。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fef3e8;border-radius:4px;padding:8px 12px;border-left:3px solid #c0392b;">
+              <div style="font-size:10px;font-weight:700;color:#c0392b;margin-bottom:2px;">2分　不太符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能提及曾核對某些資料，但無法說明如何發現問題或採取哪些具體確認動作。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fefce8;border-radius:4px;padding:8px 12px;border-left:3px solid #d4600a;">
+              <div style="font-size:10px;font-weight:700;color:#d4600a;margin-bottom:2px;">3分　部分符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能舉出一個事例，說明確認過程，但缺乏說明發現疑點後如何進一步處置的邏輯。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e8f5ee;border-radius:4px;padding:8px 12px;border-left:3px solid #2e7d9e;">
+              <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin-bottom:2px;">4分　大致符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能清楚描述確認的步驟與邏輯，說明如何交叉比對資訊，發現問題後採取行動，結果具體。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e0f7f4;border-radius:4px;padding:8px 12px;border-left:3px solid #1a3a6e;">
+              <div style="font-size:10px;font-weight:700;color:#1a3a6e;margin-bottom:2px;">5分　非常符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">以完整STAR架構說明系統性核對流程，主動發現問題並即時處置，結果有明確成果，並反思建立了更好的確認習慣。</div>
+          </div>
+        </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FQ2. 抗壓性 深挖 ── -->
+
+  <div class="followup-card" id="full-fq-抗壓性">
+    <div class="followup-header" style="background:#4a2e7a;padding:14px 18px;">
+      <div>
+        <span class="trait-card-title">後續面試建議問題 02</span>
+        <div style="margin-top:4px;font-size:11px;color:rgba(255,255,255,0.85);">針對向度：抗壓性｜提問原因：AI面試行動描述泛化，缺乏具體壓力管理策略</div>
+      </div>
+    </div>
+    <div class="followup-reason">
+      <strong>提問原因：</strong>吳先生在AI面試中對抗壓性的回答（「告訴自己冷靜，一件一件處理」）缺乏具體策略說明。人資專員需同時處理複雜的勞資問題、系統操作與主管要求，高壓情境下的情緒穩定度是關鍵，需以更具體的事例深入評估。
+    </div>
+    <div class="trait-card-body">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;margin-top:20px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">面試問題</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#2e7d9e;">S</div>
+            <div class="fq-star-q">在您的工作經驗中，有沒有一次面臨非常緊迫的期限或多項緊急任務同時出現的情況，讓您感覺到明顯的壓力？可以說說那是什麼狀況嗎？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#5a7a2e;">T</div>
+            <div class="fq-star-q">當時您必須在多短的時間內完成哪些事？如果沒有完成會有什麼影響？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a5a2e;">A</div>
+            <div class="fq-star-q">面對那樣的壓力，您當時具體做了哪些事來讓自己保持清晰的判斷？是如何決定處理順序的？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a2e2e;">R</div>
+            <div class="fq-star-q">最後結果如何？事後您有沒有調整自己處理高壓情境的方式？</div>
+          </div>
+        </div>
+      </div>
+      <div>
+<div class="obs-block">
+          <div class="obs-label">面試官觀察重點</div>
+          <div class="obs-text">觀察應徵者在描述時是否仍保持冷靜的敘述語氣，以及是否能清楚說明決策邏輯而非直覺反應。若回答仍泛化，可追問：「當時最讓您感到焦慮的是哪一件事？您怎麼讓自己繼續動作？」</div>
+        </div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);margin-bottom:10px;">符合度等級評估建議</div>
+        <div id="full-score-抗壓性" style="display:block;">
+<div style="margin-top:6px;padding-left:20px;">
+          <div style="margin-bottom:10px;"><div style="background:#fdeaea;border-radius:4px;padding:8px 12px;border-left:3px solid #e74c3c;">
+              <div style="font-size:10px;font-weight:700;color:#e74c3c;margin-bottom:2px;">1分　完全不符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">仍以「告訴自己冷靜」等泛化語句帶過，完全無法說明具體的優先排序邏輯或應對策略。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fef3e8;border-radius:4px;padding:8px 12px;border-left:3px solid #c0392b;">
+              <div style="font-size:10px;font-weight:700;color:#c0392b;margin-bottom:2px;">2分　不太符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能描述情境，但應對方式說明籠統，缺乏清楚的決策邏輯，無法說明如何維持執行品質。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fefce8;border-radius:4px;padding:8px 12px;border-left:3px solid #d4600a;">
+              <div style="font-size:10px;font-weight:700;color:#d4600a;margin-bottom:2px;">3分　部分符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能說明大致的優先排序方式，但缺乏說明在情緒波動下如何穩定自己並持續有效執行的具體策略。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e8f5ee;border-radius:4px;padding:8px 12px;border-left:3px solid #2e7d9e;">
+              <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin-bottom:2px;">4分　大致符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能清楚說明在壓力下評估輕重緩急的方式、穩定情緒的具體做法，以及逐步執行的過程，結果具體。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e0f7f4;border-radius:4px;padding:8px 12px;border-left:3px solid #1a3a6e;">
+              <div style="font-size:10px;font-weight:700;color:#1a3a6e;margin-bottom:2px;">5分　非常符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">以完整STAR架構描述高壓情境全程應對，包含情緒調節策略、優先決策邏輯、執行過程，並主動反思壓力管理方法，展現高度自我覺察。</div>
+          </div>
+        </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FQ3. 社交性 主動性深挖 ── -->
+
+  <div class="followup-card" id="full-fq-社交性">
+    <div class="followup-header" style="background:#4a2e7a;padding:14px 18px;">
+      <div>
+        <span class="trait-card-title">後續面試建議問題 03</span>
+        <div style="margin-top:4px;font-size:11px;color:rgba(255,255,255,0.85);">針對向度：社交性｜提問原因：AI面試未能釐清主動社交動機</div>
+      </div>
+    </div>
+    <div class="followup-reason">
+      <strong>提問原因：</strong>吳先生在AI面試中的社交性展現偏向被動應對，描述的多為「工作要求需要與人互動」，而非主動建立關係。人資人員需主動建立跨部門信任，因此需進一步確認其主動社交的意願與習慣。
+    </div>
+    <div class="trait-card-body">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);text-transform:uppercase;margin-bottom:10px;margin-top:20px;padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);">面試問題</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#2e7d9e;">S</div>
+            <div class="fq-star-q">您曾經有沒有主動去認識一位原本不熟的同事或跨部門的人，而不是因為工作上被指派要合作？可以說說是什麼樣的情況嗎？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#5a7a2e;">T</div>
+            <div class="fq-star-q">您當時為什麼會決定主動去找這個人？是看到什麼機會或感受到什麼需要？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a5a2e;">A</div>
+            <div class="fq-star-q">您具體怎麼做的？第一步是什麼？您用什麼方式讓對方感覺自在？</div>
+          </div>
+          <div class="fq-star-row">
+            <div class="fq-star-icon" style="background:#7a2e2e;">R</div>
+            <div class="fq-star-q">後來這段關係有沒有對您的工作產生幫助？您從這個經驗中對自己的社交方式有什麼體會？</div>
+          </div>
+        </div>
+      </div>
+      <div>
+<div class="obs-block">
+          <div class="obs-label">面試官觀察重點</div>
+          <div class="obs-text">留意應徵者是否以「自己主動出擊」為核心描述，而非「剛好有機會認識」。人資人員需要能主動走進各部門建立信任，觀察其是否具備這樣的性格底色。</div>
+        </div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;color:var(--ink);padding-bottom:6px;padding-left:12px;border-bottom:2px solid var(--rule);margin-bottom:10px;">符合度等級評估建議</div>
+        <div id="full-score-社交性" style="display:block;">
+<div style="margin-top:6px;padding-left:20px;">
+          <div style="margin-bottom:10px;"><div style="background:#fdeaea;border-radius:4px;padding:8px 12px;border-left:3px solid #e74c3c;">
+              <div style="font-size:10px;font-weight:700;color:#e74c3c;margin-bottom:2px;">1分　完全不符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">無法舉出任何主動認識他人的例子，或所有事例均屬被動配合工作需求，從未主動出擊。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fef3e8;border-radius:4px;padding:8px 12px;border-left:3px solid #c0392b;">
+              <div style="font-size:10px;font-weight:700;color:#c0392b;margin-bottom:2px;">2分　不太符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能舉出一個例子，但明顯是機緣巧合，並非刻意主動建立關係，無法說明主動社交的動機。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#fefce8;border-radius:4px;padding:8px 12px;border-left:3px solid #d4600a;">
+              <div style="font-size:10px;font-weight:700;color:#d4600a;margin-bottom:2px;">3分　部分符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能說明主動接觸的情境，但動機說明薄弱，或難以說明這段關係後來帶來了什麼具體價值。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e8f5ee;border-radius:4px;padding:8px 12px;border-left:3px solid #2e7d9e;">
+              <div style="font-size:10px;font-weight:700;color:#2e7d9e;margin-bottom:2px;">4分　大致符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">能清楚說明主動社交的動機、具體接觸方式，以及這段關係後來對工作帶來的實質幫助，敘述完整。</div>
+          </div>
+        </div>
+          <div style="margin-bottom:10px;"><div style="background:#e0f7f4;border-radius:4px;padding:8px 12px;border-left:3px solid #1a3a6e;">
+              <div style="font-size:10px;font-weight:700;color:#1a3a6e;margin-bottom:2px;">5分　非常符合</div>
+              <div style="font-size:11px;color:var(--ink-light);line-height:1.6;">以完整STAR架構說明主動建立關係的全過程，動機清晰、行動具體、成果有意義，並能反思自己的社交風格與策略，展現高度的人際主動性。</div>
+          </div>
+        </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部備注 -->
+
+
+  </div>
+</div></div>
+</div><!-- /page -->
+<script>
+function toggleNote() {
+  var content = document.getElementById('noteContent');
+  var icon    = document.getElementById('noteToggleIcon');
+  var text    = document.getElementById('noteToggleText');
+  var isOpen  = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'block';
+  icon.textContent = isOpen ? '▼' : '▲';
+  text.textContent = isOpen ? '展開' : '收合';
+}
+
+function jumpTo(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var top = 0;
+  var obj = el;
+  while (obj) { top += obj.offsetTop || 0; obj = obj.offsetParent; }
+  window.scrollTo({ top: top - 20, behavior: 'smooth' });
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function scrollToPrint() {
+  var el = document.getElementById('full-version-section');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function() { window.print(); }, 600);
+  } else {
+    window.print();
+  }
+}
+
+function toggleInline(id, btn, labelOpen, labelClose) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? 'block' : 'none';
+  btn.textContent = isHidden ? labelClose : labelOpen;
+}
+</script>
+</body>
+</html>
