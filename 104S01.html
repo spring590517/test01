@@ -162,7 +162,7 @@ body{background:#f0ede8;font-family:'Noto Sans TC',sans-serif;color:var(--ink);m
   <div style="flex:1;min-width:200px;font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;color:#3a3a3a;letter-spacing:0.06em;text-align:left;">AI 面試＿性格分析結果報告</div>
   <div style="display:flex;gap:8px;flex-shrink:0;">
     <button onclick="window.location.href='mailto:?subject=AI面試性格分析結果報告'" style="padding:6px 14px;background:white;border:1.5px solid #2e7d9e;border-radius:20px;cursor:pointer;color:#2e7d9e;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;" onmouseover="this.style.background='#2e7d9e';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='#2e7d9e'">轉寄</button>
-    <button onclick="scrollToPrint()" style="padding:6px 14px;background:white;border:1.5px solid #2e7d9e;border-radius:20px;cursor:pointer;color:#2e7d9e;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;" onmouseover="this.style.background='#2e7d9e';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='#2e7d9e'">列印</button>
+    <button onclick="scrollToPrint()" style="padding:6px 14px;background:white;border:1.5px solid #2e7d9e;border-radius:20px;cursor:pointer;color:#2e7d9e;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;" onmouseover="this.style.background='#2e7d9e';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='#2e7d9e'">閱讀書面版</button>
   </div>
 </div>
 
@@ -809,7 +809,10 @@ body{background:#f0ede8;font-family:'Noto Sans TC',sans-serif;color:var(--ink);m
 </div><!-- /rpt-body -->
 <div style="margin:48px 0;border:none;border-top:6px solid #d4600a;border-radius:3px;"></div>
 <div style="padding:0 0 40px;">
-  <div id="full-version-section" style="text-align:center;padding:32px 16px 12px;font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;color:#3a3a3a;letter-spacing:0.06em;">AI 面試＿性格分析結果書面版</div>
+  <div id="full-version-section" style="display:flex;align-items:center;justify-content:space-between;padding:32px 16px 12px;flex-wrap:wrap;gap:12px;">
+  <div style="flex:1;font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;color:#3a3a3a;letter-spacing:0.06em;">AI 面試＿性格分析結果書面版</div>
+  <button onclick="window.print()" style="display:flex;align-items:center;gap:6px;padding:6px 16px;background:white;border:1.5px solid #2e7d9e;border-radius:20px;cursor:pointer;color:#2e7d9e;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#2e7d9e';this.style.color='white'" onmouseout="this.style.background='white';this.style.color='#2e7d9e'">🖨️ 列印</button>
+</div>
   <div class="rpt-body">
 
   <!-- ── 應徵者資訊 header ── -->
