@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>【高中職】自我探索成果Ｘ心流時光回顧 → 探索生涯興趣的學習歷程檔案</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+<title>【AI學檔教練】我的生涯興趣學習歷程檔案</title>
 <meta name="description" content="提供就讀的科別或班群、參與的社團或活動，及生涯興趣、多元智能＆心流時光...資料，生成可以直接貼到AI的 Prompt。然後將這段 Prompt 貼到你熟悉的AI工具，即可生成「探索生涯興趣的學習歷程檔案」初稿。" />
 <style>
   *,*::before,*::after{box-sizing:border-box}
@@ -25,41 +25,68 @@
   header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(160%) blur(8px);
     background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.7));border-bottom:1px solid var(--ring)}
   .header-inner{max-width:min(980px,92vw);margin:0 auto;padding:12px 8px}
-  .head-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .head-row{position:relative;display:flex;align-items:center;gap:12px}
+  .title-wrap{flex:1;min-width:0;text-align:center;padding:0 clamp(48px, 14vw, 68px)}
   .title{font-weight:800;font-size:clamp(20px, 1.1rem + 2vw, 30px)}
   .sub{color:var(--muted);font-size:clamp(.95rem, .9rem + .4vw, 1.05rem)}
-  .fs-ctrl{display:flex;gap:8px;align-items:center}
+  /* 字級控制：分段式膠囊，小Ａ／大Ａ搭配品牌色正負號 */
+  .fs-ctrl{position:absolute;right:0;top:50%;transform:translateY(-50%);
+    display:inline-flex;align-items:stretch;background:#fff;border:1px solid var(--ring);
+    border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(23,26,31,.08);flex:0 0 auto}
+  .fs-btn{appearance:none;border:0;background:transparent;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:1px;
+    padding:6px 13px;color:var(--ink);line-height:1;transition:background .15s ease}
+  .fs-btn+.fs-btn{border-left:1px solid var(--ring)}
+  .fs-btn:hover{background:#fff3ea}
+  .fs-btn:active{background:#ffe1cf}
+  .fs-btn:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+  .fs-btn .a{font-weight:800;letter-spacing:-.02em}
+  .fs-btn .a-sm{font-size:13px}
+  .fs-btn .a-lg{font-size:20px}
+  .fs-btn .sign{font-size:11px;font-weight:900;color:var(--brand);align-self:flex-start;margin-top:3px}
   .btn{appearance:none;border:1px solid transparent;background:var(--brand);color:#fff;border-radius:10px;padding:.9em 1.1em;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:.5em;transition:transform .06s ease, background .2s ease;font-size:1em}
   .btn:hover{background:var(--brand-600)} .btn:active{transform:translateY(1px)}
   .btn.secondary{background:#444e60}
   .btn.ghost{background:transparent;color:inherit;border:1px solid var(--ring)}
   .btn.block{width:100%;justify-content:center}
   .btn.sm{padding:.45em .7em;border-radius:8px}
-  .wrap{max-width:min(980px,92vw);margin:16px auto 40px;padding:0 4px}
+  .wrap{max-width:min(980px,92vw);margin:16px auto 0;padding:0 4px calc(120px + env(safe-area-inset-bottom,0))}
   .card{background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow)}
   .landing{padding:16px;display:grid;gap:12px}
   .qtitle{font-size:clamp(1.15rem, 1.05rem + 1vw, 1.6rem);font-weight:800;margin:4px 0}
   .muted{color:var(--muted);font-size:1rem}
+  .usage-h{font-weight:800;color:var(--ink);margin-bottom:10px}
+  .usage-list{margin:0;padding-left:1.5em;display:grid;gap:12px}
+  .usage-list li{line-height:1.65}
+  .usage-list li::marker{font-weight:800;color:var(--brand-600)}
+  .usage-or{display:inline-block;margin-left:4px;color:var(--brand-600);font-weight:800}
   .hint{color:var(--muted);font-size:.95rem}
   .toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
-  .progress{position:sticky;top:64px;height:12px;background:#e9ebf3;border-radius:999px;overflow:hidden;margin:0 0 14px}
-  .bar{height:100%;background:var(--brand);width:0;transition:width .25s ease}
+  .steplabel{display:flex;justify-content:space-between;align-items:baseline;font-size:.9rem;color:var(--muted);font-weight:700;margin:0 2px 6px}
+  .steplabel b{color:var(--brand-600)}
+  .progress{position:relative;height:10px;background:#e9ebf3;border-radius:999px;overflow:hidden;margin:0 0 16px}
+  .bar{height:100%;background:linear-gradient(90deg,var(--brand),#ff9147);width:0;transition:width .3s ease}
   .grid{display:grid;gap:10px}
   .cols-2{grid-template-columns:1fr}
   @media(min-width:640px){.cols-2{grid-template-columns:1fr 1fr}}
   .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .field{width:100%;padding:1em 1.1em;border:1px solid var(--ring);border-radius:10px;font-size:1em;background:var(--card)}
   .field:focus{outline:2px solid transparent;box-shadow:0 0 0 3px rgba(255,102,0,.25)}
-  textarea{min-height:28vh;resize:vertical}
-  .chip{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:1px solid var(--ring);border-radius:999px;background:#fafbff;cursor:pointer;user-select:none;font-size:1em}
-  .chip b{font-variant-numeric:tabular-nums}
-  .chip.sel{position:relative;background:#fff;border-color:#ffd0ae}
-  .chip.sel::before{content:'';position:absolute;inset:0;border-radius:999px;background:rgba(255,102,0,.12);pointer-events:none}
-  .chip.sel::after{content:attr(data-order);position:absolute;inset:0;margin:auto;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#fff;color:#a04300;font-weight:800;font-size:1.1em;pointer-events:none}
+  textarea{min-height:120px;resize:vertical;line-height:1.6}
+  .chip{position:relative;display:flex;align-items:flex-start;gap:12px;padding:16px 46px 16px 16px;border:1px solid var(--ring);border-radius:18px;background:#fafbff;cursor:pointer;user-select:none;font-size:1em;min-height:56px;transition:border-color .15s ease, background .15s ease}
+  .chip:active{background:#fff3ea}
+  .chip b{font-variant-numeric:tabular-nums;color:var(--muted)}
+  .chip.sel{background:#fff7f0;border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+  .chip.sel b{color:var(--brand-600)}
+  .chip.sel::after{content:'✓';position:absolute;top:50%;right:12px;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;font-size:.95em;pointer-events:none}
+  .chip.sel[data-order]::after{content:attr(data-order)}
   .sel-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
   .sel-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px dashed var(--brand);background:#fff7f0;border-radius:999px;font-size:.95rem}
-  .sel-pill button{all:unset;cursor:pointer;padding:2px 4px;border-radius:6px}
+  .sel-pill button{all:unset;cursor:pointer;padding:2px 8px;border-radius:6px;font-size:1.15em;line-height:1}
   .safe-bottom{padding-bottom:calc(env(safe-area-inset-bottom,0) + 8px)}
+  /* 放大核取方塊的可點擊範圍，方便手指操作 */
+  label.hint{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 4px;cursor:pointer}
+  label.hint input[type=checkbox]{width:22px;height:22px;accent-color:var(--brand);flex:0 0 auto}
 
   .apps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
   .appbtn{display:flex;align-items:center;justify-content:center;gap:10px;padding:.9em 1.1em;border:1px solid var(--ring);border-radius:12px;background:#fff;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}
@@ -69,13 +96,44 @@
 
 
   .center{text-align:center}
+  .right{text-align:right}
+  #out{min-height:34vh}
   .bigcopy{display:flex;justify-content:center;margin:8px 0 14px}
+  .bigcopy .btn{width:100%;max-width:440px;justify-content:center;gap:.55em}
+  #copy svg{flex:0 0 auto}
+  /* 結果頁的 Step 標題：放大、加粗、靠左 */
+  .steptitle{text-align:left;font-weight:800;color:var(--ink);line-height:1.5;
+    font-size:clamp(1.1rem, 1rem + .7vw, 1.32rem);margin:16px 0 4px}
+  /* Prompt 方框收合切換：靠右 */
+  .out-toggle-row{display:flex;justify-content:flex-end;margin:6px 0 10px}
+  .out-toggle{appearance:none;cursor:pointer;border:1px solid var(--ring);background:#fff;
+    color:var(--brand-600);font-weight:800;font-size:.95rem;border-radius:999px;
+    padding:.5em .95em;display:inline-flex;align-items:center;gap:.4em;transition:background .15s ease, border-color .15s ease}
+  .out-toggle:hover{background:#fff7f0;border-color:#ffd0ae}
+  .out-toggle:active{background:#ffe1cf}
+  .out-toggle .caret{font-size:.85em;transition:transform .2s ease}
+  .out-toggle[aria-expanded="true"] .caret{transform:rotate(180deg)}
   .btn.xl{font-size:1.05em;padding:1.05em 1.4em;border-radius:12px}
+
+  /* 固定底部導覽列：手指永遠能碰到「上一題／下一題」 */
+  #actionbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.97);
+    backdrop-filter:saturate(160%) blur(8px);border-top:1px solid var(--ring);
+    padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -4px 16px rgba(23,26,31,.06)}
+  #actionbar[hidden]{display:none !important}
+  .bar-inner{max-width:min(980px,92vw);margin:0 auto;padding:10px 8px}
+  .bar-hint{color:var(--brand-600);font-size:.9rem;font-weight:700;text-align:center;margin-bottom:8px}
+  .bar-btns{display:flex;gap:10px;align-items:stretch}
+  .bar-btns .btn{padding:1.05em 1.1em;font-size:1.02em}
+  .bar-btns #prev{flex:0 0 auto;min-width:104px}
+  .bar-btns #next{flex:1 1 auto;justify-content:center}
+  .btn.is-disabled{background:#c9ccd6;color:#fff;cursor:not-allowed}
+  .btn.is-disabled:hover{background:#c9ccd6}
   .appgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 6px}
   .appcard{background:#fff;border:1px solid var(--ring);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;box-shadow:var(--shadow)}
   .appcard:hover{background:#fff7f0;border-color:#ffd0ae}
   .appicon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;border:1px solid #eee}
   .appname{font-weight:800}
+  @media(max-width:420px){ .appgrid{gap:8px} .appcard{padding:12px 6px;border-radius:12px} .appcard .appname{font-size:.9em} }
   .restartwrap{display:flex;justify-content:center;margin-top:10px}
 
 </style>
@@ -84,13 +142,16 @@
 <header>
   <div class="header-inner">
     <div class="head-row">
-      <div>
-        <div class="title">【高中職】自我探索成果Ｘ心流時光回顧 → 探索生涯興趣的學習歷程檔案</div>
-        <div class="sub">提供就讀的科別或班群、參與的社團或活動，及生涯興趣、多元智能＆心流時光...資料，生成可以直接貼到AI的 Prompt。然後將這段 Prompt 貼到你熟悉的AI工具，即可生成「探索生涯興趣的學習歷程檔案」初稿。</div>
+      <div class="title-wrap">
+        <div class="title">【AI學檔教練】我的生涯興趣學習歷程檔案</div>
       </div>
-      <div class="fs-ctrl" aria-label="字級調整">
-        <button class="btn ghost sm" id="fsDown" title="縮小字級">A−</button>
-        <button class="btn ghost sm" id="fsUp" title="放大字級">A＋</button>
+      <div class="fs-ctrl" role="group" aria-label="字級調整">
+        <button class="fs-btn" id="fsDown" title="縮小字級" aria-label="縮小字級">
+          <span class="a a-sm">A</span><span class="sign" aria-hidden="true">−</span>
+        </button>
+        <button class="fs-btn" id="fsUp" title="放大字級" aria-label="放大字級">
+          <span class="a a-lg">A</span><span class="sign" aria-hidden="true">＋</span>
+        </button>
       </div>
     </div>
   </div>
@@ -98,7 +159,13 @@
 
 <main class="wrap">
   <section class="card landing" id="landing">
-    <p class="muted">使用說明：請點選「啟動我的AI學檔教練」，根據引導生成 Prompt；或是點選「載入範例，先玩看看」，一則快速體驗使用程序；二則檢視產生的學習歷程檔案初稿範例。</p>
+    <div class="muted">
+      <div class="usage-h">使用說明：</div>
+      <ol class="usage-list">
+        <li>點選「啟動我的AI學檔教練」：請根據引導提供你的自我探索資訊，生成用來產生你「生涯興趣學習歷程檔案」的 Prompt。<span class="usage-or">或</span></li>
+        <li>點選「載入範例，先玩看看」：一則快速體驗使用程序；二則檢視產生的生涯興趣學習歷程檔案初稿範例。</li>
+      </ol>
+    </div>
     <div class="grid">
       <button class="btn block" id="startBtn">▶︎ 啟動我的AI學檔教練</button>
       <button class="btn secondary block" id="sampleBtn">✨ 載入範例，先玩看看</button>
@@ -106,6 +173,8 @@
   </section>
   <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
 </main>
+
+<nav id="actionbar" hidden aria-label="題目導覽"></nav>
 
 <script>
 (function initApp(){
@@ -178,11 +247,51 @@
   };
 
   /* --------- UI Helpers --------- */
+  const QTOTAL = 12; // 問卷互動步驟數（第 13 步為結果頁）
   const progress = () => {
-    const pct = Math.round(Math.min(S.step,S.total)/S.total*100);
-    return `<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div class="bar" style="width:${pct}%"></div></div>`;
+    const shown = Math.min(S.step, QTOTAL);
+    const pct = Math.round(shown/QTOTAL*100);
+    return `<div class="steplabel"><span>步驟 <b>${shown}</b> / ${QTOTAL}</span><span>${pct}%</span></div>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div class="bar" style="width:${pct}%"></div></div>`;
   };
-  const nav = () => { const nextLabel = (S.step===12)?'生成召喚AI的Prompt →':'下一題 →'; return `<div class="toolbar">${S.step>1?'<button class="btn ghost" id="prev">← 上一題</button>':''}${S.step<S.total?`<button class="btn" id="next">${nextLabel}</button>`:'<button class="btn" id="gen">生成彙整 →</button>'}</div>`; };
+
+  /* 是否可前往下一題（關鍵題目需先完成） */
+  function canProceed(step){
+    if(step===1) return S.g1!=null;
+    if(step===4) return S.riasec.length===2;
+    if(step===5) return S.mi.length===3;
+    return true;
+  }
+  function proceedHint(step){
+    if(step===1) return '請先選擇一個就讀階段';
+    if(step===4) return '請依序選滿 2 個生涯興趣';
+    if(step===5) return '請依序選滿 3 個多元智能';
+    return '';
+  }
+
+  /* 固定底部導覽列 */
+  function renderActionBar(){
+    const bar = document.getElementById('actionbar');
+    if(!bar) return;
+    if(S.step < 1 || S.step >= 13){ bar.hidden = true; bar.innerHTML = ''; return; }
+    bar.hidden = false;
+    const ok = canProceed(S.step);
+    const nextLabel = (S.step===12) ? '生成 AI Prompt →' : '下一題 →';
+    bar.innerHTML = `<div class="bar-inner">
+        ${ok ? '' : `<div class="bar-hint">${proceedHint(S.step)}</div>`}
+        <div class="bar-btns">
+          ${S.step>1 ? '<button class="btn ghost" id="prev">← 上一題</button>' : ''}
+          <button class="btn${ok?'':' is-disabled'}" id="next" ${ok?'':'aria-disabled="true"'}>${nextLabel}</button>
+        </div>
+      </div>`;
+    const prev = bar.querySelector('#prev');
+    const next = bar.querySelector('#next');
+    if(prev) prev.onclick = ()=>{ S.step--; render(); };
+    if(next) next.onclick = ()=>{
+      if(!canProceed(S.step)){ toast(proceedHint(S.step)); return; }
+      S.step++; render();
+    };
+  }
 
   const chips = (opts, selected, capOrSingle) => {
     const multi = Array.isArray(selected);
@@ -230,12 +339,7 @@
       <div class="qtitle">${title}</div>
       ${hint?`<div class="hint">${hint}</div>`:''}
       <div class="grid" style="margin-top:10px">${inner}</div>
-      ${nav()}
     </section>`;
-    const prev = stage.querySelector('#prev'), next = stage.querySelector('#next'), gen = stage.querySelector('#gen');
-    if(prev) prev.onclick = ()=>{ S.step--; render(); };
-    if(next) next.onclick = ()=>{ S.step++; render(); };
-    if(gen)  gen.onclick  = ()=>{ S.step = S.total; render(); };
   };
   const escapeHTML = s => String(s??'').replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
 
@@ -279,7 +383,10 @@
   }
 
   /* --------- Render --------- */
+  let lastStep = -1;
   function render(){
+    const stepChanged = (S.step !== lastStep);
+    lastStep = S.step;
     landing.hidden = (S.step >= 1);
     switch(S.step){
       case 1:
@@ -375,14 +482,20 @@
         const text = compileText();
         stage.innerHTML = `${progress()}<section class="card" style="padding:16px">
           <div class="qtitle center">將生成召喚AI的Prompt，複製到ChatGPT、Gemini或Copilot</div>
-          <div class="hint center">Step1.請點選「一鍵複製貼到 AI 的 Prompt」按鈕，複製上述的 Prompt 內容</div>
-          <textarea id="out" class="field" aria-label="生成召喚AI的Prompt">${escapeHTML(text)}</textarea>
+          <div class="steptitle">Step1.  點選「一鍵複製貼到 AI 的 Prompt」按鈕</div>
+          <div class="out-toggle-row">
+            <button class="out-toggle" id="toggleOut" type="button" aria-expanded="false" aria-controls="out">查看 Prompt 文字內容 <span class="caret" aria-hidden="true">▼</span></button>
+          </div>
+          <textarea id="out" class="field" aria-label="生成召喚AI的Prompt" hidden>${escapeHTML(text)}</textarea>
 
           <div class="bigcopy">
-            <button class="btn xl" id="copy">一鍵複製貼到AI的Prompt</button>
+            <button class="btn xl" id="copy">
+              <svg viewBox="0 0 24 24" width="1.3em" height="1.3em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              <span>一鍵複製貼到AI的Prompt</span>
+            </button>
           </div>
 
-          <div class="hint center" style="margin-top:6px">Step2.將複製的Prompt貼到下列任何一個AI網站</div>
+          <div class="steptitle">Step2. 將複製的 Prompt 貼到下列任何一個 AI 網站。</div>
           <div class="appgrid">
             <div class="appcard" id="openChatGPT" title="開啟 ChatGPT">
               <div class="appicon">
@@ -412,11 +525,44 @@
           try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(txt); toast('已複製到剪貼簿！'); } else { fallbackCopy(txt); } }
           catch{ fallbackCopy(txt); }
         };
+        (function wireToggle(){
+          const btn = stage.querySelector('#toggleOut');
+          const box = stage.querySelector('#out');
+          if(!btn || !box) return;
+          btn.onclick = ()=>{
+            const willOpen = box.hasAttribute('hidden');
+            if(willOpen){
+              box.removeAttribute('hidden');
+              btn.setAttribute('aria-expanded','true');
+              btn.innerHTML = '收合 Prompt 文字內容 <span class="caret" aria-hidden="true">▼</span>';
+            }else{
+              box.setAttribute('hidden','');
+              btn.setAttribute('aria-expanded','false');
+              btn.innerHTML = '查看 Prompt 文字內容 <span class="caret" aria-hidden="true">▼</span>';
+            }
+          };
+        })();
         stage.querySelector('#restart').onclick = ()=> reset();
         stage.querySelector('#openChatGPT').onclick = openChatGPTApp;
         stage.querySelector('#openGemini').onclick = openGemini;
         stage.querySelector('#openCopilot').onclick = openCopilot;
         break;
+    }
+
+    // 更新固定底部導覽列
+    renderActionBar();
+
+    // 讓多行輸入框依內容自動長高（結果頁的 Prompt 框除外）
+    stage.querySelectorAll('textarea').forEach(t=>{
+      if(t.id === 'out') return;
+      const grow = ()=>{ t.style.height='auto'; t.style.height = Math.min(t.scrollHeight, Math.round(window.innerHeight*0.5)) + 'px'; };
+      t.addEventListener('input', grow);
+      grow();
+    });
+
+    // 換題時捲回頂端，讓使用者從題目開頭讀起（同題內重繪不捲動）
+    if(stepChanged){
+      try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ window.scrollTo(0,0); }
     }
   }
 
@@ -496,6 +642,9 @@
       flow5:'', flow5_none:false,
     });
     landing.hidden = false; stage.innerHTML = '';
+    lastStep = 0;
+    renderActionBar();
+    try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ window.scrollTo(0,0); }
   }
 
   document.getElementById('startBtn')?.addEventListener('click', ()=>{ S.step=1; render(); });
