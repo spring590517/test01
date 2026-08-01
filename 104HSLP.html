@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>【高中職】生涯興趣Ｘ心流時光 → 生涯興趣探索的學習歷程檔案</title>
-<meta name="description" content="提供生涯興趣＆心流時光，就可以生成可以貼到AI產生生涯興趣探索的學習歷程檔案初稿的Prompt。" />
+<title>【高中職】自我探索成果Ｘ心流時光回顧 → 探索生涯興趣的學習歷程檔案</title>
+<meta name="description" content="提供就讀的科別或班群、參與的社團或活動，及生涯興趣、多元智能＆心流時光...資料，生成可以直接貼到AI的 Prompt。然後將這段 Prompt 貼到你熟悉的AI工具，即可生成「探索生涯興趣的學習歷程檔案」初稿。" />
 <style>
   *,*::before,*::after{box-sizing:border-box}
   [hidden]{display:none !important}
@@ -85,8 +85,8 @@
   <div class="header-inner">
     <div class="head-row">
       <div>
-        <div class="title">【高中職】生涯興趣Ｘ心流時光 → 我的生涯興趣_學習歷程檔案</div>
-        <div class="sub">彙整「生涯興趣Ｘ心流時光」探索成果，就可以生成可以貼到AI產生生涯興趣探索的學習歷程檔案初稿的Prompt</div>
+        <div class="title">【高中職】自我探索成果Ｘ心流時光回顧 → 探索生涯興趣的學習歷程檔案</div>
+        <div class="sub">提供就讀的科別或班群、參與的社團或活動，及生涯興趣、多元智能＆心流時光...資料，生成可以直接貼到AI的 Prompt。然後將這段 Prompt 貼到你熟悉的AI工具，即可生成「探索生涯興趣的學習歷程檔案」初稿。</div>
       </div>
       <div class="fs-ctrl" aria-label="字級調整">
         <button class="btn ghost sm" id="fsDown" title="縮小字級">A−</button>
@@ -98,7 +98,7 @@
 
 <main class="wrap">
   <section class="card landing" id="landing">
-    <p class="muted">使用說明：請點選「啟動我的AI職涯教練」，根據引導完成Prompt；或是點選「載入範例，先玩看看」，一則快速體驗使用程序；二則檢視產生的學習歷程檔案初稿。</p>
+    <p class="muted">使用說明：請點選「啟動我的AI學檔教練」，根據引導生成 Prompt；或是點選「載入範例，先玩看看」，一則快速體驗使用程序；二則檢視產生的學習歷程檔案初稿範例。</p>
     <div class="grid">
       <button class="btn block" id="startBtn">▶︎ 啟動我的AI學檔教練</button>
       <button class="btn secondary block" id="sampleBtn">✨ 載入範例，先玩看看</button>
@@ -436,7 +436,7 @@
     const tail = [
 '',
 '請你擔任我的「AI職涯教練」，',
-'根據上述心流時光圖及生涯興趣測驗結果的二項資訊，以生涯輔導的專業，考量我目前就讀的專業類別（請務必考量我在第1項＆第二項的回答內容。例如：我是就讀技術型高中的那個科別；或我是就讀普通高中二年級～三年級的那個類別。），以學習歷程檔案描述的方式，完成一份完整的「生涯興趣探索成果學習歷程檔案」。',
+'根據上述學生提供的資訊，以生涯輔導的專業，考量我目前就讀的專業類別（請務必考量我在第1項＆第二項的回答內容。例如：我是就讀技術型高中的那個科別；或我是就讀普通高中二年級～三年級的那個類別。），以學習歷程檔案描述的方式，完成一份完整的「生涯興趣探索成果學習歷程檔案」。',
 '',
 '請先為這個「生涯興趣探索成果學習歷程檔案」取一個名稱。',
 '名稱的取名，請依整份學習歷程檔案的內容，取一個可以凸顯我探索結果，清楚易懂、畫龍點睛的標題。',
