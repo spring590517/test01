@@ -1,307 +1,1309 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI生存力檢核表</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; }
-        [v-cloak] { display: none; }
-        .selected { border-color: #2563eb !important; background-color: #eff6ff !important; border-width: 2px; }
-        #report-capture { width: 100%; max-width: 600px; margin: 0 auto; background: white; border-radius: 24px; }
-        .score-box { background: #eff6ff; border-left: 6px solid #2563eb; border-radius: 12px; }
-        .dimension-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .suggestion-tag { background: #fffbeb; color: #92400e; border-radius: 8px; font-size: 0.85rem; }
-        .instruction-section { border-left: 4px solid #e2e8f0; padding-left: 1rem; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>職缺性格需求分析 — HR 工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  /* ── 104人力銀行 色系 ── */
+  --bg:        #F0F2F5;
+  --surface:   #FFFFFF;
+  --surface2:  #F6F8FA;
+  --border:    #DDE2E8;
+  --ink:       #2C3340;
+  --ink2:      #5A6478;
+  --ink3:      #9AA5B8;
+  --accent:    #00B2B2;
+  --accent-bg: #E6F7F7;
+  --gold:      #F06023;
+  --gold-bg:   #FEF0E8;
+  --green:     #008F8F;
+  --green-bg:  #E0F4F4;
+  --blue:      #1A6DB5;
+  --blue-bg:   #EBF4FC;
+  --r: 6px;
+  --r-lg: 10px;
+  --shadow: 0 1px 4px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+
+
+#appShell { max-width: 900px; margin: 0 auto; padding: 32px 20px 48px; }
+.hero { text-align: center; margin-bottom: 40px; padding: 40px 20px 32px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent);
+  background: var(--accent-bg); border: 1px solid #80D9D9;
+  padding: 4px 14px; border-radius: 20px; margin-bottom: 16px;
+}
+.hero-title {
+  font-family: 'DM Sans', 'Noto Sans TC', sans-serif; font-size: 28px; font-weight: 700;
+  color: var(--ink); line-height: 1.3; margin-bottom: 10px;
+}
+.hero-desc { font-size: 14px; color: var(--ink2); max-width: 500px; margin: 0 auto; line-height: 1.7; }
+.steps-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; margin-bottom: 28px;
+}
+.step-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink3); font-weight: 500; }
+.step-item.active { color: var(--ink); }
+.step-item.done { color: var(--green); }
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; background: var(--surface);
+  flex-shrink: 0; transition: all 0.2s;
+}
+.step-item.active .step-num { background: var(--accent); border-color: var(--accent); color: white; }
+.step-item.done .step-num   { background: var(--green); border-color: var(--green); color: white; }
+.step-arrow { width: 32px; height: 1px; background: var(--border); margin: 0 4px; }
+.input-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;
+}
+@media (max-width: 540px) { .input-grid { grid-template-columns: 1fr; } }
+.input-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-card:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,178,178,0.12);
+}
+.input-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px 10px; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.input-label { display: flex; align-items: center; gap: 8px; }
+.step-pill {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em;
+  padding: 2px 8px; border-radius: 3px; background: var(--accent); color: white;
+}
+.input-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.input-hint { font-size: 11px; color: var(--ink3); }
+textarea {
+  width: 100%; border: none; outline: none; background: var(--surface);
+  padding: 14px 16px; font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+  font-size: 13px; line-height: 1.7; color: var(--ink); resize: vertical; min-height: 200px;
+}
+textarea::placeholder { color: var(--ink3); }
+.input-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-top: 1px solid var(--border); background: var(--surface2);
+}
+.sample-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: var(--ink2);
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 12px; cursor: pointer; transition: all 0.15s;
+}
+.sample-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+.input-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink3); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.2s; }
+.status-dot.filled { background: var(--green); }
+.analyze-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 8px 0 0; }
+.btn-analyze {
+  position: relative; background: var(--accent); color: white; border: none;
+  border-radius: var(--r); padding: 11px 28px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  letter-spacing: 0.03em; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px; overflow: hidden;
+}
+.btn-analyze::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.06));
+}
+.btn-analyze:hover:not(:disabled) { background: #008F8F; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,178,178,0.3); }
+.btn-analyze:disabled { background: var(--ink3); cursor: not-allowed; transform: none; }
+.btn-demo {
+  background: var(--surface); color: var(--ink2);
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 11px 20px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.03em;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 7px;
+}
+.btn-demo:hover { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+.analyze-note { font-size: 11px; color: var(--ink3); display: flex; align-items: center; gap: 5px; }
+.loading-wrap { display: none; flex-direction: column; align-items: center; gap: 14px; padding: 32px; text-align: center; }
+.loading-wrap.active { display: flex; }
+.loading-bar-outer { width: 280px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.loading-bar-inner {
+  height: 100%; background: var(--accent); border-radius: 2px; width: 0%;
+  animation: loadprogress 40s ease-out forwards;
+}
+@keyframes loadprogress {
+  0%{width:0%} 20%{width:25%} 50%{width:55%} 80%{width:80%} 95%{width:90%}
+}
+.loading-label { font-size: 13px; font-weight: 500; color: var(--ink2); }
+.loading-sub { font-size: 11px; color: var(--ink3); }
+.loading-dots span { display: inline-block; animation: blink 1.4s infinite both; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+.toast {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--ink); color: white; padding: 10px 20px;
+  border-radius: 8px; font-size: 13px; font-weight: 500;
+  z-index: 300; transition: transform 0.3s ease; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+#jobTraitsPanel { max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+.btn-reset {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 8px 18px;
+  border-radius: 6px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--ink2);
+  cursor: pointer; transition: all 0.15s; margin: 0 auto 32px;
+}
+.btn-reset:hover { background: var(--bg); border-color: var(--ink); color: var(--ink); }
+.btn-export {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent); color: white; border: 1.5px solid var(--accent);
+  border-radius: var(--r); padding: 8px 18px;
+  font-family: 'DM Sans','Noto Sans TC',sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; letter-spacing: 0.01em;
+}
+.btn-export:hover { background: #008F8F; border-color: #008F8F; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,143,143,.25); }
+.btn-export:disabled { background: var(--ink3); border-color: var(--ink3); cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Part tabs */
+.part-tabs {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.part-tab {
+  font-size: 12px; font-weight: 600; padding: 6px 16px;
+  border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--ink2);
+  cursor: pointer; transition: all 0.15s;
+}
+.part-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+.part-tab:hover:not(.active) { border-color: var(--ink2); color: var(--ink); }
+.btn-export-inline {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'DM Sans','Noto Sans TC',sans-serif;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+  padding: 5px 12px; border-radius: 6px;
+  background: var(--accent-bg); color: var(--green);
+  border: 1.5px solid #66CCCC;
+  cursor: pointer; transition: all 0.18s; white-space: nowrap;
+}
+.btn-export-inline:hover { background: var(--accent); color: white; border-color: var(--accent); transform: translateY(-1px); }
+.btn-export-inline:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+/* Score badge */
+.score-badge-1 { background:#F0F2F5; color:#9AA5B8; border:1px solid #DDE2E8; }
+.score-badge-2 { background:#FEF0E8; color:#C44D1A; border:1px solid #F9B99A; }
+.score-badge-3 { background:#FFF8E8; color:#9A7010; border:1px solid #EDD888; }
+.score-badge-4 { background:#E6F7F7; color:#007A7A; border:1px solid #80CCCC; }
+.score-badge-5 { background:#e8f5e8; color:#1a6a1a; border:1px solid #80c080; }
+
+/* Trait row */
+.trait-row {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: box-shadow 0.15s;
+}
+.trait-row:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+.trait-row-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;
+}
+.trait-name { font-size: 14px; font-weight: 800; color: #1a1a2e; }
+.trait-typical { font-size: 11.5px; font-weight: 500; color: #8a8aa0; }
+.score-chip {
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  border-radius: 6px; padding: 2px 10px; flex-shrink: 0;
+}
+.trait-def { font-size: 11.5px; color: #5a5a7a; margin-bottom: 6px; line-height: 1.5; }
+.trait-need-label { font-size: 11px; font-weight: 700; color: #777; letter-spacing: 0.04em; margin-bottom: 3px; }
+.trait-need-text { font-size: 12px; color: #3a3a5a; line-height: 1.65; margin-bottom: 8px; }
+.evidence-row { display:flex; gap:6px; align-items:flex-start; margin-top:4px; }
+.evidence-icon { flex-shrink:0; margin-top:2px; }
+.evidence-text { font-size:11.5px; color:#3a3a5a; line-height:1.65; font-style:italic; }
+
+/* ── 密碼閘 ── */
+#gate {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, #007A7A 0%, #00B2B2 55%, #E6F7F7 140%);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+#gate.hidden { display: none; }
+.gate-card {
+  background: var(--surface); border-radius: var(--r-lg);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+  width: 100%; max-width: 360px; padding: 34px 30px 28px; text-align: center;
+}
+.gate-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); background: var(--accent-bg); border: 1px solid #80D9D9;
+  padding: 4px 14px; border-radius: 20px; margin-bottom: 18px;
+}
+.gate-title { font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.gate-desc  { font-size: 12.5px; color: var(--ink2); margin-bottom: 20px; line-height: 1.6; }
+.gate-input {
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 11px 14px; font-size: 14px; color: var(--ink); outline: none;
+  text-align: center; letter-spacing: 0.15em; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.gate-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,178,178,0.12); }
+.gate-input.err { border-color: #E5484D; animation: gate-shake 0.35s; }
+@keyframes gate-shake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)}
+  40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+}
+.gate-err-msg { font-size: 11.5px; color: #E5484D; min-height: 16px; margin: 8px 0 4px; }
+.gate-btn {
+  width: 100%; margin-top: 6px; border: none; border-radius: var(--r);
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+  padding: 11px; cursor: pointer; transition: background 0.15s;
+}
+.gate-btn:hover { background: var(--green); }
+.gate-cancel {
+  width: 100%; margin-top: 8px; border: 1px solid var(--border); border-radius: var(--r);
+  background: transparent; color: var(--ink2); font-size: 13px; font-weight: 600;
+  padding: 9px; cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.gate-cancel:hover { background: var(--surface2); color: var(--ink); }
+.gate-foot { font-size: 10.5px; color: var(--ink3); margin-top: 16px; }
+</style>
 </head>
 <body>
 
-    <div id="app" v-cloak class="max-w-4xl mx-auto py-10 px-4">
-        <header v-if="!showResult" class="text-center mb-10">
-            <h1 class="text-3xl font-black text-slate-900 mb-3">AI生存力檢核表</h1>
-            <p class="text-slate-600 font-medium">用 S.E.E.D 檢核你個人的AI素養。</p>
-        </header>
+<!-- ── 密碼閘（點分析／範例時才跳出）── -->
+<div id="gate" class="hidden">
+  <div class="gate-card">
+    <div class="gate-badge">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+      HR 內部工具
+    </div>
+    <div class="gate-title">請輸入密碼</div>
+    <div class="gate-desc">此功能僅供內部使用，輸入通行密碼後即可執行。</div>
+    <input type="password" id="gateInput" class="gate-input" placeholder="請輸入密碼"
+           autocomplete="off" onkeydown="if(event.key==='Enter')checkGate()">
+    <div class="gate-err-msg" id="gateErr"></div>
+    <button class="gate-btn" onclick="checkGate()">確認</button>
+    <button class="gate-cancel" onclick="closeGate()">取消</button>
+    <div class="gate-foot">104人力銀行 · 內部原型</div>
+  </div>
+</div>
 
-        <main v-if="!showResult">
-            <div v-for="(category, cIdx) in shuffledQuestions" :key="cIdx" class="mb-10">
-                <div class="border-l-8 border-blue-700 bg-white p-4 shadow-sm mb-6 rounded-r-lg">
-                    <h2 class="text-xl font-bold text-blue-900">{{ category.title }}</h2>
-                </div>
-                
-                <div v-for="(q, qIdx) in category.items" :key="q.id" class="mb-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <p class="text-lg font-bold mb-4 text-slate-800">{{ q.displayIndex }}. {{ q.text }}</p>
-                    <div class="grid grid-cols-1 gap-3">
-                        <button v-for="(opt, oIdx) in q.shuffledOpts" :key="oIdx"
-                                @click="selectAnswer(q.id, opt.score)"
-                                :class="['text-left p-4 border rounded-xl transition-all duration-200 hover:border-blue-400', 
-                                { 'selected': userAnswers[q.id] === opt.score }]">
-                            <span class="text-sm leading-relaxed">{{ opt.text }}</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+<script>
+// ── 密碼閘設定：如需更換密碼，只改這一行即可 ──
+const ACCESS_PW = '104104';
 
-            <div class="mt-12 mb-20 text-center">
-                <button @click="calculateScore" 
-                        class="w-full max-w-md bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-800 transition-all text-xl">
-                    產生檢核報告
-                </button>
-            </div>
-        </main>
+let gateUnlocked = false;   // 本次工作階段是否已通過密碼
+let pendingAction = null;   // 通過密碼後要執行的動作
 
-        <div v-else>
-            <div id="report-capture" class="overflow-hidden shadow-2xl">
-                <div class="bg-blue-900 p-8 text-white text-center">
-                    <h1 class="text-2xl font-bold mb-1">AI 時代職場生存力檢核報告</h1>
-                    <p class="text-xs opacity-70">測驗時間：{{ reportDate }}</p>
-                </div>
+// 分析／範例按鈕都改為呼叫此函式：未解鎖則跳密碼視窗，解鎖後直接執行
+function requireGate(action) {
+  if (gateUnlocked) { action(); return; }
+  pendingAction = action;
+  document.getElementById('gateErr').textContent = '';
+  const input = document.getElementById('gateInput');
+  input.value = '';
+  document.getElementById('gate').classList.remove('hidden');
+  setTimeout(() => input.focus(), 50);
+}
 
-                <div class="p-8 text-left">
-                    <div class="flex items-center gap-8 mb-10">
-                        <div class="flex-shrink-0 text-center">
-                            <p class="text-slate-400 font-bold text-xs uppercase mb-1">Survival Rate</p>
-                            <div class="text-7xl font-black text-blue-700">{{ totalScore }}%</div>
-                        </div>
-                        <div class="score-box p-5 flex-1">
-                            <h3 class="text-xl font-bold text-blue-900 mb-1">{{ resultTitle }}</h3>
-                            <p class="text-slate-600 text-sm leading-snug">{{ resultDesc }}</p>
-                        </div>
-                    </div>
+function checkGate() {
+  const input = document.getElementById('gateInput');
+  const err   = document.getElementById('gateErr');
+  if (input.value === ACCESS_PW) {
+    gateUnlocked = true;
+    document.getElementById('gate').classList.add('hidden');
+    const act = pendingAction; pendingAction = null;
+    if (act) act();
+  } else {
+    err.textContent = '密碼錯誤，請再試一次';
+    input.classList.remove('err'); void input.offsetWidth; input.classList.add('err');
+    input.select();
+  }
+}
 
-                    <h3 class="text-lg font-bold mb-6 flex items-center">
-                        <span class="w-1.5 h-6 bg-blue-600 mr-2 rounded-full"></span> 維度深度分析
-                    </h3>
-                    
-                    <div class="dimension-grid text-left mb-10">
-                        <div v-for="(analysis, key) in dimensionAnalysis" :key="key" class="mb-6">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-slate-800 text-sm">{{ analysis.title }}</span>
-                                <span class="text-blue-600 font-bold text-xs">{{ dimensionScores[key] }} / 25</span>
-                            </div>
-                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
-                                <div class="bg-blue-600 h-full" :style="{ width: (dimensionScores[key]/25*100) + '%' }"></div>
-                            </div>
-                            <p class="text-[11px] text-slate-500 leading-tight mb-2 h-8">{{ analysis.feedback }}</p>
-                            <div class="suggestion-tag p-2 flex items-start gap-1">
-                                <span class="flex-shrink-0">💡</span>
-                                <span class="text-[10px] leading-tight font-medium">建議：{{ analysis.action }}</span>
-                            </div>
-                        </div>
-                    </div>
+function closeGate() {
+  document.getElementById('gate').classList.add('hidden');
+  pendingAction = null;
+}
 
-                    <div class="mt-10 pt-8 border-t border-slate-200">
-                        <h3 class="text-lg font-black text-slate-800 mb-6 text-center">如何提升個人的AI生存力？</h3>
-                        
-                        <div class="space-y-8">
-                            <div class="instruction-section">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">S</span>
-                                    <h4 class="font-bold text-blue-900">Strategy 策略思維 (策略腦)</h4>
-                                </div>
-                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">評估工作者能否從「策略高度」看待 AI。這不僅是把 AI 當工具，而是能規劃 AI 在職涯中的定位。知道何時該啟動 AI 發散創意，何時由人類決策收斂。</p>
-                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
-                                    <li><b>AI 敏銳度：</b>識別哪些環節適合交給 AI（如重複任務、數據摘要）。</li>
-                                    <li><b>成長心態：</b>面對 AI 頻繁更新能保持學習熱情而非焦慮。</li>
-                                    <li><b>協作意識：</b>將 AI 視為「副駕駛 (Copilot)」而非替代者。</li>
-                                </ul>
-                            </div>
+// Esc 關閉密碼視窗
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !document.getElementById('gate').classList.contains('hidden')) closeGate();
+});
+</script>
 
-                            <div class="instruction-section">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">E</span>
-                                    <h4 class="font-bold text-blue-900">Execution 執行效能 (行動手)</h4>
-                                </div>
-                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">將想法轉化為產出的能力。評估 Prompt 精準度、多模組掌控力，利用 AI 提升工作的「單位產值」與「品質」。</p>
-                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
-                                    <li><b>提示詞工程：</b>提供清晰背景與格式，具備「多輪對話」修正能力。</li>
-                                    <li><b>工具多樣性：</b>熟悉不同 AI 工具（如文本、影像、數據分析）。</li>
-                                    <li><b>工作流整合：</b>將 AI 嵌入現有流程（如會議記錄、電子郵件自動化）。</li>
-                                </ul>
-                            </div>
+<div id="appShell">
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      公司職缺性格解析器
+    </div>
+    <h1 class="hero-title">解析公司職缺需要的職業性格</h1>
+    <p class="hero-desc">提供公司介紹與職缺說明，AI 即時解析公司職缺在 54 個性格向度的需求強度。</p>
+  </div>
 
-                            <div class="instruction-section">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">E</span>
-                                    <h4 class="font-bold text-blue-900">Evaluation 評估辨析 (辨析眼)</h4>
-                                </div>
-                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">具備「檢驗 AI 產出」的能力，從邏輯、事實、情緒溫度中發現幻覺或偏見。不盲從答案，具備最高裁決權。</p>
-                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
-                                    <li><b>事實查核：</b>查證 AI 內容準確性的意識，不盲目相信輸出。</li>
-                                    <li><b>幻覺識別：</b>了解語言模型侷限，判斷哪些回答可能是編造的。</li>
-                                    <li><b>偏見識別：</b>察覺輸出中隱含的性別、文化或專業偏見。</li>
-                                </ul>
-                            </div>
+  <div class="steps-row">
+    <div class="step-item active" id="step1item"><div class="step-num">1</div><span>公司介紹</span></div>
+    <div class="step-arrow"></div>
+    <div class="step-item" id="step2item"><div class="step-num">2</div><span>職缺說明</span></div>
+    <div class="step-arrow"></div>
+    <div class="step-item" id="step3item"><div class="step-num">3</div><span>性格分析</span></div>
+  </div>
 
-                            <div class="instruction-section">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="bg-blue-700 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">D</span>
-                                    <h4 class="font-bold text-blue-900">Duty 責任與倫理 (倫理心)</h4>
-                                </div>
-                                <p class="text-[11px] text-slate-600 mb-2 leading-relaxed font-medium">對「職業義務」的守護與風險控管。在使用 AI 服務他人時，確保不侵害隱私、不傳播錯誤資訊，對成果負責。</p>
-                                <ul class="text-[10px] text-slate-500 space-y-1 list-disc list-inside">
-                                    <li><b>資安防護：</b>不將公司機密或客戶個資上傳至雲端模型。</li>
-                                    <li><b>智財權素養：</b>清楚 AI 生成內容在智產法律上的使用規範。</li>
-                                    <li><b>道德責任：</b>在使用 AI 時能誠實標註，對最終結果負起專業責任。</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-12 pt-8 border-t border-slate-100 text-center">
-                        <p class="text-xs italic text-slate-400 mb-4">「在 AI 時代，最核心的競爭力不是取代機器，而是開展人類特有的天賦。」</p>
-                        <p class="text-sm font-bold text-blue-900">用AI啟動你怦然心動的第二人生</p>
-                        <p class="text-[10px] text-slate-400 mt-2">檢核表的內容是與 AI 協作取得，檢核報告純供參考</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-8 space-y-4 max-w-[500px] mx-auto pb-20">
-                <button @click="downloadJPG" class="w-full bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-800 transition">
-                    下載分析結果
-                </button>
-                <button @click="reset" class="w-full text-slate-400 font-bold py-2 text-sm">重新進行測驗</button>
-            </div>
+  <div class="input-grid">
+    <div class="input-card">
+      <div class="input-card-header">
+        <div class="input-label">
+          <span class="step-pill">STEP 1</span>
+          <span class="input-title">公司介紹</span>
         </div>
+        <div class="input-hint">從 104 公司頁複製</div>
+      </div>
+      <textarea id="companyInput" placeholder="請將公司頁資訊複製貼上到這裡…
+
+建議包含：
+· 公司名稱
+· 產業類別
+· 員工人數
+· 公司簡介 / 品牌故事" oninput="updateStatus()"></textarea>
+      <div class="input-footer">
+        <button class="sample-btn" onclick="loadSample('company')">📋 帶入範例</button>
+        <div class="input-status">
+          <div class="status-dot" id="companyDot"></div>
+          <span id="companyStatusText">尚未輸入</span>
+        </div>
+      </div>
     </div>
 
-    <script>
-        const { createApp, ref, computed, onMounted } = Vue;
+    <div class="input-card">
+      <div class="input-card-header">
+        <div class="input-label">
+          <span class="step-pill">STEP 2</span>
+          <span class="input-title">職缺說明</span>
+        </div>
+        <div class="input-hint">從 104 職缺頁複製</div>
+      </div>
+      <textarea id="jobInput" placeholder="請將職缺說明複製貼上到這裡…
 
-        createApp({
-            setup() {
-                const showResult = ref(false);
-                const userAnswers = ref({}); 
-                const reportDate = ref("");
+建議包含：
+· 職缺名稱
+· 工作內容
+· 應徵條件" oninput="updateStatus()"></textarea>
+      <div class="input-footer">
+        <button class="sample-btn" onclick="loadSample('job')">📋 帶入範例</button>
+        <div class="input-status">
+          <div class="status-dot" id="jobDot"></div>
+          <span id="jobStatusText">尚未輸入</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                const seedQuestions = [
-                    { id_key: "Strategy", title: "S — Strategy (策略思維)", items: [
-                        { id: "s1", text: "主管要求你今天下班前彙整 20 份長篇專案進度，你會：", opts: [{t: "認命加班逐份閱讀手寫摘要，不考慮工具輔助", s: 1}, {t: "感到煩躁並開始抱怨，最後只草草看完重點", s: 2}, {t: "全部丟給 AI 摘要後直接貼上，不另外確認內容", s: 4}, {t: "請 AI 根據特定格式提取異常點，由我針對疑點複查", s: 5}] },
-                        { id: "s2", text: "當你常用的 AI 工具突然升級且功能大改時，你的習慣是：", opts: [{t: "排斥學習新介面，固守原本熟悉的手動流程", s: 1}, {t: "覺得很麻煩，等公司強制要求使用時再去學", s: 2}, {t: "利用空暇自行探索新功能，看看是否有幫助", s: 4}, {t: "第一時間測試新舊差異，優化自己的工作 SOP", s: 5}] },
-                        { id: "s3", text: "面對職涯規劃，你如何看待 AI 對你專業的影響？", opts: [{t: "AI 終將取代我的工作，覺得未來發展希望渺茫", s: 1}, {t: "AI 只是玩具，目前的專業經驗才是生存唯一保障", s: 2}, {t: "AI 是好用的工具，能幫我處理掉大部分的雜務", s: 4}, {t: "AI 是我的數位副駕駛，能與我共同提升職涯產值", s: 5}] },
-                        { id: "s4", text: "當你有一個新點子卻不知如何起頭撰寫企劃書時：", opts: [{t: "堅持純人工思考，不希望 AI 的邏輯介入個人原創", s: 1}, {t: "上網搜尋別人的舊模板，套用現成的架構來填寫", s: 2}, {t: "輸入關鍵字讓 AI 給出大綱，選一組看起來順眼的", s: 4}, {t: "透過 AI 進行發散思考，再由我收斂與決定策略方向", s: 5}] },
-                        { id: "s5", text: "公司評估引進新的 AI 協作系統，你的主動行為會是：", opts: [{t: "質疑系統準確度與成本，建議維持現狀最穩定", s: 1}, {t: "觀望他人使用後的成效，決定是否要跟進學習", s: 2}, {t: "主動嘗試將系統應用在目前手邊的繁瑣任務上", s: 4}, {t: "規劃人機協作藍圖，重新定義團隊成員的核心價值", s: 5}] }
-                    ]},
-                    { id_key: "Execution", title: "E — Execution (執行效能)", items: [
-                        { id: "e1", text: "請 AI 寫出的信件太過官腔、不像你的風格時，你會：", opts: [{t: "放棄 AI 回歸手寫，認為自己寫還比較快", s: 1}, {t: "反覆要求它「寫好一點」，不給具體指令直到它寫好", s: 2}, {t: "在指令中補上收件者背景與回信目標重新生成", s: 4}, {t: "餵入自己寫過的範本讓 AI 學習語氣後再生成", s: 5}] },
-                        { id: "e2", text: "你需要製作一份專業的跨部門簡報，你會：", opts: [{t: "手動一張張排版並從搜尋引擎一張張找配圖", s: 1}, {t: "使用 PPT 內建模板，圖文全由人工手動輸入", s: 2}, {t: "請 AI 生成文字初稿，再搭配 AI 生成的圖庫素材", s: 4}, {t: "整合多種 AI 工具，將數據轉成分析圖表並美化", s: 5}] },
-                        { id: "e3", text: "面對收件匣中累積了數十封郵件，你的處理習慣是：", opts: [{t: "堅持逐封閱讀回覆，認為這樣才展現專業態度", s: 1}, {t: "先處理最緊急的，剩下的拖延到最後才處理", s: 2}, {t: "利用 AI 摘要郵件重點，我再根據摘要挑重點回", s: 4}, {t: "讓 AI 根據歷史習慣預擬草稿，由我進行最後審核", s: 5}] },
-                        { id: "e4", text: "當你面對一個複雜的 Excel 公式或程式碼錯誤時：", opts: [{t: "靠個人邏輯一步步檢驗，或翻閱過往的筆記資料", s: 1}, {t: "直接向專業同事詢問答案，等待他人幫忙解決", s: 2}, {t: "將報錯資訊丟給 AI，並嘗試套用它給的解法", s: 4}, {t: "清晰描述數據結構請 AI 提供架構，由我驗證邏輯", s: 5}] },
-                        { id: "e5", text: "回顧今天的工作流程，你使用 AI 的實際情況是：", opts: [{t: "今天完全沒有想到任何一個環節可以交給 AI 處理", s: 1}, {t: "只有在被別人提醒或強烈要求時，才會被動開啟", s: 2}, {t: "在多個任務中主動詢問 AI 的建議或協作產出", s: 4}, {t: "AI 已經是日常工作流的一環，操作時不需刻意思考", s: 5}] }
-                    ]},
-                    { id_key: "Evaluation", title: "E — Evaluation (評估辨析)", items: [
-                        { id: "v1", text: "AI 提供了一段看似專業的歷史數據或法條引言，你會：", opts: [{t: "非常有說服力，直接將其運用在正式簡報或對外報告", s: 1}, {t: "只要讀起來順暢、沒有明顯錯字，我就選擇採信", s: 2}, {t: "產生警覺，快速利用搜尋引擎核對內容的真實性", s: 4}, {t: "具備查證意識，針對關鍵資訊建立多方核實的流程", s: 5}] },
-                        { id: "v2", text: "在生成團隊示意圖時，AI 出現了某種職業與性別的偏見：", opts: [{t: "完全沒發現異常，認為這只是隨機生成的結果", s: 1}, {t: "覺得有點不妥但懶得改，認為這不影響工作品質", s: 2}, {t: "在人工挑選時手動排除掉偏見較明顯的圖檔", s: 4}, {t: "主動介入修改指令，引導產出具備多元性的結果", s: 5}] },
-                        { id: "v3", text: "面對 AI 產出「市場成功率極高」的分析報告，你會：", opts: [{t: "完全採信，認為 AI 的大數據預測絕不會出錯", s: 1}, {t: "當作推諉工具，若決策出錯可以推說是 AI 建議的", s: 2}, {t: "參考數據，並結合第一線的非結構化經驗來調整", s: 4}, {t: "我始終擁有最高裁決權，數據僅是我的參考資訊", s: 5}] },
-                        { id: "v4", text: "AI 撰寫的溫情慰問信件讀起來很有禮貌但略顯生硬時：", opts: [{t: "非常完美，因為 AI 寫得很專業，直接按發送鍵", s: 1}, {t: "只要稱謂沒寫錯，就不花時間修改，原樣發送", s: 2}, {t: "覺得不像我的口吻，決定由自己手寫大部分內容", s: 4}, {t: "辨識 AI 模式，注入真實的情感連結點再發送", s: 5}] },
-                        { id: "v5", text: "在使用 AI 尋找資訊時，發現它給了一個不存在的術語：", opts: [{t: "完全沒發現，甚至在會議中錯誤引用了該資訊", s: 1}, {t: "感到困惑，但懷疑是自己專業知識不足而不敢挑戰", s: 2}, {t: "立刻意識到這就是所謂的「AI 幻覺」，並主動對該內容予以駁回", s: 4}, {t: "分析該錯誤情境，優化未來的提問指令以降低出錯率", s: 5}] }
-                    ]},
-                    { id_key: "Duty", title: "D — Duty (責任與倫理)", items: [
-                        { id: "d1", text: "為了快速分析客戶需求，你會將哪種檔案直接上傳至 AI？", opts: [{t: "將包含客戶全名、電話等機密清單直接上傳處理", s: 1}, {t: "認為雲端系統很安全，直接上傳未經處理的內部文件", s: 2}, {t: "先將檔案中的敏感資訊手動遮蔽或刪除後再上傳", s: 4}, {t: "嚴守資安準則，絕不上傳任何涉及隱私或機密的檔案", s: 5}] },
-                        { id: "d2", text: "在商業文案中使用 AI 生成的圖像時，你的權責觀念是：", opts: [{t: "認為網路上的東西隨便抓隨便用，不需要擔心智財", s: 1}, {t: "認為法律尚未規範，先用了再說，出了問題再處理", s: 2}, {t: "會先確認該工具的商用授權合約，確保合法後使用", s: 4}, {t: "對智財風險高度敏銳，必要時請法務或專家進行評估", s: 5}] },
-                        { id: "d3", text: "當你完成的成果中有很大一部分是靠 AI 協助時，你會：", opts: [{t: "完全隱瞞使用 AI 的事實，將功勞全部歸於個人努力與原創", s: 1}, {t: "被主管詢問時才被動承認，並淡化 AI 的參與程度", s: 2}, {t: "在成果中簡述輔助工具名稱，維持基本的職業透明度", s: 4}, {t: "主動聲明協作範疇，並對最終產出負起完全專業責任", s: 5}] },
-                        { id: "d4", text: "發現 AI 生成的行銷文案為了吸引點閱而有誇大不實時：", opts: [{t: "只要能帶動業績，誇大一點也無傷大雅，直接發布", s: 1}, {t: "感到心虛但因時間緊迫，還是決定不修改直接發送", s: 2}, {t: "修正最誇張的部分，保留其餘能吸引目光的灰色內容", s: 4}, {t: "守護誠信底線，寧可降低點閱也要確保資訊真實性", s: 5}] },
-                        { id: "d5", text: "在使用 AI 協作一段時間後，你對自身專業責任的感覺是：", opts: [{t: "工作變輕鬆了，腦力消耗減少，責任也隨之變少", s: 1}, {t: "開始依賴 AI 背書，若出錯傾向認為是工具的問題", s: 2}, {t: "AI 只是工具，我的專業地位不變，操作應更謹慎", s: 4}, {t: "AI 促使我更嚴謹審核成果，承擔更高層次的專業責任", s: 5}] }
-                    ]}
-                ];
+  <div class="analyze-wrap">
+    <div style="display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn-analyze" id="jobAnalyzeBtn" onclick="requireGate(analyzeJob)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        分析公司職缺性格需求
+      </button>
+      <button class="btn-demo" onclick="requireGate(showDemo)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        分析結果範例
+      </button>
+    </div>
+    <div class="analyze-note">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#A8A29E"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+      約需 30–60 秒（分析 54 個向度）
+    </div>
+  </div>
 
-                const shuffledQuestions = ref([]);
-                const shuffle = (array) => {
-                    let arr = [...array];
-                    for (let i = arr.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [arr[i], arr[j]] = [arr[j], arr[i]];
-                    }
-                    return arr;
-                };
+  <div class="loading-wrap" id="jobLoadingWrap">
+    <div class="loading-bar-outer">
+      <div class="loading-bar-inner" id="jobLoadingBarInner"></div>
+    </div>
+    <div class="loading-label">AI 正在分析 54 個性格向度<span class="loading-dots"><span>．</span><span>．</span><span>．</span></span></div>
+    <div class="loading-sub" id="loadingSubText">分析公司頁性格需求…</div>
+  </div>
+</div>
 
-                const initSurvey = () => {
-                    let globalIdx = 1;
-                    shuffledQuestions.value = seedQuestions.map(cat => ({
-                        ...cat,
-                        items: cat.items.map(item => ({
-                            ...item,
-                            displayIndex: globalIdx++,
-                            shuffledOpts: shuffle(item.opts.map(o => ({ text: o.t, score: o.s })))
-                        }))
-                    }));
-                };
+<div id="jobTraitsPanel" style="display:none;">
+  <div id="jobTraitsContent"></div>
+  <div style="text-align:center;margin-top:8px;">
+    <button class="btn-reset" onclick="resetAll()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      重新分析
+    </button>
+  </div>
+</div>
 
-                const selectAnswer = (qId, score) => { userAnswers.value[qId] = score; };
+<div class="toast" id="toast"></div>
 
-                const dimensionScores = computed(() => {
-                    const res = { Strategy: 0, Execution: 0, Evaluation: 0, Duty: 0 };
-                    seedQuestions.forEach(cat => { cat.items.forEach(item => { res[cat.id_key] += (userAnswers.value[item.id] || 0); }); });
-                    return res;
-                });
 
-                const totalScore = computed(() => Object.values(dimensionScores.value).reduce((a, b) => a + b, 0));
+<script>
+const SAMPLE_COMPANY = `公司名稱：104人力銀行
 
-                const resultTitle = computed(() => {
-                    if (totalScore.value >= 85) return "AI 領航導師 (Pioneer)";
-                    if (totalScore.value >= 65) return "效能實踐者 (Practitioner)";
-                    if (totalScore.value >= 45) return "適應觀察者 (Observer)";
-                    return "傳統守成者 (Protector)";
-                });
+公司介紹
+產業類別：網際網路相關業
+資本額：3億3123萬元
+員工人數：1000人
+地址：新北市新店區寶中路119號之一10樓(231)
 
-                const resultDesc = computed(() => {
-                    if (totalScore.value >= 85) return "您能從策略高度駕馭技術，兼顧高效執行與倫理責任，是 AI 時代最具價值的領航人才。";
-                    if (totalScore.value >= 65) return "您具備成熟的協作意識，建議深化策略布局與風險控管，進一步發揮數位領導力。";
-                    if (totalScore.value >= 45) return "您已跨入 AI 門檻，但在流程整合、事實辨析與資安風險管理上仍有顯著的強化空間。";
-                    return "您仍依賴傳統運作模式，對 AI 衝擊與侷限掌握不足。建議即刻重塑職涯策略，補強 SEED 核心素養。";
-                });
+公司簡介
+【品牌故事】
+我們在乎的，不只當下，還有對時代的深遠意義。
 
-                const dimensionAnalysis = computed(() => {
-                    const s = dimensionScores.value;
-                    return {
-                        Strategy: { title: "Strategy 策略思維", feedback: s.Strategy >= 18 ? "具高度策略腦與協作視野。" : "決策較依賴舊有經驗路徑。", action: s.Strategy >= 18 ? "規劃跨部門導入專案。" : "練習挑戰數據預設觀點。" },
-                        Execution: { title: "Execution 執行效能", feedback: s.Execution >= 18 ? "行動手高效，工具調配精準。" : "指令輸入層次有限。", action: s.Execution >= 18 ? "建立個人自動化 SOP。" : "學習結構化提示詞技巧。" },
-                        Evaluation: { title: "Evaluation 評估辨析", feedback: s.Evaluation >= 18 ? "辨析眼敏銳，守護最高裁決。" : "對系統產出存有依賴偏誤。", action: s.Evaluation >= 18 ? "開發內容審核標準。" : "練習針對 AI 產出事實查核。" },
-                        Duty: { title: "Duty 責任倫理", feedback: s.Duty >= 18 ? "倫理心堅定，資安意識佳。" : "忽視潛在合規風險。", action: s.Duty >= 18 ? "推動組織級倫理準則。" : "加強智財權法律知識。" }
-                    };
-                });
+1996年，104誕生，如同美麗的珍珠，來自一粒蚌殼無法忍受的砂粒。
 
-                const calculateScore = () => {
-                    let unFinishedIds = [];
-                    shuffledQuestions.value.forEach(cat => {
-                        cat.items.forEach(q => {
-                            if (!userAnswers.value[q.id]) { unFinishedIds.push(q.displayIndex); }
-                        });
-                    });
-                    if (unFinishedIds.length > 0) {
-                        alert(`請完成尚未回答的題目：第 ${unFinishedIds.join(', ')} 題`);
-                        return;
-                    }
-                    reportDate.value = new Date().toLocaleString();
-                    showResult.value = true;
-                    window.scrollTo(0, 0);
-                };
+創辦人楊基寬早年曾外派德國和英國，對於歐美重視人與人的尊重、提升人文水平深植於心，返台後，與朋友成功創業，原已是科技新貴的創業家，卻因無法忍受產品品質被忽略的刺心感而主動辭職。
+人生重新歸零，當時網路還不普及，人力招募處於報紙人事廣告和店家貼紅字條的傳統年代。在事業巔峰拒絕因循定規，楊基寬尋找醉心感動的人生續曲，眼見人們總是習慣沒有效率的求職求才管道，他再次啟動勇敢挑戰的創業魂，歷經兩年拼搏，在三十多坪的舊公寓住家，僅用一部電腦架設網站，創立104人力銀行，並以人性化的網路媒合，開啟國內人力資源市場新頁。
 
-                const downloadJPG = async () => {
-                    const element = document.getElementById('report-capture');
-                    const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-                    const link = document.createElement('a');
-                    link.href = canvas.toDataURL('image/jpeg', 0.9);
-                    link.download = `SEED_Report_${new Date().getTime()}.jpg`;
-                    link.click();
-                };
+●我們在乎人的價值，讓人力變人才的有機環境。
+人的一生，有三十年花在職場，平均會換七次工作，當找工作停留在薪資價格的低階層次，而非理想價值和社會影響力，職場不會進步；當找人才停留在費用成本的數字階段，企業無法累積人才資本，國力不會提升。
+身為市場典範，我們追求工作、生活與生命的質感，對求職者「不只找工作，幫你找方向」，對徵才企業「不只找人才，為你管理人才」；唯有看見「人」的價值，勞資才能共榮共享，職場才能有機共生。
 
-                const reset = () => { userAnswers.value = {}; showResult.value = false; initSurvey(); window.scrollTo(0, 0); };
+●最真誠的企業承諾，就是陪伴客戶成長、引領社會前行。
+為求產業創新，我們以C.M.O.S.A.五大核心概念（cloud雲端、mobile行動、open開放、social社群、A.I.人工智慧）步入第二代104，在多元職涯與多元人資的既有基礎上，優化廣度服務，滿足深層需求。
+觀察到人口老化與少子化的時代趨勢，我們的經營觸角從職涯延伸到銀髮與兒童，確立「老有所終、壯有所用、幼有所長」為公司發展的三大核心，期待發揮健康長者的價值，另期待幫每一個孩子找到天賦，以質代量，緩解人才供應短少的衝擊。
 
-                onMounted(initSurvey);
+●關懷台灣母親，鼓勵破框思考、價值轉型
+104的誕生，緣於失業的社會問題。我們肩上，一直有一份社會責任，一種想安定職場的力量，想關愛土地的活力。我們始終期待，工作的角色應轉型為付出的角色，轉變成幫助社會的人，敢於擁抱問題、解決問題；往往，這就創造出獨特價值和自己的意義。
 
-                return { shuffledQuestions, userAnswers, showResult, totalScore, dimensionScores, resultTitle, resultDesc, dimensionAnalysis, reportDate, selectAnswer, calculateScore, downloadJPG, reset };
-            }
-        }).mount('#app');
-    </script>
+經營理念
+如果幫每個上班族找到方向是公司的願景，那麼我們必須給自己兩個新的責任：
+1.讓孝順的他們無需分心漸老的雙親；
+2.讓勤奮的他們無需憂心漸大的子女！
+
+104的三大使命：
+1.【職涯使命，壯有所用】104期待對求職者「不只找工作，幫你找方向」，對企業「不只找人才，幫你管理人才」。
+2.【銀髮使命，老有所終】104期待發揮健康長者的價值。
+3.【孩子使命，幼有所長】104期待幫每一個孩子找到天份。
+
+【學習不間斷】
+『104大學』企劃學院、工程學院、管理學院，積極贊助IT研討會及黑客松大賽、開辦多項專業課程及內部分享，提供完整系列課程培育內部同仁。
+
+【薪酬政策】
+每年透過外部機構的薪酬調查報告等管道收集資訊，進行薪資比對、年度調薪，提供具市場競爭性的薪酬。
+
+【技術發展】
+104透過C.M.O.S.A.、Big data應用，提供大眾更快速、有效的求才求職服務：雲端服務(Cloud)、行動平台(Mobile)、開放平台(Open)、群體智慧(Social)、人工智慧(A.I.)
+
+【人才永續獲多項獎項肯定】
+榮獲國家人才發展獎、TTQS金牌認證、天下永續公民獎小巨人組新秀獎、TCSA台灣永續獎人才發展領袖獎、勞動部工作生活平衡獎等獎項。`;
+
+const SAMPLE_JOB = `職缺名稱：人資專員
+
+104人力銀行_一零四資訊科技股份有限公司
+徵才積極度：活躍
+應徵人數 11~30 人
+
+工作內容
+歡迎加入104人資團隊，共同成長!
+【Giver 團隊文化】不擔心單打獨鬥，我們擁有一群樂於分享、鼓勵創新、彼此支援的夥伴，讓你工作不孤單。
+【千人級實戰場景】服務 1,000+ 名員工，透過 eHRMS 系統深度掌握「新進、離職、假勤、福利」的全核心流程。
+【清晰的職涯路徑】鼓勵內部輪調與跨域學習，從這裡紮穩馬步，未來可往其他 HR 專業領域發展。
+
+職務內容:
+1. 打造溫暖的入職體驗
+   *負責新進同仁接待與制度導覽，成為新人加入 104 的首位專業嚮導。
+   *辦理聘僱合約、資料建檔及勞健保加退保作業，確保法規合規性。
+2. 專業的假勤管理與諮詢
+   *運用 104 eHRMS 執行班別管理、調班與排班作業、假勤設定、假勤審核、及每月假勤結算與報表彙整。
+   *擔任「進階假勤專家」：針對 HR 客服機器人無法處理的複雜個案，提供具溫度的專業建議與回覆。
+   *隨時關注勞動法令中關於各項假別之調整，具備專業分析能力並適時調整公司制度以符合合規性。
+3. 全方位團保服務與規劃
+   *保險實務執行：辦理員工及眷屬團保加保，負責每月保費核對與請款。
+   *年度方案評估：參與年度團保續約/換約評估，定期檢視理賠概況與保障內容，確保提供同仁最具競爭力的保險方案。
+4. 離職、留停與福利審核
+   *辦理員工離職/留停作業，並審核與發放各項生育、喪葬、結婚津貼與生日禮金，傳遞公司的關懷與福利溫度。
+5. AI 流程優化
+   *運用 AI 工具優化報到、假勤及團保行政流程，將重複性作業自動化，提升工作效率與品質。
+   *104提供豐富訓練課程，教你如何用 AI 工具輔助 HR 工作，讓你成為科技時代的人資尖兵。
+
+職務類別：人力資源人員、人力資源助理
+工作待遇：月薪38,000元以上
+工作性質：全職
+上班地點：新北市新店區寶中路119號3樓(231)
+管理責任：不需負擔管理責任
+出差外派：無需出差外派
+
+條件要求
+工作經歷：1年以上
+學歷要求：大學、碩士
+科系要求：不拘
+語文條件：不拘
+
+其他條件
+經驗要求：具備 1 年以上人資假勤、保險相關實務經驗者尤佳。
+核心素質：細心度高、具服務熱忱，且對「運用 AI 提升效率」充滿好奇心與學習動力。
+團隊特質：認同 Giver 精神，喜歡分享與互助，願意在團隊中貢獻新想法。`;
+
+const FACTOR_COLORS = {
+  '情緒穩定': { bg: '#eef4fb', border: '#7bafd4', dot: '#2e7d9e' },
+  '親和樂群': { bg: '#f0faf0', border: '#7dbf7d', dot: '#2e7e2e' },
+  '勤勉審慎': { bg: '#fdf6ee', border: '#d4a97b', dot: '#9e6a2e' },
+  '外向實踐': { bg: '#fdf0f8', border: '#d47bb0', dot: '#9e2e78' },
+  '經驗開放': { bg: '#f3f0fd', border: '#a07bd4', dot: '#5e2e9e' },
+};
+
+const SCORE_LABELS = { 1: '完全不需要', 2: '不太需要', 3: '部分需要', 4: '需要', 5: '非常需要' };
+function getScoreLabelC(score) {
+  if (score <= 1.40) return '完全不需要';
+  if (score <= 2.40) return '不太需要';
+  if (score <= 3.40) return '部分需要';
+  if (score <= 4.40) return '需要';
+  return '非常需要';
+}
+const SCORE_LABELS_C = { 1: '完全不需要', 2: '不太需要', 3: '部分需要', 4: '需要', 5: '非常需要' };
+
+function updateStatus() {
+  const company = document.getElementById('companyInput').value.trim();
+  const job     = document.getElementById('jobInput').value.trim();
+  const companyDot  = document.getElementById('companyDot');
+  const companyText = document.getElementById('companyStatusText');
+  const jobDot      = document.getElementById('jobDot');
+  const jobText     = document.getElementById('jobStatusText');
+  if (company) {
+    companyDot.classList.add('filled');
+    companyText.textContent = `${company.length} 字`;
+    document.getElementById('step1item').className = 'step-item done';
+    document.getElementById('step2item').className = 'step-item active';
+  } else {
+    companyDot.classList.remove('filled');
+    companyText.textContent = '尚未輸入';
+    document.getElementById('step1item').className = 'step-item active';
+    document.getElementById('step2item').className = 'step-item';
+  }
+  if (job) {
+    jobDot.classList.add('filled');
+    jobText.textContent = `${job.length} 字`;
+    document.getElementById('step2item').className = 'step-item done';
+    document.getElementById('step3item').className = 'step-item active';
+  } else {
+    jobDot.classList.remove('filled');
+    jobText.textContent = '尚未輸入';
+    if (company) document.getElementById('step2item').className = 'step-item active';
+  }
+}
+
+function loadSample(type) {
+  if (type === 'company') document.getElementById('companyInput').value = SAMPLE_COMPANY;
+  else                     document.getElementById('jobInput').value = SAMPLE_JOB;
+  updateStatus();
+  showToast('範例資料已帶入');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function resetAll() {
+  document.getElementById('appShell').style.display = '';
+  document.getElementById('jobTraitsPanel').style.display = 'none';
+  document.getElementById('jobTraitsContent').innerHTML = '';
+  document.getElementById('jobAnalyzeBtn').disabled = false;
+  document.getElementById('jobLoadingWrap').classList.remove('active');
+  document.getElementById('companyInput').value = '';
+  document.getElementById('jobInput').value = '';
+  document.getElementById('step1item').className = 'step-item active';
+  document.getElementById('step2item').className = 'step-item';
+  document.getElementById('step3item').className = 'step-item';
+  updateStatus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function safeParseJSON(raw) {
+  // Strip markdown fences
+  let s = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim();
+  // Try direct parse
+  try { return JSON.parse(s); } catch(e) {}
+  // Find outermost { }
+  const start = s.indexOf('{');
+  if (start === -1) return null;
+  // Find matching closing brace
+  let depth = 0, end = -1;
+  for (let i = start; i < s.length; i++) {
+    if (s[i] === '{') depth++;
+    else if (s[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
+  }
+  const candidate = end !== -1 ? s.slice(start, end + 1) : s.slice(start);
+  try { return JSON.parse(candidate); } catch(e) {}
+  // Last resort: try to fix truncated JSON by closing open structures
+  try {
+    let fixed = candidate;
+    // Count unclosed brackets
+    let opens = (fixed.match(/\[/g)||[]).length - (fixed.match(/\]/g)||[]).length;
+    let braces = (fixed.match(/\{/g)||[]).length - (fixed.match(/\}/g)||[]).length;
+    // Remove trailing incomplete entry
+    const lastComma = fixed.lastIndexOf(',');
+    const lastBrace = Math.max(fixed.lastIndexOf('}'), fixed.lastIndexOf(']'));
+    if (lastComma > lastBrace) fixed = fixed.slice(0, lastComma);
+    for (let i = 0; i < opens; i++) fixed += ']';
+    for (let i = 0; i < braces; i++) fixed += '}';
+    const parsed = JSON.parse(fixed);
+    console.warn('Recovered truncated JSON, traits count:', parsed.traits ? parsed.traits.length : 'unknown');
+    return parsed;
+  } catch(e2) {}
+  return null;
+}
+
+// ── 54 traits master list ──
+const ALL_TRAITS = [
+  {code:'D14H',name:'抗壓性',factor:'情緒穩定'},{code:'D02H',name:'情緒調適',factor:'情緒穩定'},
+  {code:'D15H',name:'樂觀性',factor:'情緒穩定'},{code:'D28H',name:'適應性',factor:'情緒穩定'},
+  {code:'D14L',name:'焦慮性',factor:'情緒穩定'},{code:'D02L',name:'情緒化',factor:'情緒穩定'},
+  {code:'D15L',name:'悲觀性',factor:'情緒穩定'},{code:'D28L',name:'固著性',factor:'情緒穩定'},
+  {code:'D17H',name:'取悅性',factor:'親和樂群'},{code:'D04H',name:'社交性',factor:'親和樂群'},
+  {code:'D27H',name:'合作性',factor:'親和樂群'},{code:'D12H',name:'互賴性',factor:'親和樂群'},
+  {code:'D08H',name:'順從性',factor:'親和樂群'},{code:'D17L',name:'剛直性',factor:'親和樂群'},
+  {code:'D04L',name:'獨處性',factor:'親和樂群'},{code:'D27L',name:'個人表現',factor:'親和樂群'},
+  {code:'D12L',name:'獨立性',factor:'親和樂群'},{code:'D08L',name:'主見性',factor:'親和樂群'},
+  {code:'D23H',name:'循規性',factor:'勤勉審慎'},{code:'D13H',name:'秩序性',factor:'勤勉審慎'},
+  {code:'D03H',name:'謹慎性',factor:'勤勉審慎'},{code:'D21H',name:'負責任',factor:'勤勉審慎'},
+  {code:'D09H',name:'堅毅性',factor:'勤勉審慎'},{code:'D23L',name:'不羈性',factor:'勤勉審慎'},
+  {code:'D13L',name:'不拘小節',factor:'勤勉審慎'},{code:'D03L',name:'直覺性',factor:'勤勉審慎'},
+  {code:'D21L',name:'隨性',factor:'勤勉審慎'},{code:'D09L',name:'不執著',factor:'勤勉審慎'},
+  {code:'D18H',name:'活力',factor:'外向實踐'},{code:'D26H',name:'企圖心',factor:'外向實踐'},
+  {code:'D25H',name:'表現性',factor:'外向實踐'},{code:'D01H',name:'領導性',factor:'外向實踐'},
+  {code:'D16H',name:'影響性',factor:'外向實踐'},{code:'D11H',name:'直率性',factor:'外向實踐'},
+  {code:'D18L',name:'從容性',factor:'外向實踐'},{code:'D26L',name:'知足性',factor:'外向實踐'},
+  {code:'D25L',name:'謙虛性',factor:'外向實踐'},{code:'D01L',name:'跟隨性',factor:'外向實踐'},
+  {code:'D16L',name:'順應性',factor:'外向實踐'},{code:'D11L',name:'委婉性',factor:'外向實踐'},
+  {code:'D20H',name:'文化開放',factor:'經驗開放'},{code:'D24H',name:'冒險性',factor:'經驗開放'},
+  {code:'D07H',name:'求變性',factor:'經驗開放'},{code:'D06H',name:'思辨性',factor:'經驗開放'},
+  {code:'D10H',name:'創造性',factor:'經驗開放'},{code:'D22H',name:'同理心',factor:'經驗開放'},
+  {code:'D19H',name:'敏覺性',factor:'經驗開放'},{code:'D20L',name:'傳統性',factor:'經驗開放'},
+  {code:'D24L',name:'守成性',factor:'經驗開放'},{code:'D07L',name:'安穩性',factor:'經驗開放'},
+  {code:'D06L',name:'思考具體性',factor:'經驗開放'},{code:'D10L',name:'務實性',factor:'經驗開放'},
+  {code:'D22L',name:'自我關注性',factor:'經驗開放'},{code:'D19L',name:'心思單純',factor:'經驗開放'},
+];
+
+const TRAIT_TYPICAL = {
+  'D14H':'冷靜沉著、處變不驚','D02H':'情緒平復快、心胸開闊',
+  'D15H':'思考正向、開朗','D28H':'彈性應變、隨遇而安',
+  'D14L':'精神緊繃、易緊張憂慮','D02L':'情緒反應大、心情平復慢',
+  'D15L':'想法悲觀、不輕易相信人','D28L':'以不變應萬變、適應緩慢',
+  'D17H':'重視關係建立、身段柔軟','D04H':'熱情、活躍、健談',
+  'D27H':'重視團隊精神、合群','D12H':'依賴或重視他人意見',
+  'D08H':'隨和、服從、配合','D17L':'剛正不阿、不逢迎拍馬',
+  'D04L':'喜歡獨處、不主動攀談','D27L':'重視個人成就、單打獨鬥',
+  'D12L':'獨立、自主','D08L':'有主見、不易妥協',
+  'D23H':'自律嚴謹、循規蹈矩','D13H':'井然有序、完美主義',
+  'D03H':'三思而行、小心翼翼','D21H':'認真、可靠、有擔當',
+  'D09H':'恆心、毅力、堅持到底','D23L':'不拘泥世俗眼光，不愛被拘束',
+  'D13L':'大而化之、不拘細節','D03L':'憑直覺行事、行動快速',
+  'D21L':'不愛擔當責任，做事隨性','D09L':'重視立即成果、不堅持執著',
+  'D18H':'精力充沛、有幹勁','D26H':'追求挑戰、超越他人',
+  'D25H':'引人注目、追求掌聲','D01H':'喜歡主導、掌控事情',
+  'D16H':'堅持意見、說服他人','D11H':'心直口快、仗義直言',
+  'D18L':'步調舒緩、輕鬆自在','D26L':'安於現狀、平凡、知足',
+  'D25L':'謙虛、不居功、不誇耀','D01L':'不喜歡主導、安於跟隨',
+  'D16L':'習慣順應，接受他人想法','D11L':'委婉、含蓄、圓滑',
+  'D20H':'價值開放、尊重多元','D24H':'勇於嘗試、追求刺激',
+  'D07H':'追求新穎、渴望變化','D06H':'喜歡思考、分析事情',
+  'D10H':'古靈精怪、創意十足','D22H':'善解人意、熱心助人',
+  'D19H':'善察言觀色、感覺敏銳','D20L':'重視傳統、堅持既有價值觀',
+  'D24L':'穩紮穩打、避免風險','D07L':'喜歡穩定、既定模式',
+  'D06L':'喜歡具體、明確、不複雜','D10L':'想法實際、遵循慣例',
+  'D22L':'關注自我、不受他人感受影響','D19L':'心思不細膩、不世故敏感'
+};
+
+
+const TRAIT_LIST_STR = `
+【性格向度清單】格式：代碼 向度名稱｜定義：…｜典型：…
+
+─情緒穩定（個人在面對壓力情境時，心理狀態能維持或恢復穩定的傾向）─
+D14H 抗壓性｜定義：心理強靭，面對壓力不會過度緊張擔憂的傾向｜典型：冷靜沉著、處變不驚
+D02H 情緒調適｜定義：受衝擊可調節情緒，迅速回復冷靜平和的傾向｜典型：情緒平復快、心胸開闊
+D15H 樂觀性｜定義：習慣從正面看待人和事，對未來懷抱信心的傾向｜典型：思考正向、開朗
+D28H 適應性｜定義：彈性調整行為模式以因應環境需求的傾向｜典型：彈性應變、隨遇而安
+D14L 焦慮性｜定義：易受壓力或挫折影響而緊張焦慮的傾向｜典型：精神緊繃、易緊張憂慮
+D02L 情緒化｜定義：情緒易受侵擾而失衡，糾結或陷入負面情緒的傾向｜典型：情緒反應大、心情平復慢
+D15L 悲觀性｜定義：習慣從負面看待人和事，對未來缺乏信心的傾向｜典型：想法悲觀、不輕易相信人
+D28L 固著性｜定義：習慣既有行為模式，不喜歡因環境變動而調整的傾向｜典型：以不變應萬變、適應緩慢
+
+─親和樂群（個人對人際互動積極參與、樂於配合的傾向）─
+D17H 取悅性｜定義：樂於迎合他人以留給別人良好印象的傾向｜典型：重視關係建立、身段柔軟
+D04H 社交性｜定義：喜歡社交活動並積極與他人互動的傾向｜典型：熱情、活躍、健談
+D27H 合作性｜定義：喜歡參與團隊合作，與他人協力完成任務的傾向｜典型：重視團隊精神、合群
+D12H 互賴性｜定義：重視與他人相互依存，樂於尋求他人意見或協助的傾向｜典型：依賴或重視他人意見
+D08H 順從性｜定義：樂於配合他人指示或團體意見的傾向｜典型：隨和、服從、配合
+D17L 剛直性｜定義：不在乎他人好惡，或不願為人際關係去討好他人的傾向｜典型：剛正不阿、不逢迎拍馬
+D04L 獨處性｜定義：習慣獨處，不熱衷社交活動或與人互動的傾向｜典型：喜歡獨處、不主動攀談
+D27L 個人表現｜定義：喜歡獨自行動，不需配合他人或受他人影響的傾向｜典型：重視個人成就、單打獨鬥
+D12L 獨立性｜定義：不喜歡受人意見左右或依賴別人，自己做決定和解決問題的傾向｜典型：獨立、自主
+D08L 主見性｜定義：不懼權威、敢與眾不同，有自己明確立場主張的傾向｜典型：有主見、不易妥協
+
+─勤勉審慎（個人在行事風格中重視條理、謹慎負責的傾向）─
+D23H 循規性｜定義：重視社會公義、遵循社會規範的傾向｜典型：自律嚴謹、循規蹈矩
+D13H 秩序性｜定義：喜歡凡事有條理、組織，並重視細節的傾向｜典型：井然有序、完美主義
+D03H 謹慎性｜定義：行事小心，三思而後行以防犯錯的傾向｜典型：三思而行、小心翼翼
+D21H 負責任｜定義：重視承諾、做事盡責並願承擔結果的傾向｜典型：認真、可靠、有擔當
+D09H 堅毅性｜定義：面對困難持續努力、堅持不懈的傾向｜典型：恆心、毅力、堅持到底
+D23L 不羈性｜定義：不拘泥世俗眼光，不愛受拘束的行為傾向｜典型：不拘泥世俗眼光，不愛被拘束
+D13L 不拘小節｜定義：做事大而化之，不拘泥細節或流程的傾向｜典型：大而化之、不拘細節
+D03L 直覺性｜定義：喜歡依直覺快速行動，隨機應變的傾向｜典型：憑直覺行事、行動快速
+D21L 隨性｜定義：不習慣承擔責任和結果，較隨性而為的傾向｜典型：不愛擔當責任，做事隨性
+D09L 不執著｜定義：重視投入能迅速見效，否則不惜轉換目標的傾向｜典型：重視立即成果、不堅持執著
+
+─外向實踐（個人試圖影響外界、實現意圖的傾向）─
+D18H 活力｜定義：精力充沛、活動力旺盛而行動積極的傾向｜典型：精力充沛、有幹勁
+D26H 企圖心｜定義：喜歡贏過別人，努力追求個人更高成就的傾向｜典型：追求挑戰、超越他人
+D25H 表現性｜定義：喜歡展現自我，獲得關注和讚揚的傾向｜典型：引人注目、追求掌聲
+D01H 領導性｜定義：喜歡主導局勢，擔任領導工作的傾向｜典型：喜歡主導、掌控事情
+D16H 影響性｜定義：喜歡說服他人、影響他人行為的傾向｜典型：堅持意見、說服他人
+D11H 直率性｜定義：喜歡有話就說，坦白率直的傾向｜典型：心直口快、仗義直言
+D18L 從容性｜定義：不喜歡繁忙活動，習慣步調平穩不急躁的傾向｜典型：步調舒緩、輕鬆自在
+D26L 知足性｜定義：滿足現狀，不貪求、不好勝和淡泊名利的傾向｜典型：安於現狀、平凡、知足
+D25L 謙虛性｜定義：低調不突出自己，習慣謙遜、不居功的傾向｜典型：謙虛、不居功、不誇耀
+D01L 跟隨性｜定義：不習慣主導局勢，安於跟隨、聽從指示的傾向｜典型：不喜歡主導、安於跟隨
+D16L 順應性｜定義：尊重他人想法，不喜歡去說服或改變別人的傾向｜典型：習慣順應，接受他人想法
+D11L 委婉性｜定義：不喜歡表態，行事委婉、圓滑、有保留的傾向｜典型：委婉、含蓄、圓滑
+
+─經驗開放（個人對內心或外在環境之感知經驗的開放接受傾向）─
+D20H 文化開放｜定義：對不同文化及觀點抱持開放態度的傾向｜典型：價值開放、尊重多元
+D24H 冒險性｜定義：樂於體驗不確定，較願意冒風險去挑戰的傾向｜典型：勇於嘗試、追求刺激
+D07H 求變性｜定義：喜好新事物，主動尋求改變與突破的傾向｜典型：追求新穎、渴望變化
+D06H 思辨性｜定義：喜歡深入分析思考和解答難題的傾向｜典型：喜歡思考、分析事情
+D10H 創造性｜定義：喜歡思索新穎想法與獨特解方的傾向｜典型：古靈精怪、創意十足
+D22H 同理心｜定義：喜歡瞭解他人感受、對人表達關懷的傾向｜典型：善解人意、熱心助人
+D19H 敏覺性｜定義：喜歡觀察人際互動、習慣察言觀色的傾向｜典型：善察言觀色、感覺敏銳
+D20L 傳統性｜定義：習慣固有傳統與價值，重視既定文化和秩序的傾向｜典型：重視傳統、堅持既有價值觀
+D24L 守成性｜定義：避免風險和挑戰，重視安全與穩定的傾向｜典型：穩紮穩打、避免風險
+D07L 安穩性｜定義：喜歡熟悉事物和既定模式，不喜歡變動的傾向｜典型：喜歡穩定、既定模式
+D06L 思考具體性｜定義：思考方式直接不複雜，喜歡具體明確事物的傾向｜典型：喜歡具體、明確、不複雜
+D10L 務實性｜定義：注重實際可行做法，質疑未經驗證新點子的傾向｜典型：想法實際、遵循慣例
+D22L 自我關注性｜定義：關注自我，易忽視或不能體會他人感受的傾向｜典型：關注自我、不受他人感受影響
+D19L 心思單純｜定義：少關注人際互動，對人情世故少費心思的傾向｜典型：心思不細膩、不世故敏感`;
+
+// ── 各向度五等級評分錨點（依據職缺文字訊號判斷）──
+const SCORING_CRITERIA_STR = `
+【各向度評分錨點】評分依據職缺說明與公司介紹中的文字訊號，每個向度格式為「1=…|2=…|3=…|4=…|5=…」
+括號內為向度定義，請先理解定義再對照錨點給分。
+
+─情緒穩定─
+D14H抗壓性（心理強靭，面對壓力不會過度緊張擔憂的傾向）: 1=明確低壓輕鬆步調|2=無壓力相關描述|3=偶有截止或多工|4=明確提及高壓多工緊迫時限|5=多處強調高壓危機應變大量複雜任務
+D02H情緒調適（受衝擊可調節情緒，迅速回復冷靜平和的傾向）: 1=純技術獨立無人際衝突|2=人際少事務性|3=偶需面對不滿|4=頻繁客訴敏感議題離職績效溝通|5=核心為高衝突危機高情緒強度
+D15H樂觀性（習慣從正面看待人和事，對未來懷抱信心的傾向）: 1=客觀批判分析為主|2=屬性中性無描述|3=隱含需積極態度|4=提及正向態度服務熱忱樂觀進取|5=多處強調樂觀為核心文化或帶動他人
+D28H適應性（彈性調整行為模式以因應環境需求的傾向）: 1=SOP固定流程穩定|2=變動低環境穩定|3=偶需調整方式|4=明確提及彈性快速學習組織轉型|5=多處強調快速轉型新技術持續導入
+D14L焦慮性（易受壓力或挫折影響而緊張焦慮的傾向）: 1=反覆強調抗壓穩定表現|2=有壓力複雜人際|3=壓力中等可緩衝|4=環境單純幾無壓力衝突|5=完全靜態或需高度敏感性職位
+D02L情緒化（情緒易受侵擾而失衡，糾結或陷入負面情緒的傾向）: 1=需專業形象頻繁敏感議題|2=涉及人際協調|3=情緒挑戰有限|4=創作表演情感表達為主|5=核心需真實情感投入表演藝術
+D15L悲觀性（習慣從負面看待人和事，對未來缺乏信心的傾向）: 1=強調積極正向文化熱忱|2=需維持服務熱忱|3=中性偶需審慎懷疑|4=需深度風險評估稽核|5=核心為風險管理合規稽核危機預防
+D28L固著性（習慣既有行為模式，不喜歡因環境變動而調整的傾向）: 1=多處強調創新流程革新|2=有變革需求|3=部分創新部分穩定|4=維持高品質流程一致性|5=守護傳統確保制度一致法規典藏
+
+─親和樂群─
+D17H取悅性（樂於迎合他人以留給別人良好印象的傾向）: 1=獨立技術客觀判斷非服務|2=人際少以產出衡量|3=有服務成分非首要|4=明確提及服務熱忱溫暖接待體驗|5=核心為打造卓越服務體驗
+D04H社交性（喜歡社交活動並積極與他人互動的傾向）: 1=獨立深度專注過多互動礙效率|2=互動偶發非主軸|3=適量互動有幫助|4=頻繁跨部門對外接觸主持活動|5=核心為建立人際網絡主持大型活動
+D27H合作性（喜歡參與團隊合作，與他人協力完成任務的傾向）: 1=完全獨立執行|2=偶有溝通個人貢獻|3=兼具獨立與協作|4=明確強調團隊合作跨部門協力|5=組織文化以協作核心Giver精神互助
+D12H互賴性（重視與他人相互依存，樂於尋求他人意見或協助的傾向）: 1=強調高度自主獨立決策|2=個人判斷為主|3=涉及一定協作|4=明確提及互助文化相互支援|5=強調共同承擔個人主義不符文化
+D08H順從性（樂於配合他人指示或團體意見的傾向）: 1=需獨立判斷鼓勵挑戰現狀|2=有自主空間|3=兼顧指示與自主|4=強調依循流程執行指示服從決策|5=高規範職位完全依循指令
+D17L剛直性（不在乎他人好惡，或不願為人際關係去討好他人的傾向）: 1=服務滿意度為核心|2=需頻繁配合|3=兼顧配合與堅持|4=需維護專業立場不受壓妥協|5=核心為捍衛原則規範法遵道德
+D04L獨處性（習慣獨處，不熱衷社交活動或與人互動的傾向）: 1=密集人際互動協作|2=相當人際互動|3=兼顧獨立與協作|4=主要獨立深度研究寫作程式|5=完全個人獨立幾無需互動
+D27L個人表現（喜歡獨自行動，不需配合他人或受他人影響的傾向）: 1=強調集體貢獻個人文化負面|2=以團隊成果衡量|3=兼顧個人與團隊|4=有明確個人績效指標業績獎項|5=以個人卓越表現為核心業務藝術
+D12L獨立性（不喜歡受人意見左右或依賴別人，自己做決定和解決問題的傾向）: 1=強調互助共榮獨立不合群|2=密切協作需求|3=兼顧獨立與協作|4=需自主管理時間任務|5=高度自主個人貢獻獨立研究
+D08L主見性（不懼權威、敢與眾不同，有自己明確立場主張的傾向）: 1=服從指示依循標準作業|2=自主空間有限|3=兼顧規範與自主|4=複雜情境需獨立判斷|5=模糊衝突中做關鍵決策
+
+─勤勉審慎─
+D23H循規性（重視社會公義、遵循社會規範的傾向）: 1=創新突破不受舊規束縛|2=有彈性空間|3=部分規範部分自主|4=明確提及法規合規要求|5=核心為法規遵循制度執行偏差後果嚴重
+D13H秩序性（喜歡凡事有條理、組織，並重視細節的傾向）: 1=彈性靈活快速迭代|2=環境動態需求低|3=部分文件整理需求|4=大量數據文件管理報表彙整|5=核心為複雜資料管理精密排程
+D03H謹慎性（行事小心，三思而後行以防犯錯的傾向）: 1=需快速決策即時反應|2=節奏快謹慎非主要|3=兼顧速度與正確|4=明確提及細心或錯誤代價大財務法律|5=多處強調細心疏失直接影響重大利益
+D21H負責任（重視承諾、做事盡責並願承擔結果的傾向）: 1=輔助支援責任寬鬆|2=職責清楚後果有限|3=有職責需負責影響中等|4=對人員組織有重要影響責任被強調|5=核心影響員工薪酬安全法規高度責任感必要
+D09H堅毅性（面對困難持續努力、堅持不懈的傾向）: 1=步調輕鬆任務明確|2=偶有阻礙程度低|3=有挑戰面對複雜個案|4=長期目標追蹤反覆跟進克服阻力|5=長期高阻力業務開發組織變革
+D23L不羈性（不拘泥世俗眼光，不愛受拘束的行為傾向）: 1=高度法規遵循標準流程|2=有明確規範|3=兼顧規範與創新|4=鼓勵大膽突破跳出框架|5=核心為顛覆創新新創藝術
+D13L不拘小節（做事大而化之，不拘泥細節或流程的傾向）: 1=明確要求細心疏失後果大|2=涉及精確資料|3=兼顧策略與執行|4=戰略規劃創意大局思維比細節重要|5=高層決策願景細節妨礙宏觀
+D03L直覺性（喜歡依直覺快速行動，隨機應變的傾向）: 1=數據分析邏輯推理核心|2=需系統性思考|3=兼顧分析與感受|4=需快速判斷高度人際感知|5=快速情境感知設計師危機指揮
+D21L隨性（不習慣承擔責任和結果，較隨性而為的傾向）: 1=強調責任感準時交付|2=有明確截止責任|3=彈性空間中等|4=創意或彈性型非嚴格時程|5=完全創意輸出時程極彈性
+D09L不執著（重視投入能迅速見效，否則不惜轉換目標的傾向）: 1=需長期堅持追蹤目標|2=需持續努力|3=兼顧堅持與調整|4=需快速轉換優先順序|5=敏捷決策能快速放棄舊方案
+
+─外向實踐─
+D18H活力（精力充沛、活動力旺盛而行動積極的傾向）: 1=深度靜態思考過度活躍礙專注|2=節奏平穩一般|3=有活動量非必要|4=節奏快需帶動士氣大量任務|5=長時間高能量業務衝刺大型活動執行
+D26H企圖心（喜歡贏過別人，努力追求個人更高成就的傾向）: 1=維持現狀過強企圖心製壓力|2=職責範疇明確非加分|3=鼓勵個人成長|4=明確職涯路徑業績目標鼓勵突破|5=以高挑戰目標為核心業績導向
+D25H表現性（喜歡展現自我，獲得關注和讚揚的傾向）: 1=幕後執行低調服務|2=偶有對外非核心|3=有對外溝通需求|4=需公開發表主持代表公司|5=核心為公開表達展示講師主播代言人
+D01H領導性（喜歡主導局勢，擔任領導工作的傾向）: 1=明確不需管理責任|2=個人貢獻者無領導|3=偶有非正式帶領指導|4=需帶領小組跨部門協調|5=核心為帶領團隊重要領導職
+D16H影響性（喜歡說服他人、影響他人行為的傾向）: 1=資料輸入標準執行|2=溝通以告知為主|3=偶需說服利害關係人|4=需爭取資源推動變革引導決策|5=核心為影響決策行為顧問業務政策推動
+D11H直率性（喜歡有話就說，坦白率直的傾向）: 1=需高度外交手腕直率傷關係|2=涉及敏感人際|3=兼顧直率與婉轉|4=文化鼓勵直接反饋開誠布公|5=需立即清晰傳達或激進坦誠文化
+D18L從容性（不喜歡繁忙活動，習慣步調平穩不急躁的傾向）: 1=節奏快速任務緊迫|2=有時程壓力|3=節奏中等|4=深度品質輸出不受速度壓力|5=需細膩耐心藝術修復精密研究
+D26L知足性（滿足現狀，不貪求、不好勝和淡泊名利的傾向）: 1=以業績成長突破為核心|2=鼓勵個人成長|3=有目標重視生活品質|4=強調穩定服務品質|5=維護既有品質穩定優先成長
+D25L謙虛性（低調不突出自己，習慣謙遜、不居功的傾向）: 1=需高能見度積極自我行銷|2=有個人品牌需求|3=兼顧個人與團隊|4=強調Giver精神集體成功|5=推崇不居功服務他人優先
+D01L跟隨性（不習慣主導局勢，安於跟隨、聽從指示的傾向）: 1=需高度自主創新|2=有自主空間|3=兼顧指示與主動|4=流程清楚依循指示為主|5=高規範執行層主動越權是問題
+D16L順應性（尊重他人想法，不喜歡去說服或改變別人的傾向）: 1=需堅守專業立場客觀|2=有明確立場需求|3=兼顧彈性與立場|4=服務多元對象需因人因情境調整|5=核心為跨文化跨層級溝通迅速調適
+D11L委婉性（不喜歡表態，行事委婉、圓滑、有保留的傾向）: 1=激進坦誠文化委婉被視逃避|2=鼓勵直接溝通|3=兼顧直接與溫和|4=需傳達負面訊息處理敏感議題|5=需高度外交手腕政府公關跨文化談判
+
+─經驗開放─
+D20H文化開放（對不同文化及觀點抱持開放態度的傾向）: 1=環境高度同質無多元需求|2=偶有跨文化非主要|3=有跨文化互動|4=明確提及多元族群海外業務跨文化|5=核心為國際業務跨國團隊多元文化服務
+D24H冒險性（樂於體驗不確定，較願意冒風險去挑戰的傾向）: 1=涉及高風險管理穩健執行|2=穩健執行為主|3=鼓勵創新但可控風險|4=明確鼓勵嘗試接受失敗|5=核心為開拓新市場顛覆性創新
+D07H求變性（喜好新事物，主動尋求改變與突破的傾向）: 1=強調穩定一致追求變化破壞品質|2=偶有改善非優先|3=有改善空間|4=明確提及流程優化工具導入持續改善|5=核心為驅動組織轉型流程革新
+D06H思辨性（喜歡深入分析思考和解答難題的傾向）: 1=標準執行過度思辨拖慢速度|2=有標準答案|3=兼顧執行與判斷|4=需解讀複雜法規分析數據評估策略|5=核心為複雜問題解決策略制定
+D10H創造性（喜歡思索新穎想法與獨特解方的傾向）: 1=複製最佳實踐創意非必要|2=依循既有方法|3=有創新空間非核心|4=明確鼓勵創新無既定答案|5=核心為創意輸出設計廣告產品創新
+D22H同理心（喜歡瞭解他人感受、對人表達關懷的傾向）: 1=客觀數據決策同理妨礙判斷|2=人際互動有限|3=有一定人際溝通|4=需深度理解員工客戶使用者|5=核心為關懷性服務HR員工關係社工諮詢
+D19H敏覺性（喜歡觀察人際互動、習慣察言觀色的傾向）: 1=處理結構化資訊過度敏覺焦慮|2=情境單純需求有限|3=偶需察覺非語言訊號|4=需持續觀察法令動態員工情緒|5=核心為偵測預警風險管理組織文化健診
+D20L傳統性（習慣固有傳統與價值，重視既定文化和秩序的傾向）: 1=強調打破傳統持續創新|2=偏向現代化|3=兼顧傳承與創新|4=涉及文化傳承維護品牌一致性|5=核心為守護傳統文化典章制度
+D24L守成性（避免風險和挑戰，重視安全與穩定的傾向）: 1=需積極開拓持續創新|2=鼓勵成長守成不利進取|3=兼顧守護與改善|4=維護既有系統標準|5=確保既有資產品質文物保護合規維護
+D07L安穩性（喜歡熟悉事物和既定模式，不喜歡變動的傾向）: 1=組織持續快速變動|2=有一定變動不利彈性|3=兼顧穩定與變動|4=環境相對穩定|5=完全穩定可預期
+D06L思考具體性（思考方式直接不複雜，喜歡具體明確事物的傾向）: 1=需深度複雜分析|2=有一定複雜度|3=兼顧複雜與直接|4=執行為主簡單直接提升效率|5=完全標準化操作
+D10L務實性（注重實際可行做法，質疑未經驗證新點子的傾向）: 1=長遠願景創新探索務實妨礙理想|2=有探索空間|3=兼顧創新與落地|4=強調有效執行快速見效降成本|5=核心為確保可執行有直接效益專案管理
+D22L自我關注性（關注自我，易忽視或不能體會他人感受的傾向）: 1=Giver精神服務他人關注自我負面|2=重視他人服務|3=兼顧自我發展與服務|4=強調個人貢獻自我驅動目標|5=完全以個人目標達成為主創作研究
+D19L心思單純（少關注人際互動，對人情世故少費心思的傾向）: 1=需高度洞察人際細節|2=涉及複雜人際情境|3=兼顧直接與深度觀察|4=直接溝通高效執行不過度解讀|5=環境單純透明直接不複雜`;
+
+// 單次呼叫：一次請模型同時對「公司頁」與「職缺頁」各給 54 個向度評分，
+// 龐大的評分錨點與向度清單只需送出一次，節省 token 並減少一次往返。
+function buildPrompt(companyText, jobText) {
+  return `你是一位資深人資顧問，專精大五人格評估。請針對【公司介紹】與【職缺說明】兩份文本，各自針對全部 54 個性格向度逐一評分（共兩組、每組 54 個）。
+
+【評分規則】
+分數代表「此文本對該特質的需求程度」，依據文字訊號嚴格對照下方各向度錨點給分：
+1=完全不需要 2=不太需要 3=部分需要 4=需要 5=非常需要
+
+評分步驟：
+1. 先閱讀向度定義與典型描述，理解該向度的核心意涵
+2. 再對照該向度的評分錨點，找出最符合文字訊號的等級
+3. 反向向度（L結尾）同樣正向評估其對該文本的需求程度
+4. 「公司評分」僅依公司介紹判斷；「職缺評分」以職缺說明為主、公司介紹為輔
+
+【各向度定義與評分錨點】
+${SCORING_CRITERIA_STR}
+
+【性格向度清單含定義與典型描述（公司、職缺各須對全部54個評分）】
+${TRAIT_LIST_STR}
+
+請以 JSON 格式回應（注意：def限15字、reason限20字、ev限15字，嚴格精簡以避免截斷）：
+{
+  "jobTitle": "職位名稱",
+  "companyName": "公司名稱",
+  "company": [
+    {
+      "traitCode": "D14H",
+      "trait": "向度名稱",
+      "factor": "所屬因素",
+      "def": "向度定義（15字內）",
+      "score": 1到5的整數,
+      "reason": "給分理由（20字內）",
+      "ev": "公司介紹原文佐證（15字內，無則留空字串）"
+    }
+  ],
+  "job": [
+    {
+      "traitCode": "D14H",
+      "trait": "向度名稱",
+      "factor": "所屬因素",
+      "def": "向度定義（15字內）",
+      "score": 1到5的整數,
+      "reason": "給分理由（20字內）",
+      "ev": "職缺說明原文佐證（15字內，無則留空字串）"
+    }
+  ]
+}
+
+規則：
+- company 與 job 都必須各含全部 54 個向度，不得遺漏，按向度清單順序排列
+- 每個分數必須先理解向度定義，再嚴格對照錨點描述，不可憑空判斷
+- 分數須有差異，不應全部相同
+- 只回傳 JSON，不加任何其他文字或 markdown
+
+以下是【公司介紹】的內容：
+${companyText}
+
+以下是【職缺說明】的內容：
+${jobText}`;
+}
+
+// ── Main analyze ──
+async function analyzeJob() {
+  const company = document.getElementById('companyInput').value.trim();
+  const job     = document.getElementById('jobInput').value.trim();
+  if (!job) { showToast('⚠ 請先填入職缺說明（STEP 2）'); return; }
+
+  const btn      = document.getElementById('jobAnalyzeBtn');
+  const loadWrap = document.getElementById('jobLoadingWrap');
+  const loadSub  = document.getElementById('loadingSubText');
+  btn.disabled = true;
+  loadWrap.classList.add('active');
+
+  const bar = document.getElementById('jobLoadingBarInner');
+  bar.style.animation = 'none'; bar.offsetHeight; bar.style.animation = '';
+
+  try {
+    // 單次呼叫：一次取得公司頁與職缺頁兩組評分
+    loadSub.textContent = '分析公司頁與職缺頁性格需求…';
+    const res = await callAPI(buildPrompt(company, job));
+    const parsed = safeParseJSON(res);
+    if (!parsed || !parsed.company || !parsed.job) {
+      console.error('原始回應:', res.slice(0, 500));
+      throw new Error('分析解析失敗（token 可能不足，請稍後重試）');
+    }
+
+    // 拆成與後續流程相容的 dataA（公司頁）/ dataB（職缺頁）
+    const dataA = { jobTitle: parsed.jobTitle, companyName: parsed.companyName, traits: parsed.company };
+    const dataB = { jobTitle: parsed.jobTitle, companyName: parsed.companyName, traits: parsed.job };
+
+    loadSub.textContent = '合併計算公司職缺分析…';
+
+    // Compute combined scores
+    const combined = computeCombined(dataA, dataB);
+
+    loadWrap.classList.remove('active');
+    renderResults(dataA, dataB, combined);
+
+  } catch(err) {
+    loadWrap.classList.remove('active');
+    btn.disabled = false;
+    showToast(`分析失敗：${err.message}`);
+  }
+}
+
+async function callAPI(prompt) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 32000,
+      temperature: 0,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content.map(i => i.text || '').join('');
+}
+
+function computeCombined(dataA, dataB) {
+  // Build lookup by traitCode
+  const mapA = {};
+  const mapB = {};
+  (dataA.traits || []).forEach(t => { mapA[t.traitCode] = t; });
+  (dataB.traits || []).forEach(t => { mapB[t.traitCode] = t; });
+
+  const combined = { jobTitle: dataB.jobTitle || dataA.jobTitle, companyName: dataA.companyName || dataB.companyName, traits: [] };
+
+  ALL_TRAITS.forEach(base => {
+    const tA = mapA[base.code];
+    const tB = mapB[base.code];
+    const scoreA = tA ? (tA.score || 1) : 1;
+    const scoreB = tB ? (tB.score || 1) : 1;
+    const rawScore = (scoreA * 1 + scoreB * 2) / 3;
+    // Round to 1 decimal place, clamp 1-5
+    const score = Math.min(5, Math.max(1, Math.round(rawScore * 10) / 10));
+
+    // Merge evidences from both
+    const evA = tA ? (tA.evidences || (tA.ev ? [tA.ev] : [])) : [];
+    const evB = tB ? (tB.evidences || (tB.ev ? [tB.ev] : [])) : [];
+    const evidences = [...new Set([...evB, ...evA])].filter(Boolean).slice(0, 3);
+
+    combined.traits.push({
+      traitCode: base.code,
+      trait: base.name,
+      factor: base.factor,
+      definition: (tB && (tB.definition||tB.def)) || (tA && (tA.definition||tA.def)) || '',
+      score,
+      scoreA,
+      scoreB,
+      scoreReason: (tB && (tB.scoreReason||tB.reason)) || (tA && (tA.scoreReason||tA.reason)) || '',
+      evidences,
+    });
+  });
+
+  return combined;
+}
+
+// ── Render ──
+let currentPart = 'part1';
+let globalData = {};
+
+function renderResults(dataA, dataB, combined) {
+  globalData = { dataA, dataB, combined };
+  document.getElementById('step2item').className = 'step-item done';
+  document.getElementById('step3item').className = 'step-item done';
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('jobTraitsPanel').style.display = '';
+
+  const jobTitle = combined.jobTitle || '';
+  const companyName = combined.companyName || '';
+
+  document.getElementById('jobTraitsContent').innerHTML = `
+    <div style="background:linear-gradient(135deg,#007A7A,#00B2B2);border-radius:12px;padding:18px 20px;margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:4px;">分析結果</div>
+      <div style="font-size:16px;font-weight:800;color:white;margin-bottom:4px;">📋 ${companyName ? companyName + '　' : ''}${jobTitle} — 54 個性格向度分析</div>
+      <div style="font-size:11.5px;color:rgba(255,255,255,0.75);line-height:1.6;">以下分三層次呈現：公司職缺分析（Part1）、職缺頁分析（Part2）、公司頁分析（Part3）。</div>
+    </div>
+    <div class="part-tabs">
+      <button class="part-tab active" onclick="switchPart('part1')">Part1 ｜ 公司職缺分析</button>
+      <button class="part-tab" onclick="switchPart('part2')">Part2 ｜ 職缺頁分析</button>
+      <button class="part-tab" onclick="switchPart('part3')">Part3 ｜ 公司頁分析</button>
+      <button class="btn-export-inline" id="exportBtn" onclick="exportToExcel()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        匯出 Excel
+      </button>
+    </div>
+    <div id="partContent"></div>
+  `;
+
+  switchPart('part1');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchPart(part) {
+  currentPart = part;
+  // Update tabs
+  document.querySelectorAll('.part-tab').forEach((el, i) => {
+    el.classList.toggle('active', ['part1','part2','part3'][i] === part);
+  });
+
+  const container = document.getElementById('partContent');
+  const { dataA, dataB, combined } = globalData;
+
+  if (part === 'part1') renderPart(container, combined, 'Part1. 公司職缺分析', SCORE_LABELS_C, true);
+  else if (part === 'part2') renderPart(container, dataB, 'Part2. 職缺頁的性格分析結果', SCORE_LABELS, false);
+  else renderPart(container, dataA, 'Part3. 公司頁的性格分析結果', SCORE_LABELS, false);
+}
+
+// ── Demo static data (pre-computed, no API call needed) ──
+const DEMO_STATIC = {"dataA":{"jobTitle":"人資專員","companyName":"104人力銀行","traits":[{"traitCode":"D15H","trait":"樂觀性","factor":"情緒穩定","def":"習慣從正面看待人和事，對未來懷抱信心的傾向","score":4,"reason":"強調社會使命積極進取文化","ev":"勇敢挑戰的創業魂"},{"traitCode":"D28H","trait":"適應性","factor":"情緒穩定","def":"彈性調整行為模式以因應環境需求的傾向","score":4,"reason":"明確提及CMOSA轉型新技術導入","ev":"C.M.O.S.A.五大核心概念"},{"traitCode":"D17H","trait":"取悅性","factor":"親和樂群","def":"樂於迎合他人以留給別人良好印象的傾向","score":4,"reason":"明確提及服務熱忱客戶體驗","ev":"不只找工作幫你找方向"},{"traitCode":"D27H","trait":"合作性","factor":"親和樂群","def":"喜歡參與團隊合作，與他人協力完成任務的傾向","score":4,"reason":"強調跨部門協力共榮共享","ev":"勞資才能共榮共享"},{"traitCode":"D08L","trait":"主見性","factor":"親和樂群","def":"不懼權威、敢與眾不同，有自己明確立場主張的傾向","score":4,"reason":"複雜情境需獨立判斷破框","ev":"鼓勵破框思考價值轉型"},{"traitCode":"D21H","trait":"負責任","factor":"勤勉審慎","def":"重視承諾、做事盡責並願承擔結果的傾向","score":4,"reason":"對社會員工有重要影響責任","ev":"肩上有一份社會責任"},{"traitCode":"D09H","trait":"堅毅性","factor":"勤勉審慎","def":"面對困難持續努力、堅持不懈的傾向","score":4,"reason":"長期目標追蹤克服阻力","ev":"歷經兩年拼搏創立104"},{"traitCode":"D18H","trait":"活力","factor":"外向實踐","def":"精力充沛、活動力旺盛而行動積極的傾向","score":4,"reason":"節奏快需帶動士氣大量任務","ev":"勇敢挑戰的創業魂"},{"traitCode":"D26H","trait":"企圖心","factor":"外向實踐","def":"喜歡贏過別人，努力追求個人更高成就的傾向","score":4,"reason":"明確職涯路徑鼓勵突破成長","ev":"104大學積極贊助研討會"},{"traitCode":"D16H","trait":"影響性","factor":"外向實踐","def":"喜歡說服他人、影響他人行為的傾向","score":4,"reason":"需推動變革引導決策影響社會","ev":"引領社會前行"},{"traitCode":"D16L","trait":"順應性","factor":"外向實踐","def":"尊重他人想法，不喜歡去說服或改變別人的傾向","score":4,"reason":"服務多元對象需因情境調整","ev":"求職者企業銀髮孩子"},{"traitCode":"D24H","trait":"冒險性","factor":"經驗開放","def":"樂於體驗不確定，較願意冒風險去挑戰的傾向","score":4,"reason":"明確鼓勵嘗試接受挑戰","ev":"勇敢挑戰的創業魂"},{"traitCode":"D07H","trait":"求變性","factor":"經驗開放","def":"喜好新事物，主動尋求改變與突破的傾向","score":4,"reason":"明確提及流程優化工具導入","ev":"C.M.O.S.A.步入第二代104"},{"traitCode":"D06H","trait":"思辨性","factor":"經驗開放","def":"喜歡深入分析思考和解答難題的傾向","score":4,"reason":"需解讀複雜趨勢評估策略","ev":"人口老化少子化趨勢觀察"},{"traitCode":"D10H","trait":"創造性","factor":"經驗開放","def":"喜歡思索新穎想法與獨特解方的傾向","score":4,"reason":"明確鼓勵創新無既定答案","ev":"鼓勵破框思考價值轉型"},{"traitCode":"D22H","trait":"同理心","factor":"經驗開放","def":"喜歡瞭解他人感受、對人表達關懷的傾向","score":4,"reason":"需深度理解員工客戶使用者","ev":"在乎人的價值"},{"traitCode":"D19H","trait":"敏覺性","factor":"經驗開放","def":"喜歡觀察人際互動、習慣察言觀色的傾向","score":4,"reason":"需持續觀察法令動態員工情緒","ev":"觀察人口老化少子化趨勢"},{"traitCode":"D14H","trait":"抗壓性","factor":"情緒穩定","def":"心理強靭，面對壓力不會過度緊張擔憂的傾向","score":3,"reason":"網路平台多工但無明確高壓描述","ev":"多元職涯與多元人資"},{"traitCode":"D02H","trait":"情緒調適","factor":"情緒穩定","def":"受衝擊可調節情緒，迅速回復冷靜平和的傾向","score":3,"reason":"涉及客戶服務偶需面對不滿","ev":"陪伴客戶成長"},{"traitCode":"D04H","trait":"社交性","factor":"親和樂群","def":"喜歡社交活動並積極與他人互動的傾向","score":3,"reason":"有跨部門對外接觸非核心","ev":"群體智慧Social"},{"traitCode":"D12H","trait":"互賴性","factor":"親和樂群","def":"重視與他人相互依存，樂於尋求他人意見或協助的傾向","score":3,"reason":"涉及一定協作但個人貢獻並重","ev":"職涯銀髮孩子三大使命"},{"traitCode":"D17L","trait":"剛直性","factor":"親和樂群","def":"不在乎他人好惡，或不願為人際關係去討好他人的傾向","score":3,"reason":"兼顧服務配合與專業立場","ev":"在乎人的價值"},{"traitCode":"D27L","trait":"個人表現","factor":"親和樂群","def":"喜歡獨自行動，不需配合他人或受他人影響的傾向","score":3,"reason":"兼顧個人與團隊成果","ev":"人才永續獲多項獎項"},{"traitCode":"D12L","trait":"獨立性","factor":"親和樂群","def":"不喜歡受人意見左右或依賴別人，自己做決定和解決問題的傾向","score":3,"reason":"兼顧獨立與協作需求","ev":"多元職涯多元人資"},{"traitCode":"D23H","trait":"循規性","factor":"勤勉審慎","def":"重視社會公義、遵循社會規範的傾向","score":3,"reason":"部分規範部分自主創新並存","ev":"TTQS金牌認證"},{"traitCode":"D13H","trait":"秩序性","factor":"勤勉審慎","def":"喜歡凡事有條理、組織，並重視細節的傾向","score":3,"reason":"大數據管理有秩序需求","ev":"Big data應用"},{"traitCode":"D03H","trait":"謹慎性","factor":"勤勉審慎","def":"行事小心，三思而後行以防犯錯的傾向","score":3,"reason":"兼顧速度與正確性","ev":"更快速有效的求才求職"},{"traitCode":"D23L","trait":"不羈性","factor":"勤勉審慎","def":"不拘泥世俗眼光，不愛受拘束的行為傾向","score":3,"reason":"鼓勵突破但有一定規範","ev":"鼓勵破框思考"},{"traitCode":"D13L","trait":"不拘小節","factor":"勤勉審慎","def":"做事大而化之，不拘泥細節或流程的傾向","score":3,"reason":"兼顧策略願景與執行細節","ev":"C.M.O.S.A.五大核心概念"},{"traitCode":"D03L","trait":"直覺性","factor":"勤勉審慎","def":"喜歡依直覺快速行動，隨機應變的傾向","score":3,"reason":"兼顧分析與快速判斷需求","ev":"A.I.人工智慧應用"},{"traitCode":"D09L","trait":"不執著","factor":"勤勉審慎","def":"重視投入能迅速見效，否則不惜轉換目標的傾向","score":3,"reason":"兼顧堅持與快速調整優先順序","ev":"步入第二代104轉型"},{"traitCode":"D25H","trait":"表現性","factor":"外向實踐","def":"喜歡展現自我，獲得關注和讚揚的傾向","score":3,"reason":"有對外溝通需求非核心","ev":"引領社會前行"},{"traitCode":"D01H","trait":"領導性","factor":"外向實踐","def":"喜歡主導局勢，擔任領導工作的傾向","score":3,"reason":"偶有非正式帶領指導需求","ev":"管理學院培育內部同仁"},{"traitCode":"D11H","trait":"直率性","factor":"外向實踐","def":"喜歡有話就說，坦白率直的傾向","score":3,"reason":"兼顧直率與婉轉溝通","ev":"人性化的網路媒合"},{"traitCode":"D25L","trait":"謙虛性","factor":"外向實踐","def":"低調不突出自己，習慣謙遜、不居功的傾向","score":3,"reason":"兼顧個人品牌與集體成功","ev":"勞資才能共榮共享"},{"traitCode":"D11L","trait":"委婉性","factor":"外向實踐","def":"不喜歡表態，行事委婉、圓滑、有保留的傾向","score":3,"reason":"兼顧直接與溫和溝通","ev":"人性化的網路媒合"},{"traitCode":"D20H","trait":"文化開放","factor":"經驗開放","def":"對不同文化及觀點抱持開放態度的傾向","score":3,"reason":"有跨文化互動非核心業務","ev":"外派德國和英國經驗"},{"traitCode":"D10L","trait":"務實性","factor":"經驗開放","def":"注重實際可行做法，質疑未經驗證新點子的傾向","score":3,"reason":"兼顧創新與落地執行","ev":"更快速有效的求才求職"},{"traitCode":"D14L","trait":"焦慮性","factor":"情緒穩定","def":"易受壓力或挫折影響而緊張焦慮的傾向","score":2,"reason":"有壓力與複雜人際需求","ev":"多元人資既有基礎"},{"traitCode":"D02L","trait":"情緒化","factor":"情緒穩定","def":"情緒易受侵擾而失衡，糾結或陷入負面情緒的傾向","score":2,"reason":"涉及人際協調需專業形象","ev":"陪伴客戶成長引領社會"},{"traitCode":"D15L","trait":"悲觀性","factor":"情緒穩定","def":"習慣從負面看待人和事，對未來缺乏信心的傾向","score":2,"reason":"強調積極正向文化熱忱","ev":"勇敢挑戰的創業魂"},{"traitCode":"D28L","trait":"固著性","factor":"情緒穩定","def":"習慣既有行為模式，不喜歡因環境變動而調整的傾向","score":2,"reason":"多處強調創新流程革新","ev":"步入第二代104"},{"traitCode":"D08H","trait":"順從性","factor":"親和樂群","def":"樂於配合他人指示或團體意見的傾向","score":2,"reason":"鼓勵挑戰現狀破框思考","ev":"鼓勵破框思考價值轉型"},{"traitCode":"D04L","trait":"獨處性","factor":"親和樂群","def":"習慣獨處，不熱衷社交活動或與人互動的傾向","score":2,"reason":"相當人際互動協作需求","ev":"社群開放平台互動"},{"traitCode":"D21L","trait":"隨性","factor":"勤勉審慎","def":"不習慣承擔責任和結果，較隨性而為的傾向","score":2,"reason":"強調責任感準時交付","ev":"肩上有一份社會責任"},{"traitCode":"D18L","trait":"從容性","factor":"外向實踐","def":"不喜歡繁忙活動，習慣步調平穩不急躁的傾向","score":2,"reason":"節奏快速任務緊迫","ev":"更快速有效的求才求職"},{"traitCode":"D26L","trait":"知足性","factor":"外向實踐","def":"滿足現狀，不貪求、不好勝和淡泊名利的傾向","score":2,"reason":"以業績成長突破為核心","ev":"步入第二代104持續創新"},{"traitCode":"D01L","trait":"跟隨性","factor":"外向實踐","def":"不習慣主導局勢，安於跟隨、聽從指示的傾向","score":2,"reason":"需高度自主創新主動","ev":"鼓勵破框思考價值轉型"},{"traitCode":"D20L","trait":"傳統性","factor":"經驗開放","def":"習慣固有傳統與價值，重視既定文化和秩序的傾向","score":2,"reason":"強調打破傳統持續創新","ev":"步入第二代104創新"},{"traitCode":"D24L","trait":"守成性","factor":"經驗開放","def":"避免風險和挑戰，重視安全與穩定的傾向","score":2,"reason":"需積極開拓持續創新","ev":"步入第二代104轉型"},{"traitCode":"D07L","trait":"安穩性","factor":"經驗開放","def":"喜歡熟悉事物和既定模式，不喜歡變動的傾向","score":2,"reason":"組織持續快速變動轉型","ev":"C.M.O.S.A.持續導入"},{"traitCode":"D06L","trait":"思考具體性","factor":"經驗開放","def":"思考方式直接不複雜，喜歡具體明確事物的傾向","score":2,"reason":"需深度複雜分析策略","ev":"Big data應用策略制定"},{"traitCode":"D22L","trait":"自我關注性","factor":"經驗開放","def":"關注自我，易忽視或不能體會他人感受的傾向","score":2,"reason":"Giver精神服務他人關注自我負面","ev":"勞資才能共榮共享"},{"traitCode":"D19L","trait":"心思單純","factor":"經驗開放","def":"少關注人際互動，對人情世故少費心思的傾向","score":2,"reason":"需高度洞察人際細節","ev":"在乎人的價值觀察趨勢"}]},"dataB":{"jobTitle":"人資專員","companyName":"104人力銀行","traits":[{"traitCode":"D27H","trait":"合作性","factor":"親和樂群","def":"喜歡參與團隊合作，與他人協力完成任務的傾向","score":5,"reason":"多處強調Giver精神互助文化","ev":"Giver團隊文化、彼此支援"},{"traitCode":"D23H","trait":"循規性","factor":"勤勉審慎","def":"重視社會公義、遵循社會規範的傾向","score":5,"reason":"核心為法規遵循合規執行","ev":"確保法規合規性、勞動法令"},{"traitCode":"D03H","trait":"謹慎性","factor":"勤勉審慎","def":"行事小心，三思而後行以防犯錯的傾向","score":5,"reason":"多處強調細心疏失影響法規薪酬","ev":"細心度高、保費核對請款"},{"traitCode":"D15H","trait":"樂觀性","factor":"情緒穩定","def":"習慣從正面看待人和事，對未來懷抱信心的傾向","score":4,"reason":"明確提及服務熱忱溫暖體驗","ev":"服務熱忱、溫暖入職體驗"},{"traitCode":"D28H","trait":"適應性","factor":"情緒穩定","def":"彈性調整行為模式以因應環境需求的傾向","score":4,"reason":"需導入AI工具持續優化流程","ev":"AI工具優化行政流程"},{"traitCode":"D17H","trait":"取悅性","factor":"親和樂群","def":"樂於迎合他人以留給別人良好印象的傾向","score":4,"reason":"明確提及服務熱忱溫暖接待","ev":"溫暖入職體驗、服務熱忱"},{"traitCode":"D12H","trait":"互賴性","factor":"親和樂群","def":"重視與他人相互依存，樂於尋求他人意見或協助的傾向","score":4,"reason":"強調互助文化相互支援分享","ev":"樂於分享、彼此支援夥伴"},{"traitCode":"D13H","trait":"秩序性","factor":"勤勉審慎","def":"喜歡凡事有條理、組織，並重視細節的傾向","score":4,"reason":"大量數據文件報表彙整管理","ev":"每月假勤結算與報表彙整"},{"traitCode":"D21H","trait":"負責任","factor":"勤勉審慎","def":"重視承諾、做事盡責並願承擔結果的傾向","score":4,"reason":"影響員工薪酬福利法規責任重","ev":"勞健保加退保、保費核對"},{"traitCode":"D25L","trait":"謙虛性","factor":"外向實踐","def":"低調不突出自己，習慣謙遜、不居功的傾向","score":4,"reason":"強調Giver精神集體成功","ev":"Giver精神、樂於分享互助"},{"traitCode":"D16L","trait":"順應性","factor":"外向實踐","def":"尊重他人想法，不喜歡去說服或改變別人的傾向","score":4,"reason":"服務多元員工需因情境調整","ev":"複雜個案具溫度專業建議"},{"traitCode":"D11L","trait":"委婉性","factor":"外向實踐","def":"不喜歡表態，行事委婉、圓滑、有保留的傾向","score":4,"reason":"需傳達離職福利等敏感議題","ev":"離職留停作業、溫暖關懷"},{"traitCode":"D07H","trait":"求變性","factor":"經驗開放","def":"喜好新事物，主動尋求改變與突破的傾向","score":4,"reason":"明確提及AI流程優化持續改善","ev":"AI工具優化、自動化作業"},{"traitCode":"D06H","trait":"思辨性","factor":"經驗開放","def":"喜歡深入分析思考和解答難題的傾向","score":4,"reason":"需解讀複雜法規分析評估制度","ev":"專業分析能力、法令調整"},{"traitCode":"D22H","trait":"同理心","factor":"經驗開放","def":"喜歡瞭解他人感受、對人表達關懷的傾向","score":4,"reason":"需深度理解員工需求提供關懷","ev":"具溫度專業建議、關懷福利"},{"traitCode":"D19H","trait":"敏覺性","factor":"經驗開放","def":"喜歡觀察人際互動、習慣察言觀色的傾向","score":4,"reason":"需持續觀察法令動態員工需求","ev":"隨時關注勞動法令調整"},{"traitCode":"D10L","trait":"務實性","factor":"經驗開放","def":"注重實際可行做法，質疑未經驗證新點子的傾向","score":4,"reason":"強調有效執行AI提升效率","ev":"提升工作效率與品質"},{"traitCode":"D14H","trait":"抗壓性","factor":"情緒穩定","def":"心理強靭，面對壓力不會過度緊張擔憂的傾向","score":3,"reason":"多工流程但無高壓危機描述","ev":"假勤結算與報表彙整"},{"traitCode":"D02H","trait":"情緒調適","factor":"情緒穩定","def":"受衝擊可調節情緒，迅速回復冷靜平和的傾向","score":3,"reason":"需處理複雜個案但衝突有限","ev":"複雜個案提供專業建議"},{"traitCode":"D15L","trait":"悲觀性","factor":"情緒穩定","def":"習慣從負面看待人和事，對未來缺乏信心的傾向","score":3,"reason":"需關注法令動態具分析能力","ev":"隨時關注勞動法令調整"},{"traitCode":"D28L","trait":"固著性","factor":"情緒穩定","def":"習慣既有行為模式，不喜歡因環境變動而調整的傾向","score":3,"reason":"需維持合規同時導入AI優化","ev":"確保法規合規性"},{"traitCode":"D04H","trait":"社交性","factor":"親和樂群","def":"喜歡社交活動並積極與他人互動的傾向","score":3,"reason":"需接待新人與跨部門溝通","ev":"新進同仁接待與制度導覽"},{"traitCode":"D08H","trait":"順從性","factor":"親和樂群","def":"樂於配合他人指示或團體意見的傾向","score":3,"reason":"需依循流程但也鼓勵貢獻想法","ev":"願意在團隊中貢獻新想法"},{"traitCode":"D17L","trait":"剛直性","factor":"親和樂群","def":"不在乎他人好惡，或不願為人際關係去討好他人的傾向","score":3,"reason":"需維護法規立場但兼顧服務","ev":"確保法規合規性"},{"traitCode":"D12L","trait":"獨立性","factor":"親和樂群","def":"不喜歡受人意見左右或依賴別人，自己做決定和解決問題的傾向","score":3,"reason":"兼顧獨立執行與團隊協作","ev":"獨立執行假勤管理作業"},{"traitCode":"D08L","trait":"主見性","factor":"親和樂群","def":"不懼權威、敢與眾不同，有自己明確立場主張的傾向","score":3,"reason":"複雜個案需獨立判斷給建議","ev":"複雜個案提供專業建議"},{"traitCode":"D09H","trait":"堅毅性","factor":"勤勉審慎","def":"面對困難持續努力、堅持不懈的傾向","score":3,"reason":"需面對複雜個案持續跟進","ev":"複雜個案提供專業建議"},{"traitCode":"D09L","trait":"不執著","factor":"勤勉審慎","def":"重視投入能迅速見效，否則不惜轉換目標的傾向","score":3,"reason":"需持續跟進但也需導入新工具","ev":"AI工具優化流程"},{"traitCode":"D18H","trait":"活力","factor":"外向實踐","def":"精力充沛、活動力旺盛而行動積極的傾向","score":3,"reason":"節奏中等有活動量非高強度","ev":"服務1000+員工日常作業"},{"traitCode":"D26H","trait":"企圖心","factor":"外向實踐","def":"喜歡贏過別人，努力追求個人更高成就的傾向","score":3,"reason":"鼓勵個人成長有職涯路徑","ev":"清晰的職涯路徑、跨域學習"},{"traitCode":"D16H","trait":"影響性","factor":"外向實踐","def":"喜歡說服他人、影響他人行為的傾向","score":3,"reason":"偶需推動AI流程優化說服採用","ev":"AI工具優化行政流程"},{"traitCode":"D11H","trait":"直率性","factor":"外向實踐","def":"喜歡有話就說，坦白率直的傾向","score":3,"reason":"兼顧直接溝通與溫暖服務","ev":"貢獻新想法、專業建議"},{"traitCode":"D18L","trait":"從容性","factor":"外向實踐","def":"不喜歡繁忙活動，習慣步調平穩不急躁的傾向","score":3,"reason":"需細心品質但也有月結時程","ev":"細心度高、每月結算"},{"traitCode":"D01L","trait":"跟隨性","factor":"外向實踐","def":"不習慣主導局勢，安於跟隨、聽從指示的傾向","score":3,"reason":"兼顧流程依循與貢獻新想法","ev":"願意貢獻新想法"},{"traitCode":"D24H","trait":"冒險性","factor":"經驗開放","def":"樂於體驗不確定，較願意冒風險去挑戰的傾向","score":3,"reason":"鼓勵創新但需合規穩健執行","ev":"鼓勵創新、AI工具嘗試"},{"traitCode":"D10H","trait":"創造性","factor":"經驗開放","def":"喜歡思索新穎想法與獨特解方的傾向","score":3,"reason":"鼓勵貢獻新想法非核心要求","ev":"願意貢獻新想法"},{"traitCode":"D24L","trait":"守成性","factor":"經驗開放","def":"避免風險和挑戰，重視安全與穩定的傾向","score":3,"reason":"兼顧維護合規制度與流程優化","ev":"確保法規合規性"},{"traitCode":"D14L","trait":"焦慮性","factor":"情緒穩定","def":"易受壓力或挫折影響而緊張焦慮的傾向","score":2,"reason":"有一定壓力與複雜人際需求","ev":"複雜個案、法規合規"},{"traitCode":"D02L","trait":"情緒化","factor":"情緒穩定","def":"情緒易受侵擾而失衡，糾結或陷入負面情緒的傾向","score":2,"reason":"需專業形象處理敏感人事議題","ev":"離職作業、法規合規性"},{"traitCode":"D04L","trait":"獨處性","factor":"親和樂群","def":"習慣獨處，不熱衷社交活動或與人互動的傾向","score":2,"reason":"需頻繁接待溝通互動","ev":"新進接待、HR客服諮詢"},{"traitCode":"D27L","trait":"個人表現","factor":"親和樂群","def":"喜歡獨自行動，不需配合他人或受他人影響的傾向","score":2,"reason":"強調集體貢獻Giver精神","ev":"Giver精神、共同成長"},{"traitCode":"D23L","trait":"不羈性","factor":"勤勉審慎","def":"不拘泥世俗眼光，不愛受拘束的行為傾向","score":2,"reason":"有明確法規規範需遵循","ev":"確保法規合規性"},{"traitCode":"D03L","trait":"直覺性","factor":"勤勉審慎","def":"喜歡依直覺快速行動，隨機應變的傾向","score":2,"reason":"需系統性分析法規數據","ev":"專業分析能力、法令分析"},{"traitCode":"D25H","trait":"表現性","factor":"外向實踐","def":"喜歡展現自我，獲得關注和讚揚的傾向","score":2,"reason":"主要幕後執行偶有對外溝通","ev":"新進同仁接待導覽"},{"traitCode":"D26L","trait":"知足性","factor":"外向實踐","def":"滿足現狀，不貪求、不好勝和淡泊名利的傾向","score":2,"reason":"鼓勵跨域學習職涯成長","ev":"鼓勵內部輪調跨域學習"},{"traitCode":"D20H","trait":"文化開放","factor":"經驗開放","def":"對不同文化及觀點抱持開放態度的傾向","score":2,"reason":"無跨文化或國際業務描述","ev":""},{"traitCode":"D20L","trait":"傳統性","factor":"經驗開放","def":"習慣固有傳統與價值，重視既定文化和秩序的傾向","score":2,"reason":"偏向現代化AI導入持續創新","ev":"AI工具、C.M.O.S.A.技術"},{"traitCode":"D07L","trait":"安穩性","factor":"經驗開放","def":"喜歡熟悉事物和既定模式，不喜歡變動的傾向","score":2,"reason":"組織持續導入AI變動不低","ev":"AI工具優化、持續改善"},{"traitCode":"D06L","trait":"思考具體性","factor":"經驗開放","def":"思考方式直接不複雜，喜歡具體明確事物的傾向","score":2,"reason":"需深度分析法規複雜個案","ev":"複雜個案、法令專業分析"},{"traitCode":"D22L","trait":"自我關注性","factor":"經驗開放","def":"關注自我，易忽視或不能體會他人感受的傾向","score":2,"reason":"Giver精神服務他人關注自我負面","ev":"Giver精神、共同成長"},{"traitCode":"D19L","trait":"心思單純","factor":"經驗開放","def":"少關注人際互動，對人情世故少費心思的傾向","score":2,"reason":"需高度洞察員工需求法令細節","ev":"隨時關注法令、複雜個案"},{"traitCode":"D13L","trait":"不拘小節","factor":"勤勉審慎","def":"做事大而化之，不拘泥細節或流程的傾向","score":1,"reason":"明確要求細心疏失後果大","ev":"細心度高、保費核對"},{"traitCode":"D21L","trait":"隨性","factor":"勤勉審慎","def":"不習慣承擔責任和結果，較隨性而為的傾向","score":1,"reason":"強調責任感準時交付月結作業","ev":"每月假勤結算、保費請款"},{"traitCode":"D01H","trait":"領導性","factor":"外向實踐","def":"喜歡主導局勢，擔任領導工作的傾向","score":1,"reason":"明確不需負擔管理責任","ev":"管理責任：不需負擔管理責任"}]}};
+
+function showDemo() {
+  const { dataA, dataB } = DEMO_STATIC;
+  const combined = computeCombined(dataA, dataB);
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('jobTraitsPanel').style.display = '';
+  renderResults(dataA, dataB, combined);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPart(container, data, title, scoreLabels, isCombined) {
+  const traits = [...(data.traits || [])].sort((a, b) => b.score - a.score);
+
+  const rows = traits.map((t, i) => {
+    const col = FACTOR_COLORS[t.factor] || { bg: '#f5f5f5', border: '#ccc', dot: '#666' };
+    let scoreLabel, scoreCls;
+    if (isCombined) {
+      scoreLabel = getScoreLabelC(t.score);
+      const clsScore = t.score <= 1.40 ? 1 : t.score <= 2.40 ? 2 : t.score <= 3.40 ? 3 : t.score <= 4.40 ? 4 : 5;
+      scoreCls = `score-badge-${clsScore}`;
+    } else {
+      scoreLabel = scoreLabels[t.score] || '';
+      const clsScore = t.score <= 1.40 ? 1 : t.score <= 2.40 ? 2 : t.score <= 3.40 ? 3 : t.score <= 4.40 ? 4 : 5;
+      scoreCls = `score-badge-${clsScore}`;
+    }
+
+    const combinedNote = isCombined
+      ? `<div style="font-size:10.5px;color:#888;margin-bottom:4px;">公司頁得分：${t.scoreA}　職缺頁得分：${t.scoreB}　→ 綜合：(${t.scoreA}×1 + ${t.scoreB}×2) / 3 ＝ <b>${t.score.toFixed(1)}</b>（${scoreLabel}）</div>`
+      : '';
+
+    const evList = t.evidences && t.evidences.length ? t.evidences : (t.ev ? [t.ev] : []);
+    const evHTML = evList.filter(e => e).map(e =>
+      `<div class="evidence-row">
+        <span class="evidence-icon" style="color:${col.dot};">❝</span>
+        <span class="evidence-text">${e}</span>
+      </div>`
+    ).join('');
+
+    return `
+      <div class="trait-row" style="border-left:4px solid ${col.dot};">
+        <div class="trait-row-header">
+          <div style="width:22px;height:22px;border-radius:50%;background:${col.dot};color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i+1}</div>
+          <span class="trait-name">${t.trait}</span>
+          <span class="trait-typical">${TRAIT_TYPICAL[t.traitCode] || ''}</span>
+          <span class="score-chip ${scoreCls}">▶ ${isCombined ? t.score.toFixed(1) : t.score}分　${scoreLabel}</span>
+        </div>
+        <div class="trait-def">向度定義：${t.definition || t.def || ''}</div>
+        ${combinedNote}
+        <div class="trait-need-label">📌 為何需要這個向度</div>
+        <div class="trait-need-text">${t.scoreReason || t.reason || ''}</div>
+        ${evHTML ? `<div class="trait-need-label">🔍 文本佐證</div>${evHTML}` : ''}
+      </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div style="font-size:15px;font-weight:800;color:#1a1a2e;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e0e0e8;">${title}</div>
+    ${rows}
+  `;
+}
+// ── Excel 匯出 ──
+function exportToExcel() {
+  if (!globalData.combined) { showToast('尚無分析結果可匯出'); return; }
+
+  const btn = document.getElementById('exportBtn');
+  btn.disabled = true;
+  btn.textContent = '匯出中…';
+
+  try {
+    const { dataA, dataB, combined } = globalData;
+    const jobTitle   = combined.jobTitle   || '';
+    const companyName = combined.companyName || '';
+
+    const wb = XLSX.utils.book_new();
+
+    // ── 樣式輔助 ──
+    const hStyle = {
+      font:      { bold: true, color: { rgb: 'FFFFFF' }, name: 'Arial', sz: 10 },
+      fill:      { patternType: 'solid', fgColor: { rgb: '1A3A5C' } },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: {
+        top:    { style: 'thin', color: { rgb: 'AAAAAA' } },
+        bottom: { style: 'thin', color: { rgb: 'AAAAAA' } },
+        left:   { style: 'thin', color: { rgb: 'AAAAAA' } },
+        right:  { style: 'thin', color: { rgb: 'AAAAAA' } },
+      }
+    };
+    const cellStyle = (rgb) => ({
+      font:      { name: 'Arial', sz: 10, color: { rgb: '1C1917' } },
+      fill:      { patternType: 'solid', fgColor: { rgb: rgb || 'FFFFFF' } },
+      alignment: { vertical: 'top', wrapText: true },
+      border: {
+        top:    { style: 'thin', color: { rgb: 'E5E2DA' } },
+        bottom: { style: 'thin', color: { rgb: 'E5E2DA' } },
+        left:   { style: 'thin', color: { rgb: 'E5E2DA' } },
+        right:  { style: 'thin', color: { rgb: 'E5E2DA' } },
+      }
+    });
+    const numStyle = (rgb) => ({
+      ...cellStyle(rgb),
+      font:      { name: 'Arial', sz: 12, bold: true, color: { rgb: '1A3A5C' } },
+      alignment: { horizontal: 'center', vertical: 'center' },
+    });
+    const FACTOR_BG = {
+      '情緒穩定': 'EFF6FF',
+      '親和樂群': 'F0FDF4',
+      '勤勉審慎': 'FFFBEB',
+      '外向實踐': 'F5F3FF',
+      '經驗開放': 'F0FDFA',
+    };
+
+    // ── 評分標籤 ──
+    function scoreLabel(score, isComb) {
+      if (isComb) {
+        if (score <= 1.40) return '完全不需要';
+        if (score <= 2.40) return '不太需要';
+        if (score <= 3.40) return '部分需要';
+        if (score <= 4.40) return '需要';
+        return '非常需要';
+      }
+      return { 1:'完全不需要', 2:'不太需要', 3:'部分需要', 4:'需要', 5:'非常需要' }[score] || '';
+    }
+
+    // ── 建立工作表 ──
+    function makeSheet(traits, isCombined) {
+      const headers = isCombined
+        ? ['排名','向度代碼','向度名稱','所屬因素','公司頁得分','職缺頁得分','公司職缺分析','需要程度','為何需要這個向度','文本佐證']
+        : ['排名','向度代碼','向度名稱','所屬因素','分數','需要程度','為何需要這個向度','文本佐證'];
+
+      const sorted = [...traits].sort((a, b) => b.score - a.score);
+      const aoa = [headers];
+
+      sorted.forEach((t, i) => {
+        const bg = FACTOR_BG[t.factor] || 'FFFFFF';
+        const ev = t.evidences && t.evidences.length
+          ? t.evidences.filter(Boolean).join('；')
+          : (t.ev || '');
+        const reason = t.scoreReason || t.reason || '';
+
+        if (isCombined) {
+          aoa.push([
+            i + 1,
+            t.traitCode,
+            t.trait,
+            t.factor,
+            t.scoreA,
+            t.scoreB,
+            parseFloat(t.score.toFixed(1)),
+            scoreLabel(t.score, true),
+            reason,
+            ev,
+          ]);
+        } else {
+          aoa.push([
+            i + 1,
+            t.traitCode,
+            t.trait,
+            t.factor,
+            t.score,
+            scoreLabel(t.score, false),
+            reason,
+            ev,
+          ]);
+        }
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+      // 欄寬
+      const colWidths = isCombined
+        ? [6, 10, 10, 10, 8, 8, 8, 10, 36, 30]
+        : [6, 10, 10, 10, 6, 10, 36, 30];
+      ws['!cols'] = colWidths.map(w => ({ wch: w }));
+
+      // 列高（標題列）
+      ws['!rows'] = [{ hpt: 30 }];
+
+      // 套用標題樣式
+      headers.forEach((_, ci) => {
+        const cell = XLSX.utils.encode_cell({ r: 0, c: ci });
+        if (ws[cell]) ws[cell].s = hStyle;
+      });
+
+      // 套用資料列樣式
+      sorted.forEach((t, ri) => {
+        const bg = FACTOR_BG[t.factor] || 'FFFFFF';
+        const cols = isCombined ? 10 : 8;
+        for (let ci = 0; ci < cols; ci++) {
+          const cell = XLSX.utils.encode_cell({ r: ri + 1, c: ci });
+          if (!ws[cell]) continue;
+          // 排名欄與分數欄用數字樣式
+          const isRank  = ci === 0;
+          const isScore = isCombined ? (ci >= 4 && ci <= 6) : ci === 4;
+          ws[cell].s = (isRank || isScore) ? numStyle(bg) : cellStyle(bg);
+        }
+      });
+
+      return ws;
+    }
+
+    // ── 加入三個工作表 ──
+    XLSX.utils.book_append_sheet(wb, makeSheet(combined.traits, true),  'Part1 公司職缺分析');
+    XLSX.utils.book_append_sheet(wb, makeSheet(dataB.traits,    false), 'Part2 職缺頁');
+    XLSX.utils.book_append_sheet(wb, makeSheet(dataA.traits,    false), 'Part3 公司頁');
+
+    // ── 檔名 ──
+    const now = new Date();
+    const ts  = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    const name = [companyName, jobTitle].filter(Boolean).join('_') || '性格向度分析';
+    XLSX.writeFile(wb, `${name}_${ts}.xlsx`, { bookSST: false, type: 'binary', cellStyles: true });
+
+    showToast('✅ Excel 已匯出下載！');
+  } catch(e) {
+    console.error('匯出失敗', e);
+    showToast('匯出失敗：' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> 匯出 Excel';
+  }
+}
+</script>
 </body>
 </html>
-
-
-
-
-
