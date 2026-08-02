@@ -66,6 +66,14 @@
   .usage-list li{line-height:1.65}
   .usage-list li::marker{font-weight:800;color:var(--brand-600)}
   .usage-or{display:inline-block;margin-left:4px;color:var(--brand-600);font-weight:800}
+  .example-link-wrap{margin-top:14px;display:flex;justify-content:center}
+  .example-link{display:inline-flex;align-items:center;gap:.55em;max-width:100%;
+    color:var(--brand-600);font-weight:800;text-decoration:none;line-height:1.5;
+    padding:10px 16px;border:1px solid #ffd0ae;background:#fff7f0;border-radius:12px;
+    transition:background .15s ease, border-color .15s ease}
+  .example-link:hover{background:#ffefe1;border-color:var(--brand)}
+  .example-link svg{flex:0 0 auto}
+  .example-link .ex-text{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
   .hint{color:var(--muted);font-size:.95rem}
   .toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px}
   .steplabel{display:flex;justify-content:space-between;align-items:baseline;font-size:.9rem;color:var(--muted);font-weight:700;margin:0 2px 6px}
@@ -111,7 +119,7 @@
   .steptitle{text-align:left;font-weight:800;color:var(--ink);line-height:1.5;
     font-size:clamp(1.1rem, 1rem + .7vw, 1.32rem);margin:16px 0 4px}
   /* Prompt 方框收合切換：靠右 */
-  .out-toggle-row{display:flex;justify-content:flex-end;margin:6px 0 10px}
+  .out-toggle-row{display:flex;justify-content:center;margin:10px 0}
   .out-toggle{appearance:none;cursor:pointer;border:1px solid var(--ring);background:#fff;
     color:var(--brand-600);font-weight:800;font-size:.95rem;border-radius:999px;
     padding:.5em .95em;display:inline-flex;align-items:center;gap:.4em;transition:background .15s ease, border-color .15s ease}
@@ -137,8 +145,46 @@
   .appgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 6px}
   .appcard{background:#fff;border:1px solid var(--ring);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;box-shadow:var(--shadow)}
   .appcard:hover{background:#fff7f0;border-color:#ffd0ae}
-  .appicon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;border:1px solid #eee}
-  .appname{font-weight:800}
+  .appicon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:#fff;box-shadow:0 3px 10px rgba(23,26,31,.12)}
+  .appicon svg{display:block}
+  .appname{font-weight:800;font-size:1.02rem}
+  .result-hero{font-weight:900;font-size:clamp(1.35rem, 1.1rem + 1.7vw, 2rem);line-height:1.35}
+  .steptitle.gap-top{margin-top:34px}
+  .copy-warn{display:flex;align-items:center;justify-content:center;gap:.35em;text-align:center;
+    margin:10px 0 0;color:#9a5b12;font-weight:700;white-space:nowrap;line-height:1.4;
+    font-size:clamp(.7rem, .58rem + .55vw, .85rem)}
+  .copy-warn svg{flex:0 0 auto;width:14px;height:14px}
+
+  /* ===== 結果頁：兩步驟流程 ===== */
+  .result-head{text-align:center;margin:2px 0 4px}
+  .result-title{font-weight:900;line-height:1.3;font-size:clamp(1.4rem, 1.1rem + 1.8vw, 2.05rem)}
+  .result-sub{color:var(--muted);font-weight:700;margin-top:6px;font-size:clamp(.95rem, .9rem + .3vw, 1.05rem)}
+  .flow{display:grid;gap:12px;margin-top:16px}
+  .flow-arrow{text-align:center;color:#ffb37a;font-size:1.5rem;font-weight:900;line-height:1;margin:-2px 0}
+  .stepcard{border:1px solid var(--ring);border-radius:18px;background:#fff;padding:16px 16px 18px;box-shadow:0 2px 10px rgba(23,26,31,.05)}
+  .stepcard-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .stepnum{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:#fff;font-weight:900;font-size:1.1rem;box-shadow:0 2px 6px rgba(255,102,0,.35)}
+  .stepcard-title{font-weight:800;font-size:clamp(1.05rem, 1rem + .5vw, 1.25rem)}
+  .stephelp{color:var(--muted);font-size:.92rem;margin:-4px 0 14px;line-height:1.6}
+  .copy-actions{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .copy-actions .btn.xl{width:100%;max-width:460px;justify-content:center}
+  .copy-actions .field{width:100%}
+  .btn.copied{background:#16a34a}
+  .btn.copied:hover{background:#15912f}
+  .copy-viewlink{background:none;border:0;cursor:pointer;color:var(--brand-600);font-weight:800;font-size:.92rem;display:inline-flex;align-items:center;gap:.35em;padding:4px 6px;border-radius:8px}
+  .copy-viewlink:hover{background:#fff3ea}
+  .copy-viewlink .caret{font-size:.85em;transition:transform .2s ease}
+  .copy-viewlink[aria-expanded="true"] .caret{transform:rotate(180deg)}
+  .copy-done-cue{display:none;align-items:center;justify-content:center;gap:.35em;color:#16a34a;font-weight:800;font-size:.95rem;text-align:center}
+  .copy-done-cue.show{display:inline-flex}
+  .ai-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .ai-btn{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;border:1px solid var(--ring);border-radius:16px;background:#fff;padding:16px 8px 12px;text-align:center;transition:transform .12s ease, box-shadow .15s ease, border-color .15s ease}
+  .ai-btn:hover{transform:translateY(-2px);border-color:#ffd0ae;box-shadow:0 8px 18px rgba(23,26,31,.10)}
+  .ai-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .ai-name{font-weight:800;font-size:1.02rem}
+  .ai-open{display:inline-flex;align-items:center;gap:.25em;font-size:.8rem;font-weight:800;color:var(--brand-600)}
+  .result-foot{text-align:center;margin-top:18px}
+  @media(max-width:420px){ .ai-btns{gap:8px} .ai-btn{padding:12px 4px 10px;border-radius:12px} .ai-name{font-size:.92rem} }
   @media(max-width:420px){ .appgrid{gap:8px} .appcard{padding:12px 6px;border-radius:12px} .appcard .appname{font-size:.9em} }
   .restartwrap{display:flex;justify-content:center;margin-top:10px}
 
@@ -176,6 +222,12 @@
     <div class="grid">
       <button class="btn block" id="startBtn">▶︎ 啟動我的AI學檔教練</button>
       <button class="btn secondary block" id="sampleBtn">✨ 載入範例，先玩看看</button>
+    </div>
+    <div class="example-link-wrap">
+      <a class="example-link" href="https://chatgpt.com/c/6a6f1f6b-01bc-83ee-bcaf-63e1bed6737b" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+        <span class="ex-text">成果範例：自我探索學習歷程檔案＿在助人與領導中發光</span>
+      </a>
     </div>
   </section>
   <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
@@ -350,10 +402,10 @@
   };
   const escapeHTML = s => String(s??'').replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
 
-  /* --------- Open ChatGPT / Gemini / Copilot --------- */
+  /* --------- Open ChatGPT / Gemini / Claude --------- */
   
   function openGemini(){ window.open('https://gemini.google.com/app', '_blank', 'noopener'); }
-  function openCopilot(){ window.open('https://copilot.microsoft.com/', '_blank', 'noopener'); }
+  function openClaude(){ window.open('https://claude.ai/', '_blank', 'noopener'); }
 
   function openChatGPTApp(){
     const webUrl = 'https://chatgpt.com/';
@@ -487,51 +539,140 @@
       
       case 13:
         const text = compileText();
-        stage.innerHTML = `${progress()}<section class="card" style="padding:16px">
-          <div class="qtitle center">將生成召喚AI的Prompt，複製到ChatGPT、Gemini或Copilot</div>
-          <div class="steptitle">Step1.  點選「一鍵複製貼到 AI 的 Prompt」按鈕</div>
-          <div class="out-toggle-row">
-            <button class="out-toggle" id="toggleOut" type="button" aria-expanded="false" aria-controls="out">查看 Prompt 文字內容 <span class="caret" aria-hidden="true">▼</span></button>
-          </div>
-          <textarea id="out" class="field" aria-label="生成召喚AI的Prompt" hidden>${escapeHTML(text)}</textarea>
-
-          <div class="bigcopy">
-            <button class="btn xl" id="copy">
-              <svg viewBox="0 0 24 24" width="1.3em" height="1.3em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-              <span>一鍵複製貼到AI的Prompt</span>
-            </button>
+        stage.innerHTML = `${progress()}<section class="card" style="padding:16px 16px 20px">
+          <div class="result-head">
+            <div class="result-title">Prompt 已生成 🎉</div>
+            <div class="result-sub">照著下面兩個步驟，把它交給 AI 就完成了</div>
           </div>
 
-          <div class="steptitle">Step2. 將複製的 Prompt 貼到下列任何一個 AI 網站。</div>
-          <div class="appgrid">
-            <div class="appcard" id="openChatGPT" title="開啟 ChatGPT">
-              <div class="appicon">
-                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>
+          <div class="flow">
+            <div class="stepcard">
+              <div class="stepcard-head">
+                <div class="stepnum">1</div>
+                <div class="stepcard-title">複製 Prompt</div>
               </div>
-              <div class="appname">ChatGPT</div>
+
+              <div class="copy-actions">
+                <button class="btn xl" id="copy">
+                  <svg viewBox="0 0 24 24" width="1.3em" height="1.3em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  <span>一鍵複製 Prompt</span>
+                </button>
+                <div class="copy-done-cue" id="copyCue">✓ 已複製！接著點下方任一 AI <span aria-hidden="true">↓</span></div>
+                <button class="copy-viewlink" id="toggleOut" type="button" aria-expanded="false" aria-controls="out">查看 Prompt 文字內容 <span class="caret" aria-hidden="true">▼</span></button>
+                <textarea id="out" class="field" aria-label="生成召喚AI的Prompt" hidden>${escapeHTML(text)}</textarea>
+              </div>
+
+              <div class="copy-warn">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>這個程式沒有儲存功能，請將生成的 Prompt 自行保存運用。</span>
+              </div>
             </div>
-            <div class="appcard" id="openGemini" title="開啟 Gemini">
-              <div class="appicon">
-                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 2a5 5 0 0 1 5 5v4H7V7a5 5 0 0 1 5-5z"/><path d="M7 13h10v4a5 5 0 0 1-10 0v-4z"/></svg>
+
+            <div class="flow-arrow" aria-hidden="true">↓</div>
+
+            <div class="stepcard">
+              <div class="stepcard-head">
+                <div class="stepnum">2</div>
+                <div class="stepcard-title">開啟 AI，貼上並送出</div>
               </div>
-              <div class="appname">Gemini</div>
-            </div>
-            <div class="appcard" id="openCopilot" title="開啟 Copilot">
-              <div class="appicon">
-                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+              <div class="stephelp">點選任一工具開啟網站，在對話框貼上（Ctrl + V／⌘ + V）後送出即可。</div>
+
+              <div class="ai-btns">
+                <div class="ai-btn" id="openChatGPT" title="開啟 ChatGPT" role="button" tabindex="0">
+                  <div class="appicon"><svg viewBox="0 0 346.238358 352.218374" width="38" height="38" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+                  <g transform="translate(-0.162462,353.218374) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M1345 3513 c-296 -63 -554 -288 -653 -570 -8 -24 -19 -31 -79 -46
+-243 -62 -467 -265 -572 -517 l-36 -85 -3 -237 c-4 -294 19 -374 154 -553 29
+-39 43 -67 41 -80 -38 -171 -39 -183 -34 -300 23 -510 467 -896 973 -845 l106
+11 57 -54 c173 -164 342 -227 612 -227 272 0 443 69 631 253 84 83 187 247
+211 336 3 12 13 21 22 21 34 0 162 49 235 90 389 218 553 676 394 1097 -35 92
+-94 195 -142 245 l-25 27 19 78 c144 588 -358 1161 -959 1094 l-99 -11 -68 62
+c-203 188 -509 270 -785 211z m349 -229 c101 -26 274 -119 256 -138 -3 -3
+-170 -100 -370 -216 -201 -116 -373 -220 -382 -231 -17 -20 -18 -60 -18 -535
+0 -282 -3 -515 -7 -517 -5 -3 -75 34 -156 81 l-148 86 3 480 3 481 27 73 c119
+329 465 520 792 436z m779 -264 c334 -49 580 -333 576 -667 -1 -105 -3 -108
+-71 -68 -54 32 -441 256 -608 352 -123 71 -74 90 -670 -255 -285 -164 -351
+-202 -355 -202 -3 0 -5 79 -5 175 l0 174 30 16 c16 8 173 98 347 199 427 246
+454 259 578 276 85 11 102 11 178 0z m-1833 -790 c0 -304 3 -436 12 -455 12
+-28 43 -48 233 -157 72 -41 202 -117 290 -167 88 -51 208 -121 267 -154 60
+-34 108 -65 108 -68 0 -7 -283 -169 -297 -169 -6 0 -64 31 -129 69 -175 101
+-377 217 -480 276 -145 84 -175 105 -237 163 -246 236 -267 627 -47 899 63 78
+221 192 268 193 9 0 12 -92 12 -430z m1742 134 c100 -58 257 -149 347 -200
+231 -134 259 -153 326 -225 239 -256 234 -666 -10 -912 -73 -74 -157 -131
+-222 -151 l-23 -7 0 424 c0 278 -4 435 -11 455 -12 34 -32 49 -234 164 -71 41
+-202 117 -290 167 -88 51 -208 121 -267 154 -60 34 -108 65 -108 68 0 8 282
+169 297 169 6 0 94 -48 195 -106z m-473 -265 l191 -111 -2 -225 -3 -224 -180
+-104 c-99 -58 -187 -104 -195 -104 -8 0 -96 46 -195 104 l-180 104 -3 224 -2
+225 187 110 c104 61 189 111 190 111 1 1 87 -49 192 -110z m512 -295 l150 -86
+-3 -477 c-4 -526 -2 -511 -75 -656 -162 -320 -571 -450 -893 -285 -79 41 -119
+77 -100 90 8 5 177 103 375 218 243 141 364 217 372 233 10 18 13 150 13 537
+0 281 2 512 5 512 3 0 73 -39 156 -86z m-321 -627 l0 -172 -102 -60 c-57 -32
+-215 -124 -353 -203 -369 -215 -424 -236 -595 -235 -368 3 -663 303 -659 670
+1 106 3 108 74 66 546 -322 701 -406 735 -398 23 6 232 124 695 393 105 61
+193 111 198 111 4 1 7 -77 7 -172z"/>
+</g>
+                </svg></div>
+                  <div class="ai-name">ChatGPT</div>
+                  <div class="ai-open">開啟 <span aria-hidden="true">↗</span></div>
+                </div>
+                <div class="ai-btn" id="openGemini" title="開啟 Gemini" role="button" tabindex="0">
+                  <div class="appicon"><svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
+                  <defs><linearGradient id="gemGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#4287F5"/><stop offset=".5" stop-color="#8A6FE0"/><stop offset="1" stop-color="#D96570"/>
+                  </linearGradient></defs>
+                  <path fill="url(#gemGrad)" d="M20 3 C 21.6 12 28 18.4 37 20 C 28 21.6 21.6 28 20 37 C 18.4 28 12 21.6 3 20 C 12 18.4 18.4 12 20 3 Z"/>
+                </svg></div>
+                  <div class="ai-name">Gemini</div>
+                  <div class="ai-open">開啟 <span aria-hidden="true">↗</span></div>
+                </div>
+                <div class="ai-btn" id="openClaude" title="開啟 Claude" role="button" tabindex="0">
+                  <div class="appicon"><svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
+                    <g stroke="#D97757" stroke-width="2.7" stroke-linecap="round">
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(0 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(30 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(60 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(90 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(120 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(150 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(180 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(210 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(240 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(270 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(300 20 20)"/>
+                      <line x1="20" y1="13" x2="20" y2="3.2" transform="rotate(330 20 20)"/>
+                    </g>
+                  </svg></div>
+                  <div class="ai-name">Claude</div>
+                  <div class="ai-open">開啟 <span aria-hidden="true">↗</span></div>
+                </div>
               </div>
-              <div class="appname">Copilot</div>
             </div>
           </div>
 
-          <div class="hint center">如果你要重新產生一個新的 Prompt，請點選「重新開始」的按鈕</div>
-          <div class="restartwrap"><button class="btn ghost" id="restart">重新開始</button></div>
+          <div class="result-foot">
+            <button class="btn ghost" id="restart">↻ 重新開始，產生新的 Prompt</button>
+          </div>
         </section>`;
-        stage.querySelector('#copy').onclick = async ()=>{
-          const txt = stage.querySelector('#out').value;
-          try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(txt); toast('已複製到剪貼簿！'); } else { fallbackCopy(txt); } }
-          catch{ fallbackCopy(txt); }
-        };
+        (function wireCopy(){
+          const copyBtn = stage.querySelector('#copy');
+          const cue = stage.querySelector('#copyCue');
+          const label = copyBtn.querySelector('span');
+          const done = ()=>{
+            copyBtn.classList.add('copied');
+            label.textContent = '\u2713 \u5df2\u8907\u88fd\uff01';
+            if(cue) cue.classList.add('show');
+            clearTimeout(copyBtn._t);
+            copyBtn._t = setTimeout(()=>{ copyBtn.classList.remove('copied'); label.textContent = '\u4e00\u9375\u8907\u88fd Prompt'; }, 2200);
+          };
+          copyBtn.onclick = async ()=>{
+            const txt = stage.querySelector('#out').value;
+            try{
+              if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(txt); toast('\u5df2\u8907\u88fd\u5230\u526a\u8cbc\u7c3f\uff01'); done(); }
+              else { fallbackCopy(txt); done(); }
+            }catch{ fallbackCopy(txt); done(); }
+          };
+        })();
         (function wireToggle(){
           const btn = stage.querySelector('#toggleOut');
           const box = stage.querySelector('#out');
@@ -552,7 +693,11 @@
         stage.querySelector('#restart').onclick = ()=> reset();
         stage.querySelector('#openChatGPT').onclick = openChatGPTApp;
         stage.querySelector('#openGemini').onclick = openGemini;
-        stage.querySelector('#openCopilot').onclick = openCopilot;
+        stage.querySelector('#openClaude').onclick = openClaude;
+        ['openChatGPT','openGemini','openClaude'].forEach(function(id){
+          var el = stage.querySelector('#'+id);
+          if(el) el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.click(); } });
+        });
         break;
     }
 
