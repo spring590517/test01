@@ -120,6 +120,116 @@
   .none-wrap{margin-top:8px;font-size:var(--fs-16);}
   .none-wrap label{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--ink)}
   .none-wrap input[type=checkbox]{width:22px;height:22px;accent-color:var(--brand);}
+
+  /* ===== UI 優化：品牌化視覺升級（附加，不改動邏輯） ===== */
+  :root{
+    --brand-050:#fff4ec; --brand-100:#ffe3d1; --brand-700:#c94f00;
+    --ring:#ece6df;
+    --shadow-lg:0 20px 46px -22px rgba(200,79,0,.42), 0 6px 18px rgba(23,26,31,.06);
+  }
+  body{
+    background:
+      radial-gradient(1100px 460px at 50% -10%, rgba(255,102,0,.10), transparent 62%),
+      linear-gradient(180deg,#fbf7f3,#f5f3f0);
+    background-attachment:fixed;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --brand-050:#2a1c13; --brand-100:#3a2417; --brand-700:#ffb380; --ring:#2c3340; }
+    body{
+      background:
+        radial-gradient(1100px 460px at 50% -10%, rgba(255,102,0,.16), transparent 62%),
+        linear-gradient(180deg,#0b0e13,#0a0d12);
+    }
+  }
+
+  /* Header hero */
+  header{box-shadow:0 1px 0 rgba(255,102,0,.06)}
+  .header-inner{padding:14px 10px 10px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-12);font-weight:800;letter-spacing:.05em;color:var(--brand);background:var(--brand-050);border:1px solid var(--brand-100);padding:4px 12px;border-radius:999px;margin-bottom:6px}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 3px rgba(255,102,0,.18)}
+  .title{line-height:1.25}
+  .title .accent{color:var(--brand)}
+  .sub{max-width:66ch}
+
+  /* Landing = hero card */
+  .landing{padding:0;gap:0;overflow:hidden;box-shadow:var(--shadow-lg);position:relative}
+  .landing::before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#ff8a3d,var(--brand),#ff5a00)}
+  .landing-hero{padding:18px 20px 6px;background:linear-gradient(180deg,var(--brand-050),transparent)}
+  .landing-hero-2{padding:2px 0 0;background:none;margin-top:2px}
+  .hero-h{font-size:var(--fs-18);font-weight:800;margin:0}
+  .hero-p{color:var(--muted);font-size:var(--fs-14);line-height:1.5;margin:6px 0 0}
+  .landing-body{padding:10px 20px 16px;display:grid;gap:10px}
+
+  /* 使用說明：真實的三步驟流程 */
+  .steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+  .steps li{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start}
+  .steps .n{font-weight:800;font-size:var(--fs-14);color:var(--brand);font-variant-numeric:tabular-nums}
+  .steps .t{font-size:var(--fs-14);line-height:1.5}
+  .steps .t b{color:var(--ink);font-weight:800}
+
+  /* CTA 層次 */
+  .cta-group{display:grid;gap:8px;margin-top:4px}
+  #startBtn{font-size:var(--fs-18);padding:1.05em 1.2em;background:linear-gradient(135deg,#ff8a3d,var(--brand));box-shadow:0 12px 26px -12px rgba(200,79,0,.75)}
+  #startBtn:hover{background:linear-gradient(135deg,#ff7a24,var(--brand-600))}
+  #sampleBtn{background:var(--card);color:var(--brand-700);border:1px solid var(--brand-100);box-shadow:none}
+  #sampleBtn:hover{background:var(--brand-050)}
+  @media (prefers-color-scheme: dark){ #sampleBtn{background:#141a22} #sampleBtn:hover{background:#1c2430} }
+
+  /* 成果範例：連結感 */
+  #reportSampleLink:hover{text-decoration-thickness:2px}
+
+  /* 進度條漸層 */
+  .bar{background:linear-gradient(90deg,#ff8a3d,var(--brand))}
+
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important} }
+
+  /* 「檢視我提供的各項資料」可展開面板 */
+  .review{border:1px solid var(--ring);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow);margin:14px 0 4px;overflow:hidden}
+  .review-head{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;font-weight:800;font-size:var(--fs-18);color:var(--ink);user-select:none}
+  .review-head::-webkit-details-marker{display:none}
+  .review-head:hover{background:var(--brand-050)}
+  .review-head:focus-visible{outline:none;box-shadow:inset 0 0 0 3px rgba(255,102,0,.25)}
+  .review-title{display:inline-flex;align-items:center;gap:8px}
+  .review-title::before{content:"📋";font-size:1em}
+  .review-toggle{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-14);font-weight:800;color:var(--brand);background:var(--brand-050);border:1px solid var(--brand-100);border-radius:999px;padding:5px 12px;white-space:nowrap}
+  .review-toggle.rt-data::after{content:"檢視資料內容 ▼"}
+  .review[open] .review-toggle.rt-data::after{content:"收合 ▲"}
+  .review-toggle.rt-prompt::after{content:"檢視 Prompt 內容 ▼"}
+  .review[open] .review-toggle.rt-prompt::after{content:"收合 ▲"}
+  .review .summary{margin:0;padding:4px 16px 18px;border-top:1px solid var(--ring)}
+  .prompt-preview{margin:0;padding:14px 16px 18px;border-top:1px solid var(--ring)}
+  .prompt-preview pre{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:var(--fs-12);line-height:1.7;max-height:360px;overflow:auto;background:var(--bg,#faf9f7);border:1px solid var(--ring);padding:12px;border-radius:10px;margin:0;color:var(--muted)}
+
+  /* 三步驟流程 */
+  .step-flow{display:grid;gap:14px;margin:16px 0}
+  .step-item{display:grid;grid-template-columns:72px 1fr;gap:12px;background:var(--card);border:1px solid var(--ring);border-radius:var(--radius);padding:14px 16px}
+  .step-num{font-size:var(--fs-12);font-weight:900;color:var(--brand);background:var(--brand-050);border:1px solid var(--brand-100);border-radius:999px;padding:6px 4px;text-align:center;align-self:start;letter-spacing:.03em}
+  .step-title{font-weight:800;font-size:var(--fs-16);margin-bottom:2px}
+  .step-body{min-width:0}
+
+  /* 其他方式（備援）區塊 */
+  .alt-flow{margin:6px auto 2px;max-width:520px;border:1px dashed var(--ring);border-radius:var(--radius);background:transparent}
+  .alt-flow-head{list-style:none;cursor:pointer;text-align:center;color:var(--muted);font-size:var(--fs-14);font-weight:700;padding:10px 12px;user-select:none}
+  .alt-flow-head::-webkit-details-marker{display:none}
+  .alt-flow-head::after{content:" ▼";font-size:.85em}
+  .alt-flow[open] .alt-flow-head::after{content:" ▲"}
+  .alt-flow-head:hover{color:var(--brand)}
+  .alt-flow-body{padding:2px 14px 14px}
+
+  /* 職涯競爭力報告：全螢幕彈窗（頁內渲染，不用 iframe） */
+  .report-overlay{position:fixed;inset:0;z-index:2000;background:#eef4f2;display:flex;flex-direction:column}
+  .report-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--ring);box-shadow:0 2px 10px rgba(0,0,0,.08);flex:0 0 auto}
+  .report-topbar-title{font-weight:800;font-size:var(--fs-16);color:var(--ink)}
+  .report-topbar-actions{display:flex;gap:8px}
+  .report-topbar-actions .btn{padding:.5em 1em;font-size:var(--fs-14)}
+  .report-content{flex:1 1 auto;overflow:auto;-webkit-overflow-scrolling:touch}
+  @media (max-width:620px){ .report-topbar-title{font-size:var(--fs-14)} .report-topbar-actions .btn{padding:.5em .7em} }
+  @media print{
+    body.report-open > *{display:none !important}
+    body.report-open .report-overlay{display:block !important;position:static !important;background:#fff !important}
+    .report-overlay .report-topbar{display:none !important}
+    .report-content{overflow:visible !important}
+  }
 </style>
 </head>
 <body>
@@ -129,19 +239,41 @@
   </div>
   <header>
     <div class="header-inner">
-      <div class="title">104AI職涯教練 | 用AI陪伴你探索職涯方向，為你的職涯解惑。</div>
-      <div class="sub"> 一鍵生成啓動AI職涯教練的 Prompt → 將生成的 Prompt 貼到 ChatGPT、Gemini 或 Copilot → 取得職涯競爭力報告＆啓動你的AI職涯教練</div>
-      <div class="sub"> ※ 這個平台不會記錄你任何的資料。產生的 AI職涯教練 Prompt 請自行複製保留 ※</div>
-
+      <span class="eyebrow">104 · AI 職涯教練</span>
+      <div class="title"><span class="accent">AI 職涯教練</span>｜用 AI 陪你探索職涯方向</div>
     </div>
   </header>
   <main class="wrap">
     <section class="card landing" id="landing" aria-label="起始畫面">
-      <div class="grid">
-        <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 召喚我的AI職涯教練</button>
-        <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例，先體驗看看</button>
+      <div class="landing-hero">
+        <h2 class="hero-h">一、評估你的職涯競爭力</h2>
       </div>
-      <p class="hint">提示：沒有相關資訊可勾選「無」。</p>
+      <div class="landing-body">
+        <ol class="steps" aria-label="使用說明">
+          <li><span class="n">1</span><span class="t">依序回答職涯問題</span></li>
+          <li><span class="n">2</span><span class="t">一鍵複製 Prompt</span></li>
+          <li><span class="n">3</span><span class="t">貼上AI取得競爭力報告</span></li>
+        </ol>
+
+        <div class="landing-hero landing-hero-2">
+          <h2 class="hero-h">二、打造你個人AI職涯教練</h2>
+        </div>
+        <p class="hero-p" style="margin:0 0 6px">讓AI職涯教練陪伴你～</p>
+        <ol class="steps" aria-label="AI職涯教練功能">
+          <li><span class="n">1</span><span class="t">進行職涯諮詢</span></li>
+          <li><span class="n">2</span><span class="t">完成求職準備</span></li>
+        </ol>
+
+        <div class="cta-group">
+          <button class="btn block" id="startBtn" aria-label="啟動引導">▶︎ 召喚我的AI職涯教練</button>
+          <button class="btn secondary block" id="sampleBtn" aria-label="載入範例">✨ 載入範例，先體驗看看</button>
+          <div style="text-align:center;margin-top:2px">
+            <a href="https://chatgpt.com/share/6a7d32c7-d8c8-83e8-83be-7678b52c9b12" id="reportSampleLink" target="_blank" rel="noopener" aria-label="查看職涯競爭力報告範例" style="display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-14);color:var(--brand);text-decoration:underline;text-underline-offset:3px;cursor:pointer">🔗 查看「職涯競爭力報告」範例</a>
+          </div>
+        </div>
+
+        <p class="hint" style="margin:0">提示：平台不會記錄你的資料，Prompt 請自行複製保留。</p>
+      </div>
     </section>
     <div id="stage" class="safe-bottom" style="margin-top:14px"></div>
   </main>
@@ -154,7 +286,7 @@ try{
 
   const S = { step:0, total:24,
     eduLevel:null,
-    age:'', expYears:'',
+    age:'', expYears:'', expYearsNone:false,
     eduField:'', eduNone:false,
     eduLike:null,
     skillPaper:'', skillNone:false,
@@ -206,11 +338,11 @@ try{
     licenses:'教育部助理教授證書、TA溝通交流分析。',
     skill:'職涯諮詢, 教育訓練設計, 心理測驗編製, 統計分析。',
     manageYears:'15',
-    flow1:'大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。',
-    flow2:'在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。',
-    flow3:'在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。',
-    flow4:'在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。',
-    flow5:'在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。',
+    flow1:'大學期間，參加返鄉服務隊；擔任總召帶領20名大學志工，陪伴偏鄉100名國小兒童，探索個人優勢天賦與認識工作世界。除了爭取到學校10萬元補助，也獲得教育部服務性社團優勝獎項。',
+    flow2:'在人力銀行服務期間，負責推動職涯教育與職涯引導師培訓；規劃培訓課程與實作活動，培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧；培養出一群具備職涯引導能力的夥伴，進一步擴大職涯服務的影響力。',
+    flow3:'在服役期間擔任巡迴教官；到不同單位為官兵規劃與執行情緒管理及職涯規劃課程，協助官兵認識自己、調適壓力並思考未來生涯方向；累積大量教學與助人經驗，也讓職涯輔導與心理學專業能實際運用在不同對象身上。',
+    flow4:'在人力銀行服務期間，與博幼基金會合作推動偏鄉生涯教育；結合104職涯志工，設計並執行各項職涯探索活動，陪伴偏鄉中小學生認識自己的興趣、優勢與工作世界；讓偏鄉學生有更多機會接觸不同職業與生涯選擇，也擴大職涯教育服務的社會影響力。',
+    flow5:'在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問；運用心理學與職涯發展專業，協助公司同仁進行職涯規劃，並規劃與帶領部門團隊建立活動；協助員工更了解自己的職涯方向，也促進團隊成員彼此理解、溝通與合作。',
     values:[14,1,2], interests:[4,5], mi:[8,7,2]
   };
 
@@ -221,7 +353,7 @@ try{
     Object.assign(S, {
       step:1,
       age: sample.age,
-      expYears: sample.expYears,
+      expYears: sample.expYears, expYearsNone:false,
       eduLevel:sample.eduLevel,
       eduField:sample.eduField, eduNone:false,
       eduLike: (sample.eduLike ?? 5),
@@ -273,6 +405,10 @@ try{
         webUrl='https://copilot.microsoft.com/';
         universalUrl='https://copilot.microsoft.com/';
         schemeUrl='ms-chat://';
+    }else if(type === 'Claude'){
+        webUrl='https://claude.ai/new';
+        universalUrl='https://claude.ai/new';
+        schemeUrl='claude://';
     }else{
         return;
     }
@@ -302,6 +438,9 @@ try{
       size = 40; path = `<circle cx="24" cy="24" r="8" fill="#FFC107"/><circle cx="38" cy="18" r="5" fill="#4CAF50"/><circle cx="10" cy="18" r="5" fill="#F44336"/><circle cx="24" cy="38" r="5" fill="#03A9F4"/>`; fill = "none";
     } else if (type === 'Copilot') {
       size = 40; path = `<path fill="#7577f8" d="M14.64 12.36L2 24.5l12.64 12.14 12.36-12.14-12.36-12.14zm18.72 0L20.64 24.5l12.72 12.14 12.36-12.14-12.36-12.14z"/><path fill="#9799ff" d="M26.96 24.5l-6.32 6.07 6.32 6.07 12.36-12.14L26.96 24.5zM20.64 24.5l6.32-6.07-6.32-6.07-12.36 12.14 12.36 6.07z"/>`; fill = "none";
+    } else if (type === 'Claude') {
+      size = 40; viewBox = "0 0 48 48"; fill = "#D97757";
+      path = `<path d="M15.8 10 8 34.5h5.3l1.6-5h9.2l1.6 5h5.3L23.2 10h-7.4zm-.1 15 3.1-9.7 3.1 9.7h-6.2zM33.2 10 40 34.5h-5.3L26.9 10h6.3z"/>`;
     }
     return `<svg width="${size}" height="${size}" viewBox="${viewBox}" fill="${fill}" xmlns="http://www.w3.org/2000/svg" style="display:block; margin: 0 auto;">${defs}${path}</svg>`;
   }
@@ -377,10 +516,12 @@ try{
       case 3:
         qWrap('3. 請問您目前累積的工作年資大約是幾年（含兼職、實習...）？','請輸入數字即可，例如：5。',
         `<div class="row">
-           <input class="field" id="expYears" inputmode="numeric" placeholder="例如：5" value="${escape(S.expYears||'')}" aria-label="工作年資">
+           <input class="field" id="expYears" inputmode="numeric" placeholder="例如：5" value="${escape(S.expYears||'')}" aria-label="工作年資" ${S.expYearsNone?'disabled':''}>
            <span class="unit" aria-hidden="true">年</span>
-         </div>`);
+         </div>
+         <div class="none-wrap"><label><input type="checkbox" id="expYearsNone" ${S.expYearsNone?'checked':''}> 無</label></div>`);
         stage.querySelector('#expYears').oninput = e => S.expYears = e.target.value.replace(/[^0-9.]/g,'');
+        stage.querySelector('#expYearsNone').onchange = e => { S.expYearsNone = e.target.checked; if(e.target.checked) S.expYears=''; render(); };
         break;
       case 4:
         qWrap('4.我就讀的專業領域','請參考下方輸入框中的「範例」，依相同格式填寫。例如：大學念心理系。主修工商心理學。輔系是修讀企管系與新聞系。若無可勾選「無」。',
@@ -526,51 +667,54 @@ try{
             看過的書或影片：漫畫、小說、散文、繪本、電影、動漫、連續劇…<br>
             重要的人生經歷：做過的工作、去過的地方、得過的榮譽、失去的…</p>
             <p>👉 接下來要您用直覺的方式，寫出「五個」讓您最有心流時光的生命事件。<br>
-            每段心流事件包含：<b>Time（時間/背景）</b>、<b>Flow（內容重點）</b>二個元素。<br>
-            例如：在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。</p>
+            每段心流事件包含：<b>BAR</b> 三個元素。其中：<br>
+            <b>Backgroud（背景）</b>，指的是這個心流時光事件發生的時間或背景。<br>
+            <b>Action（行動）</b>，表示在這個心流時光事件你做了哪些事情。<br>
+            <b>Result（結果）</b>，表示這個心流時光事件讓你獲得哪些學習成果。<br>
+            例如：（Backgroud，背景）國一的寒假參加四天三夜的全國大露營，（Action，行動）擔任小隊長負責帶領小隊成員執行各項任務與競賽，（Result，結果）領導的小組獲得精神總錦標的第三名。</p>
           </div>`);
         break;
       case 16:
-        qWrap('15. 我最有心流時光的生命經歷是？','每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。如果你沒有資訊提供，請點選下方「無」這個選項。',
+        qWrap('15. 我最有心流時光的生命經歷是？','每個心流事件包含：Backgroud（背景）、Action（行動）、Result（結果）。例如：Backgroud（背景）大學期間，參加返鄉服務隊；（Action，行動）擔任總召帶領20名大學志工，陪伴偏鄉100名國小兒童，探索個人優勢天賦與認識工作世界。（Result，結果）除了爭取到學校10萬元補助，也獲得教育部服務性社團優勝獎項。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow1" placeholder="
-範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
-大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1||'')}</textarea>
+範例：（輸入示意）
+大學期間，參加返鄉服務隊；擔任總召帶領20名大學志工，陪伴偏鄉100名國小兒童，探索個人優勢天賦與認識工作世界。除了爭取到學校10萬元補助，也獲得教育部服務性社團優勝獎項。" ${S.flow1None?'disabled':''} aria-label="心流事件一">${escape(S.flow1||'')}</textarea>
          <div class="none-wrap"><label><input type="checkbox" id="flow1None" ${S.flow1None?'checked':''}> 無</label></div>`);
         stage.querySelector('#flow1').oninput=e=>S.flow1=e.target.value;
         stage.querySelector('#flow1None').onchange=e=>{S.flow1None=e.target.checked; render();};
         break;
       case 17:
-        qWrap('16. 我第二個比較有心流時光的生命經歷是？','每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。如果你沒有資訊提供，請點選下方「無」這個選項。',
+        qWrap('16. 我第二個比較有心流時光的生命經歷是？','每個心流事件包含：Background（背景）、Action（行動）、Result（結果）。例如：Background（背景）在人力銀行服務期間，負責推動職涯教育與職涯引導師培訓；Action（行動）規劃培訓課程與實作活動，培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧；Result（結果）培養出一群具備職涯引導能力的夥伴，進一步擴大職涯服務的影響力。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow2" ${S.flow2None?'disabled':''} aria-label="心流事件二" placeholder="
-範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
-在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。">${escape(S.flow2||'')}</textarea>
+範例：（輸入示意）
+在人力銀行服務期間，負責推動職涯教育與職涯引導師培訓；規劃培訓課程與實作活動，培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧；培養出一群具備職涯引導能力的夥伴，進一步擴大職涯服務的影響力。">${escape(S.flow2||'')}</textarea>
          <label class="hint"><input type="checkbox" id="flow2None" ${S.flow2None?'checked':''}> 無</label>`);
         stage.querySelector('#flow2').oninput=e=>S.flow2=e.target.value;
         stage.querySelector('#flow2None').onchange=e=>{S.flow2None=e.target.checked; render();};
         break;
       case 18:
-        qWrap('17. 我第三個比較有心流時光的生命經歷是？','每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。如果你沒有資訊提供，請點選下方「無」這個選項。',
+        qWrap('17. 我第三個比較有心流時光的生命經歷是？','每個心流事件包含：Background（背景）、Action（行動）、Result（結果）。例如：Background（背景）在服役期間擔任巡迴教官；Action（行動）到不同單位為官兵規劃與執行情緒管理及職涯規劃課程，協助官兵認識自己、調適壓力並思考未來生涯方向；Result（結果）累積大量教學與助人經驗，也讓職涯輔導與心理學專業能實際運用在不同對象身上。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow3" ${S.flow3None?'disabled':''} aria-label="心流事件三" placeholder="
-範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
-在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。">${escape(S.flow3||'')}</textarea>
+範例：（輸入示意）
+在服役期間擔任巡迴教官；到不同單位為官兵規劃與執行情緒管理及職涯規劃課程，協助官兵認識自己、調適壓力並思考未來生涯方向；累積大量教學與助人經驗，也讓職涯輔導與心理學專業能實際運用在不同對象身上。">${escape(S.flow3||'')}</textarea>
          <label class="hint"><input type="checkbox" id="flow3None" ${S.flow3None?'checked':''}> 無</label>`);
         stage.querySelector('#flow3').oninput=e=>S.flow3=e.target.value;
         stage.querySelector('#flow3None').onchange=e=>{S.flow3None=e.target.checked; render();};
         break;
       case 19:
-        qWrap('18. 我第四個比較有心流時光的生命經歷是？','每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。如果你沒有資訊提供，請點選下方「無」這個選項。',
+        qWrap('18. 我第四個比較有心流時光的生命經歷是？','每個心流事件包含：Background（背景）、Action（行動）、Result（結果）。例如：Background（背景）在人力銀行服務期間，與博幼基金會合作推動偏鄉生涯教育；Action（行動）結合104職涯志工，設計並執行各項職涯探索活動，陪伴偏鄉中小學生認識自己的興趣、優勢與工作世界；Result（結果）讓偏鄉學生有更多機會接觸不同職業與生涯選擇，也擴大職涯教育服務的社會影響力。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow4" ${S.flow4None?'disabled':''} aria-label="心流事件四" placeholder="
-範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
-在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。">${escape(S.flow4||'')}</textarea>
+範例：（輸入示意）
+在人力銀行服務期間，與博幼基金會合作推動偏鄉生涯教育；結合104職涯志工，設計並執行各項職涯探索活動，陪伴偏鄉中小學生認識自己的興趣、優勢與工作世界；讓偏鄉學生有更多機會接觸不同職業與生涯選擇，也擴大職涯教育服務的社會影響力。">${escape(S.flow4||'')}</textarea>
          <label class="hint"><input type="checkbox" id="flow4None" ${S.flow4None?'checked':''}> 無</label>`);
         stage.querySelector('#flow4').oninput=e=>S.flow4=e.target.value;
         stage.querySelector('#flow4None').onchange=e=>{S.flow4None=e.target.checked; render();};
         break;
       case 20:
-        qWrap('19. 我第五個比較有心流時光的生命經歷是？','每個心流事件包含：Time（時間/背景）、Flow（內容重點）。例如：在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。如果你沒有資訊提供，請點選下方「無」這個選項。',
+        qWrap('19. 我第五個比較有心流時光的生命經歷是？','每個心流事件包含：Background（背景）、Action（行動）、Result（結果）。例如：Background（背景）在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問；Action（行動）運用心理學與職涯發展專業，協助公司同仁進行職涯規劃，並規劃與帶領部門團隊建立活動；Result（結果）協助員工更了解自己的職涯方向，也促進團隊成員彼此理解、溝通與合作。如果你沒有資訊提供，請點選下方「無」這個選項。',
         `<textarea class="field" id="flow5" ${S.flow5None?'disabled':''} aria-label="心流事件五" placeholder="
-範例：（輸入示意）Time（時間/背景）、Flow（內容重點）
-在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。">${escape(S.flow5||'')}</textarea>
+範例：（輸入示意）
+在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問；運用心理學與職涯發展專業，協助公司同仁進行職涯規劃，並規劃與帶領部門團隊建立活動；協助員工更了解自己的職涯方向，也促進團隊成員彼此理解、溝通與合作。">${escape(S.flow5||'')}</textarea>
          <label class="hint"><input type="checkbox" id="flow5None" ${S.flow5None?'checked':''}> 無</label>`);
         stage.querySelector('#flow5').oninput=e=>S.flow5=e.target.value;
         stage.querySelector('#flow5None').onchange=e=>{S.flow5None=e.target.checked; render();};
@@ -608,69 +752,53 @@ try{
 以下的範例，是「我的職涯發展資訊」想要包含的內容。
 格式的部分，請讓我可以清楚易懂，快速地掌握我上述提供的各項職涯發展資訊。
 
+【格式範例開始——以下為示範用途，請勿將此範例視為使用者的真實資料】
 **********************
-
-範例
-
+Spring範例（此為格式示範，非本次使用者資料）
 最高學歷
 (8) 博士畢業。
-
 就讀專業領域
 大學是念心理系，主修工商心理學組。輔系是修讀企管系與新聞系。
 碩士是念心理研究所，主修工商心理學。
 博士是念心理研究所，主修工商心理學，輔修心理輔導。
-
 就讀專業領域的喜歡程度：
 (5) 非常喜歡
-
 擅長科目／論文／專題／競賽
 擅長科目有：人力資源管理、組織心理學、領導心理學、心理輔導、正向心理學、心理測驗、統計、SPSS。
 碩士論文：目標設定對工作動機的影響。
 博士論文：部屬對領導者的知覺與因應行為。
-
 社團經驗
 1.政大蘭友會返鄉服務隊/總召,隊輔/看見自己喜歡和大家一起用寓教於樂的方式幫助別人/3年。
 2.心理系學會/系代/和一群志同道合的伙伴完成20週年系慶各項活動/1年。
-
-
 工作經驗
 1.人力銀行/職涯永續長/執行中學生、大學生職涯教育工作，發展職涯探索工具與服務，培訓職涯引導師與職涯志工/15年。
 2.資訊科技製造產業/員工發展室專案顧問/發展＆執行員工職涯規劃方案，協助各部門團隊建立活動/3年。
 3.國立大學/心理系助理教授/負責人力資源管理、領導心理學、統計、質化研究...課程，主持國科會、國防部研究專案，指導研究生論文計畫，協助企業執行甄選測驗建置計畫/5年。
-
 證照
-
 教育部助理教授證書、TA溝通交流分析。
 技能
-
 職涯諮詢, 教育訓練設計, 心理測驗編製, 統計分析。
-
 管理經驗
 15 年
-
 心流時光
 1.大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。
 2.在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。
 3.在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。
 4.在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。
 5.在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。
-
 心理測驗彙整
-
 職業價值觀（3）
 (14) 服務他人：工作讓我能幫助他人，為社會大眾服務。
 (1) 具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。
 (2) 理念要有共鳴：工作或公司文化能符合我的核心價值。
-
 生涯興趣（2）
 (4) S.社會型：喜歡助人、協作與引導他人，偏好溝通、人際互動與服務工作。
 (5) E.企業型：喜歡影響與說服他人，展現領導、組織與決策的行為。
-
 多元智能（3）
 (8) 內省同理：擅長探索自己與同理他人，能安靜獨處。
 (7) 人際互動：擅長觀察情緒，喜歡團體活動與帶領。
-
 **********************
+【格式範例結束——請依照上方格式，使用本次使用者在第1至23項填寫的真實資料來撰寫報告，絕對不可使用上方 Spring 範例的資料】
 
 報告的第二部份，請再提供「報告摘要」。
 請用條列的方式，提供「職涯競爭力報告」的重點摘要。目的是讓我可以很快地掌握下面問題一、問題二、問題三、問題四、問題五、問題六，六個問題的回答內容。
@@ -829,129 +957,49 @@ D.未來從事這個產業要思考問題：根據我的現況，舉出如果我
 
 
 **********************
-
-
-
-範例
-
-
-
+Spring範例
 最高學歷
-
 (8) 博士畢業。
-
-
-
 就讀專業領域
-
 大學是念心理系，主修工商心理學組。輔系是修讀企管系與新聞系。
-
 碩士是念心理研究所，主修工商心理學。
-
 博士是念心理研究所，主修工商心理學，輔修心理輔導。
-
-
-
 就讀專業領域的喜歡程度：
-
 (5) 非常喜歡
-
-
-
 擅長科目／論文／專題／競賽
-
 擅長科目有：人力資源管理、組織心理學、領導心理學、心理輔導、正向心理學、心理測驗、統計、SPSS。
-
 碩士論文：目標設定對工作動機的影響。
-
 博士論文：部屬對領導者的知覺與因應行為。
-
-
-
 社團經驗
-
 1.政大蘭友會返鄉服務隊/總召,隊輔/看見自己喜歡和大家一起用寓教於樂的方式幫助別人/3年。
-
 2.心理系學會/系代/和一群志同道合的伙伴完成20週年系慶各項活動/1年。
-
-
-
-
-
 工作經驗
-
 1.人力銀行/職涯永續長/執行中學生、大學生職涯教育工作，發展職涯探索工具與服務，培訓職涯引導師與職涯志工/15年。
-
 2.資訊科技製造產業/員工發展室專案顧問/發展＆執行員工職涯規劃方案，協助各部門團隊建立活動/3年。
-
 3.國立大學/心理系助理教授/負責人力資源管理、領導心理學、統計、質化研究...課程，主持國科會、國防部研究專案，指導研究生論文計畫，協助企業執行甄選測驗建置計畫/5年。
-
-
-
 證照
-
-
-
 教育部助理教授證書、TA溝通交流分析。
-
 技能
-
-
-
 職涯諮詢, 教育訓練設計, 心理測驗編製, 統計分析。
-
-
-
 管理經驗
-
 15 年
-
-
-
 心流時光
-
 1.大學期間，參加返鄉服務隊，陪伴偏鄉國小兒童探索個人優勢天賦。
-
 2.在人力銀行服務期間，負責培訓150位104職涯引導師，提升他們職涯諮詢與引導的技巧。
-
 3.在服役期間擔任巡迴教官，負責官兵的情緒管理及職涯規劃教育。
-
 4.在人力銀行服務期間，與博幼基金會合作協助偏鄉中小學生探索工作世界。
-
 5.在博士班就讀期間，擔任宏碁電腦員工發展室專案顧問，協助公司同仁的職涯規劃＆部門的團隊建立活動。
-
-
-
 心理測驗彙整
-
-
-
 職業價值觀（3）
-
 (14) 服務他人：工作讓我能幫助他人，為社會大眾服務。
-
 (1) 具有影響力：工作能讓我獲得影響力，取得良好的社會地位與聲望。
-
 (2) 理念要有共鳴：工作或公司文化能符合我的核心價值。
-
-
-
 生涯興趣（2）
-
 (4) S.社會型：喜歡助人、協作與引導他人，偏好溝通、人際互動與服務工作。
-
 (5) E.企業型：喜歡影響與說服他人，展現領導、組織與決策的行為。
-
-
-
 多元智能（3）
-
 (8) 內省同理：擅長探索自己與同理他人，能安靜獨處。
-
 (7) 人際互動：擅長觀察情緒，喜歡團體活動與帶領。
-
-
-
 **********************
 
 
@@ -1081,6 +1129,102 @@ D.未來從事這個產業要思考問題：根據我的現況，舉出如果我
 1.請先在對話框呈現上述自我探索學習歷程檔案全部的文字內容 。
 
 2.接著再用網頁策展的方式，生成一個網頁，讓我比較容易解讀這份自我探索學習歷程檔案的內容。
+
+3.生成的策展網頁，請與這個前端網頁架構相同。請用這個前端網頁的 Html 語法。
+
+  特別說明：內容只是提供你生成前端策展頁面的範例。實際生成的策展頁面，請用我個人提供的真實資料。
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-Hant"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+&lt;title&gt;Spring｜職涯競爭力報告&lt;/title&gt;
+&lt;style&gt;
+:root{--ink:#18313a;--muted:#5e727a;--paper:#fffdf8;--soft:#edf5f3;--accent:#c96b4b;--accent2:#2e6f6b;--gold:#bf8b36;--line:#d9e4e1;--shadow:0 16px 40px rgba(24,49,58,.10)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#f1f7f5 0,#fffdf8 26rem);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.8}
+a{color:var(--accent2)}
+.hero{padding:64px 20px 42px;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(201,107,75,.10);right:-160px;top:-220px}
+.hero-inner{max-width:1120px;margin:auto;position:relative}
+.kicker{font-size:.86rem;font-weight:800;letter-spacing:.18em;color:var(--accent)}
+h1{font-size:clamp(2.4rem,7vw,5.8rem);line-height:1.05;margin:.35rem 0 1rem;letter-spacing:-.05em}
+.hero p{max-width:760px;font-size:1.08rem;color:var(--muted)}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.badge{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:.9rem;box-shadow:0 6px 16px rgba(24,49,58,.05)}
+.shell{max-width:1180px;margin:auto;padding:0 18px 80px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:26px}
+nav{position:sticky;top:16px;align-self:start;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+nav strong{display:block;margin-bottom:8px}
+nav a{display:block;text-decoration:none;color:var(--muted);padding:7px 10px;border-radius:10px;font-size:.93rem}
+nav a:hover{background:var(--soft);color:var(--ink)}
+.tools{display:grid;gap:8px;margin-top:16px}
+button{border:0;border-radius:12px;padding:10px 13px;cursor:pointer;font-weight:800;background:var(--accent2);color:white}
+button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}
+main{min-width:0}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.summary-card{background:white;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 20px rgba(24,49,58,.06)}
+.summary-card .num{font-size:2rem;font-weight:900;color:var(--accent)}
+.summary-card b{display:block}
+.summary-card small{color:var(--muted)}
+.article{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:24px;padding:clamp(22px,5vw,58px);box-shadow:var(--shadow)}
+.article h1{font-size:2.5rem;margin-top:0}
+.article h2{font-size:1.75rem;margin-top:3.3rem;padding-top:1.2rem;border-top:2px solid var(--line)}
+.article h3{font-size:1.3rem;margin-top:2rem;color:var(--accent2)}
+.article h4{font-size:1.05rem}
+.article blockquote{margin:1.5rem 0;padding:16px 20px;background:var(--soft);border-left:5px solid var(--accent2);border-radius:0 14px 14px 0;color:var(--muted)}
+.article li{margin:.34rem 0}
+.article table{width:100%;border-collapse:separate;border-spacing:0;margin:1.3rem 0;overflow:hidden;border:1px solid var(--line);border-radius:14px;font-size:.94rem}
+.article th,.article td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.article th{background:var(--soft)}
+.article tr:last-child td{border-bottom:0}
+.article hr{border:0;border-top:1px solid var(--line);margin:2.8rem 0}
+.article strong{color:#203f48}
+.source-note{margin-top:22px;background:#fff7e8;border:1px solid #ecd7ae;border-radius:16px;padding:16px;color:#665334;font-size:.92rem}
+.floating{position:fixed;right:18px;bottom:18px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;text-decoration:none;background:var(--accent);color:white;box-shadow:var(--shadow);font-weight:900}
+@media(max-width:900px){.shell{grid-template-columns:1fr}nav{position:relative;top:auto}.summary-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.hero{padding-top:42px}.article{padding:22px 18px}.article h2{font-size:1.45rem}.article table{display:block;overflow-x:auto;white-space:nowrap}nav{display:none}}
+@media print{nav,.floating,.tools{display:none!important}body{background:white}.shell{display:block;max-width:none;padding:0}.article{border:0;box-shadow:none;padding:0}.hero{padding:20px 0}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header class="hero" id="top"&gt;
+  &lt;div class="hero-inner"&gt;
+    &lt;div class="kicker"&gt;CAREER SUSTAINABILITY · EVIDENCE-BASED REVIEW&lt;/div&gt;
+    &lt;h1&gt;職涯競爭力報告&lt;/h1&gt;
+    &lt;p&gt;把30年經驗，從「豐富資歷」整理成可聚焦、可驗證、可收費、可規模化的第二人生資產。&lt;/p&gt;
+    &lt;div class="badges"&gt;&lt;span class="badge"&gt;55歲&lt;/span&gt;&lt;span class="badge"&gt;博士&lt;/span&gt;&lt;span class="badge"&gt;30年工作經驗&lt;/span&gt;&lt;span class="badge"&gt;15年管理經驗&lt;/span&gt;&lt;span class="badge"&gt;S × E 生涯興趣&lt;/span&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/header&gt;
+&lt;div class="shell"&gt;
+&lt;nav&gt;
+&lt;strong&gt;快速導覽&lt;/strong&gt;
+&lt;a href="#第一部分職涯發展資訊"&gt;職涯發展資訊&lt;/a&gt;
+&lt;a href="#第二部分報告摘要"&gt;報告摘要&lt;/a&gt;
+&lt;a href="#問題一五個比較明確突出的專業才能"&gt;五項硬實力&lt;/a&gt;
+&lt;a href="#問題二五個比較明確突出的優勢特質"&gt;五項軟特質&lt;/a&gt;
+&lt;a href="#問題三推薦適合發展的五個職業"&gt;五個職業&lt;/a&gt;
+&lt;a href="#問題四推薦適合加入的五個產業"&gt;五個產業&lt;/a&gt;
+&lt;a href="#問題五三個具體職涯方向建議"&gt;三項方向&lt;/a&gt;
+&lt;a href="#問題六可以繼續互動或請教的三個問題"&gt;下一步提問&lt;/a&gt;
+&lt;div class="tools"&gt;&lt;button onclick="window.print()"&gt;列印／另存PDF&lt;/button&gt;&lt;button class="secondary" onclick="document.documentElement.scrollTop=0"&gt;回到頂端&lt;/button&gt;&lt;/div&gt;
+&lt;/nav&gt;
+&lt;main&gt;
+&lt;section class="summary-grid"&gt;
+&lt;div class="summary-card"&gt;&lt;div class="num"&gt;3&lt;/div&gt;&lt;b&gt;最強硬實力&lt;/b&gt;&lt;small&gt;職涯諮詢、課程設計、人才培育&lt;/small&gt;&lt;/div&gt;
+&lt;div class="summary-card"&gt;&lt;div class="num"&gt;1&lt;/div&gt;&lt;b&gt;最務實策略&lt;/b&gt;&lt;small&gt;先在既有平台驗證第二曲線&lt;/small&gt;&lt;/div&gt;
+&lt;div class="summary-card"&gt;&lt;div class="num"&gt;4&lt;/div&gt;&lt;b&gt;關鍵補強&lt;/b&gt;&lt;small&gt;聚焦、產品、商業數據、可複製交付&lt;/small&gt;&lt;/div&gt;
+&lt;/section&gt;
+&lt;article class="article"&gt;...（報告內文請依使用者真實資料生成）...&lt;/article&gt;
+&lt;/main&gt;
+&lt;/div&gt;
+&lt;a class="floating" href="#top" aria-label="回到頂端"&gt;↑&lt;/a&gt;
+&lt;script&gt;
+const headings=[...document.querySelectorAll('.article h2,.article h1')];
+headings.forEach(h=&gt;{if(!h.id) h.id=h.textContent.replace(/[^\w一-鿿]+/g,'');});
+&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;
 `;
         const text = compiledText() + tail;
 
@@ -1089,36 +1233,61 @@ D.未來從事這個產業要思考問題：根據我的現況，舉出如果我
 
         stage.innerHTML = progress()+`<section class="card" style="padding:16px">
           <div class="qtitle">彙整完成</div>
-          <div class="hint">已將你的填答整理成可閱讀的分區塊。需要整包 Prompt 來丟給 AI？直接按下面的按鈕或展開「顯示完整 Prompt」。</div>
+          <div class="hint">你的填答已彙整完成。請依照以下三個步驟，取得你的職涯競爭力報告。</div>
 
-          <div class="summary">${summaryHTML}</div>
+          <div class="step-flow">
+            <div class="step-item">
+              <div class="step-num">步驟一</div>
+              <div class="step-body">
+                <details class="review">
+                  <summary class="review-head">
+                    <span class="review-title">檢視我的各項資料</span>
+                    <span class="review-toggle rt-data" aria-hidden="true"></span>
+                  </summary>
+                  <div class="summary">${summaryHTML}</div>
+                </details>
+              </div>
+            </div>
 
-          <div class="center-text">Step1. 直接複製完整 Prompt</div>
-          <div style="text-align:center;margin-bottom:6px;">
-            <button class="btn" id="copy" style="font-size:var(--fs-22);padding:1em 2em;">一鍵複製貼到 AI 的 Prompt</button>
+            <div class="step-item">
+              <div class="step-num">步驟二</div>
+              <div class="step-body">
+                <details class="review">
+                  <summary class="review-head">
+                    <span class="review-title">複製AI職涯教練 Prompt</span>
+                    <span class="review-toggle rt-prompt" aria-hidden="true"></span>
+                  </summary>
+                  <div class="prompt-preview"><pre>${escape(text)}</pre></div>
+                </details>
+                <p class="hint" style="margin:10px 0 8px">點下方按鈕，將你的職涯發展資訊與 AI 職涯教練 Prompt 一鍵複製到剪貼簿。</p>
+                <div style="text-align:center">
+                  <button class="btn block" id="copy">📋 一鍵複製職涯教練 Prompt</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-num">步驟三</div>
+              <div class="step-body">
+                <div class="step-title">將內容複製到下列 AI 工具</div>
+                <p class="hint" style="margin:4px 0 8px">開啟下列任一 AI，將剛才複製的 Prompt 貼上。即可取得你的職涯競爭力報告，並且與生成的 AI 職涯教練，進行職涯諮詢。</p>
+                <div class="ai-btn-group">
+                  <button class="ai-btn" id="openChatGPT">${aiLogoSvg('ChatGPT')}<span>ChatGPT</span></button>
+                  <button class="ai-btn" id="openGemini">${aiLogoSvg('Gemini')}<span>Gemini</span></button>
+                  <button class="ai-btn" id="openClaude">${aiLogoSvg('Claude')}<span>Claude</span></button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <details class="copybox">
-            <summary class="btn ghost" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">顯示可複製的完整 Prompt（展開/收合）</summary>
-            <textarea id="out" aria-label="彙整文字" class="field" style="margin-top:10px;">${escape(text)}</textarea>
-          </details>
-
-          <div class="center-text" style="margin-top:24px;">Step2. 將 Prompt 貼到下列任一 AI</div>
-          <div class="ai-btn-group">
-            <button class="ai-btn" id="openGemini">${aiLogoSvg('Gemini')}<span>推薦 Gemini</span></button>
-            <button class="ai-btn" id="openChatGPT">${aiLogoSvg('ChatGPT')}<span>ChatGPT</span></button>
-            <button class="ai-btn" id="openCopilot">${aiLogoSvg('Copilot')}<span>Copilot</span></button>
-          </div>
-
-          <div class="restart-hint">想重填？點『重新開始』。</div>
+          <div class="restart-hint">想要重新填寫資訊，請點選『重新開始』icon。</div>
           <div style="text-align:center;margin-top:10px;">
             <button class="btn ghost" id="restart">重新開始</button>
           </div>
         </section>`;
 
         document.getElementById('copy').onclick=async()=>{
-          const ta = document.getElementById('out');
-          const txt = ta ? ta.value : text;
+          const txt = text;
           try{
             if (navigator.clipboard && window.isSecureContext) {
               await navigator.clipboard.writeText(txt);
@@ -1131,7 +1300,7 @@ D.未來從事這個產業要思考問題：根據我的現況，舉出如果我
         document.getElementById('restart').onclick=()=>{ reset(); };
         document.getElementById('openChatGPT').onclick=()=>openAI('ChatGPT');
         document.getElementById('openGemini').onclick=()=>openAI('Gemini');
-        document.getElementById('openCopilot').onclick=()=>openAI('Copilot');
+        document.getElementById('openClaude').onclick=()=>openAI('Claude');
         break;
     }
   }
@@ -1159,7 +1328,7 @@ D.未來從事這個產業要思考問題：根據我的現況，舉出如果我
 
   function reset(){ Object.assign(S, { step:0, total:24,
     eduLevel:null,
-    age:'', expYears:'',
+    age:'', expYears:'', expYearsNone:false,
     eduField:'', eduNone:false,
     eduLike:null,
     skillPaper:'', skillNone:false,
@@ -1184,7 +1353,7 @@ D.未來從事這個產業要思考問題：根據我的現況，舉出如果我
     const likeMap = {1:'非常不喜歡',2:'不喜歡',3:'普通',4:'喜歡',5:'非常喜歡'};
     const L1 = `1.我的最高學歷是：${levelTxt}${findById(eduLevelOpts,S.eduLevel)}`;
     const L2 = `2.我目前的年齡是：${S.age || '（未填）'} 歲`;
-    const L3 = `3.我目前累積的工作年資大約是：${S.expYears || '（未填）'} 年`;
+    const L3 = `3.我目前累積的工作年資大約是：${S.expYearsNone?'無。':(S.expYears?S.expYears+' 年':'（未填）')}`;
     const L4 = `4.我對就讀的專業領域：${S.eduFieldNone?'無。':(S.eduField||'')}`;
     const L5 = `5.我就讀專業領域的喜歡程度：${S.eduLike?('('+S.eduLike+')'):''}${S.eduLike?likeMap[S.eduLike]:'（未選擇）'}`;
     const L6 = `6.我擅長的科目、做過的專題、論文或參與過的競賽：${S.skillNone?'無。':(S.skillPaper||'')}`;
@@ -1209,6 +1378,7 @@ D.未來從事這個產業要思考問題：根據我的現況，舉出如果我
   }
 
   // ---- 新增：將 S 組成可讀版 HTML ----
+
   function buildSummaryHTML(){
     const likeMap = {1:'非常不喜歡',2:'不喜歡',3:'普通',4:'喜歡',5:'非常喜歡'};
     const sec = [];
